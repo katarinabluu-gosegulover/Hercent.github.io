@@ -543,15 +543,8 @@ h3 {
 
 .account-strip {
   display: grid;
-  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
-  gap: 20px;
+  gap: 16px;
   padding: 24px;
-}
-
-.account-intro,
-.account-links {
-  display: grid;
-  gap: 12px;
 }
 
 .account-label {
@@ -563,14 +556,10 @@ h3 {
   font-family: "IBM Plex Mono", Consolas, monospace;
 }
 
-.account-copy {
-  margin: 0;
-  color: var(--muted);
-  line-height: 1.75;
-}
-
 .account-links {
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
 }
 
 .account-chip {
