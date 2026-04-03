@@ -268,6 +268,8 @@ img {
   z-index: 2;
 }
 
+.space-singularity-horizon,
+.space-singularity-infall,
 .space-singularity-corona,
 .space-singularity-shadow,
 .space-singularity-jet {
@@ -275,6 +277,45 @@ img {
   left: 50%;
   pointer-events: none;
   transform: translateX(-50%);
+}
+
+.space-singularity-horizon {
+  top: -22px;
+  width: 236px;
+  height: 236px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 50% 50%, transparent 0 34%, rgba(255, 255, 255, 0.18) 38%, rgba(244, 228, 255, 0.28) 42%, rgba(196, 132, 252, 0.26) 48%, rgba(88, 28, 135, 0.10) 58%, transparent 66%);
+  filter: blur(6px);
+  opacity: 0.92;
+  z-index: 3;
+}
+
+.space-singularity-infall {
+  top: 8px;
+  width: 258px;
+  height: 188px;
+  border-radius: 50%;
+  background:
+    conic-gradient(
+      from 18deg,
+      rgba(255, 255, 255, 0) 0deg,
+      rgba(255, 255, 255, 0.30) 24deg,
+      rgba(244, 228, 255, 0.52) 54deg,
+      rgba(196, 132, 252, 0.18) 94deg,
+      rgba(255, 255, 255, 0) 140deg,
+      rgba(255, 255, 255, 0.18) 220deg,
+      rgba(244, 228, 255, 0.44) 276deg,
+      rgba(255, 255, 255, 0) 360deg
+    );
+  -webkit-mask:
+    radial-gradient(circle at 50% 46%, transparent 0 29%, #000 37% 50%, transparent 60%);
+  mask:
+    radial-gradient(circle at 50% 46%, transparent 0 29%, #000 37% 50%, transparent 60%);
+  filter: blur(5px);
+  opacity: 0.86;
+  z-index: 3;
+  animation: singularity-infall 10s linear infinite;
 }
 
 .space-singularity-corona {
@@ -291,24 +332,24 @@ img {
 
 .space-singularity-core {
   left: 50%;
-  top: -16px;
-  width: 176px;
-  height: 176px;
+  top: -28px;
+  width: 206px;
+  height: 206px;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 0 42%, rgba(4, 5, 10, 1) 56%, rgba(236, 209, 255, 0.08) 60%, transparent 63%);
+    radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 1) 0 44%, rgba(4, 5, 10, 1) 58%, rgba(236, 209, 255, 0.08) 62%, transparent 65%);
   box-shadow:
     0 0 0 8px rgba(245, 232, 255, 0.12),
-    0 0 58px rgba(236, 209, 255, 0.18),
-    0 0 92px rgba(168, 85, 247, 0.16);
+    0 0 72px rgba(236, 209, 255, 0.20),
+    0 0 118px rgba(168, 85, 247, 0.18);
   transform: translateX(-50%);
-  z-index: 3;
+  z-index: 4;
 }
 
 .space-singularity-shadow {
-  top: 44px;
-  width: 224px;
-  height: 64px;
+  top: 48px;
+  width: 262px;
+  height: 74px;
   border-radius: 50%;
   background:
     radial-gradient(ellipse at center, rgba(0, 0, 0, 0.96) 0 34%, rgba(2, 4, 12, 0.86) 46%, rgba(2, 6, 23, 0.28) 64%, transparent 78%);
@@ -1088,6 +1129,23 @@ h3 {
   }
 }
 
+@keyframes singularity-infall {
+  from {
+    transform: translateX(-50%) rotate(0deg) scale(1);
+    opacity: 0.76;
+  }
+
+  50% {
+    transform: translateX(-50%) rotate(180deg) scale(0.985);
+    opacity: 1;
+  }
+
+  to {
+    transform: translateX(-50%) rotate(360deg) scale(1);
+    opacity: 0.76;
+  }
+}
+
 :root[data-theme="dark"] .site-header {
   border-bottom-color: rgba(148, 163, 184, 0.12);
 }
@@ -1131,6 +1189,14 @@ h3 {
 
 :root[data-theme="dark"] .space-singularity-lensing {
   opacity: 1;
+}
+
+:root[data-theme="dark"] .space-singularity-horizon {
+  opacity: 1;
+}
+
+:root[data-theme="dark"] .space-singularity-infall {
+  opacity: 0.94;
 }
 
 :root[data-theme="dark"] .space-singularity-corona {
@@ -1284,21 +1350,33 @@ h3 {
     height: 156px;
   }
 
+  .space-singularity-horizon {
+    width: 180px;
+    height: 180px;
+    top: -10px;
+  }
+
+  .space-singularity-infall {
+    width: 196px;
+    height: 144px;
+    top: 12px;
+  }
+
   .space-singularity-corona {
     width: 188px;
     height: 132px;
   }
 
   .space-singularity-core {
-    width: 132px;
-    height: 132px;
-    top: -2px;
+    width: 152px;
+    height: 152px;
+    top: -10px;
   }
 
   .space-singularity-shadow {
-    width: 172px;
-    height: 46px;
-    top: 42px;
+    width: 192px;
+    height: 52px;
+    top: 44px;
   }
 
   .space-singularity-jet {
@@ -1345,7 +1423,8 @@ h3 {
 
   .space-singularity::before,
   .space-singularity-ring-back,
-  .space-singularity-ring-front {
+  .space-singularity-ring-front,
+  .space-singularity-infall {
     animation: none !important;
   }
 }

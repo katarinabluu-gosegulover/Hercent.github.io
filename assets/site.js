@@ -167,6 +167,12 @@ const initBlackHoleBackdrop = () => {
   const lensing = document.createElement("span");
   lensing.className = "space-singularity-lensing";
 
+  const horizon = document.createElement("span");
+  horizon.className = "space-singularity-horizon";
+
+  const infall = document.createElement("span");
+  infall.className = "space-singularity-infall";
+
   const corona = document.createElement("span");
   corona.className = "space-singularity-corona";
 
@@ -179,7 +185,7 @@ const initBlackHoleBackdrop = () => {
   const frontRing = document.createElement("span");
   frontRing.className = "space-singularity-ring space-singularity-ring-front";
 
-  singularity.append(backRing, jet, lensing, corona, core, shadow, frontRing);
+  singularity.append(backRing, jet, lensing, infall, corona, horizon, core, shadow, frontRing);
 
   const backdrop = document.querySelector(".space-backdrop");
 
