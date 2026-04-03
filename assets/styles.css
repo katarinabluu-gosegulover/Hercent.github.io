@@ -16,6 +16,21 @@
   --radius-sm: 14px;
 }
 
+:root[data-theme="dark"] {
+  --bg: #07111f;
+  --bg-warm: #0b1728;
+  --surface: rgba(15, 23, 42, 0.84);
+  --surface-strong: #0f172a;
+  --ink: #e2e8f0;
+  --muted: #94a3b8;
+  --accent: #60a5fa;
+  --accent-deep: #93c5fd;
+  --teal: #5eead4;
+  --gold: #38bdf8;
+  --border: rgba(148, 163, 184, 0.16);
+  --shadow: 0 24px 56px rgba(2, 6, 23, 0.40);
+}
+
 * {
   box-sizing: border-box;
 }
@@ -99,6 +114,32 @@ img {
   background: rgba(37, 99, 235, 0.08);
   color: var(--ink);
   transform: translateY(-1px);
+}
+
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-strong);
+  color: var(--ink);
+  font: inherit;
+  font-family: "IBM Plex Mono", Consolas, monospace;
+  cursor: pointer;
+  transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px);
+}
+
+.theme-toggle-label::before {
+  content: "$ theme";
+  margin-right: 10px;
+  color: var(--accent-deep);
 }
 
 .panel {
@@ -479,6 +520,37 @@ h3 {
   text-align: center;
 }
 
+:root[data-theme="dark"] .site-header {
+  border-bottom-color: rgba(148, 163, 184, 0.12);
+}
+
+:root[data-theme="dark"] .site-nav a:hover,
+:root[data-theme="dark"] .site-nav a[aria-current="page"] {
+  background: rgba(96, 165, 250, 0.12);
+}
+
+:root[data-theme="dark"] .button-secondary,
+:root[data-theme="dark"] .mini-card,
+:root[data-theme="dark"] .hero-metrics div {
+  background: rgba(15, 23, 42, 0.62);
+}
+
+:root[data-theme="dark"] .category-badge {
+  background: rgba(96, 165, 250, 0.14);
+}
+
+:root[data-theme="dark"] .category-section {
+  background: rgba(8, 15, 29, 0.54);
+}
+
+:root[data-theme="dark"] .check-number {
+  background: rgba(148, 163, 184, 0.12);
+}
+
+:root[data-theme="dark"] .theme-toggle {
+  background: rgba(15, 23, 42, 0.76);
+}
+
 [data-reveal] {
   opacity: 0;
   transform: translateY(24px);
@@ -514,6 +586,11 @@ h3 {
 
   .hero h1 {
     max-width: none;
+  }
+
+  .theme-toggle {
+    width: 100%;
+    justify-content: center;
   }
 }
 

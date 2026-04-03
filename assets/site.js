@@ -1,3 +1,44 @@
+const THEME_KEY = "hercent-theme";
+const root = document.documentElement;
+const themeToggle = document.querySelector("[data-theme-toggle]");
+const themeLabel = document.querySelector("[data-theme-label]");
+
+const getPreferredTheme = () => {
+  const savedTheme = localStorage.getItem(THEME_KEY);
+
+  if (savedTheme === "light" || savedTheme === "dark") {
+    return savedTheme;
+  }
+
+  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+};
+
+const applyTheme = (theme) => {
+  root.dataset.theme = theme;
+
+  if (themeLabel) {
+    themeLabel.textContent = theme === "dark" ? "Light" : "Dark";
+  }
+
+  if (themeToggle) {
+    themeToggle.setAttribute(
+      "aria-label",
+      theme === "dark" ? "라이트 모드로 전환" : "다크 모드로 전환"
+    );
+    themeToggle.setAttribute("aria-pressed", theme === "dark" ? "true" : "false");
+  }
+};
+
+applyTheme(getPreferredTheme());
+
+if (themeToggle) {
+  themeToggle.addEventListener("click", () => {
+    const nextTheme = root.dataset.theme === "dark" ? "light" : "dark";
+    localStorage.setItem(THEME_KEY, nextTheme);
+    applyTheme(nextTheme);
+  });
+}
+
 const yearTarget = document.querySelector("[data-year]");
 
 if (yearTarget) {
