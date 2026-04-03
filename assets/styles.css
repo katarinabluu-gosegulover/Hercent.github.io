@@ -444,6 +444,29 @@ h3 {
   content: "->";
 }
 
+.view-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 88px;
+  min-height: 42px;
+  margin-top: 18px;
+  padding: 0 16px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.72);
+  color: var(--ink);
+  font-family: "IBM Plex Mono", Consolas, monospace;
+  font-size: 0.86rem;
+  text-transform: lowercase;
+  transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease;
+}
+
+.view-link:hover {
+  transform: translateY(-1px);
+  background: rgba(37, 99, 235, 0.08);
+}
+
 .kicker-row {
   display: flex;
   align-items: center;
@@ -693,6 +716,10 @@ h3 {
 :root[data-theme="dark"] .button-secondary,
 :root[data-theme="dark"] .mini-card,
 :root[data-theme="dark"] .hero-metrics div {
+  background: rgba(15, 23, 42, 0.62);
+}
+
+:root[data-theme="dark"] .view-link {
   background: rgba(15, 23, 42, 0.62);
 }
 
