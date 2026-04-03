@@ -96,6 +96,15 @@ img {
   box-shadow: 0 12px 30px rgba(51, 95, 115, 0.22);
 }
 
+.brand-avatar {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border);
+  box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+}
+
 .site-nav {
   display: flex;
   flex-wrap: wrap;
@@ -298,34 +307,6 @@ h3 {
   border: 1px solid var(--border);
 }
 
-.profile-card,
-.profile-panel {
-  display: grid;
-  gap: 18px;
-}
-
-.profile-image {
-  width: 100%;
-  aspect-ratio: 1 / 1;
-  object-fit: cover;
-  border-radius: 22px;
-  border: 1px solid var(--border);
-  box-shadow: 0 16px 34px rgba(15, 23, 42, 0.12);
-}
-
-.profile-image-large {
-  max-width: 360px;
-}
-
-.profile-copy {
-  display: grid;
-  gap: 8px;
-}
-
-.profile-copy h2 {
-  font-size: 1.4rem;
-}
-
 .mini-card-accent {
   background: linear-gradient(160deg, rgba(15, 23, 42, 0.96), rgba(29, 78, 216, 0.92));
   color: white;
@@ -419,10 +400,6 @@ h3 {
 .check-grid,
 .about-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-.about-grid-profile {
-  grid-template-columns: 1.2fr 1fr 1fr 1fr;
 }
 
 .post-card,
@@ -610,10 +587,6 @@ h3 {
   background: rgba(15, 23, 42, 0.62);
 }
 
-:root[data-theme="dark"] .profile-image {
-  box-shadow: 0 18px 36px rgba(2, 6, 23, 0.34);
-}
-
 :root[data-theme="dark"] .category-badge {
   background: rgba(96, 165, 250, 0.14);
 }
@@ -649,10 +622,6 @@ h3 {
   .category-grid,
   .check-grid,
   .about-grid,
-  .about-grid-profile {
-    grid-template-columns: 1fr;
-  }
-
   .post-row,
   .site-header,
   .site-footer {
