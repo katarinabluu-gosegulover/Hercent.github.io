@@ -113,7 +113,7 @@ img {
 
 .space-blackhole-shell {
   position: fixed;
-  top: -236px;
+  top: -136px;
   left: 50%;
   width: min(1480px, 100vw);
   height: 420px;
@@ -1387,7 +1387,7 @@ h3 {
   }
 
   .space-blackhole-shell {
-    top: -120px;
+    top: -48px;
     width: min(1120px, 150vw);
     height: 240px;
     opacity: 0.96;
