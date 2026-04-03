@@ -21,6 +21,7 @@
       <nav class="site-nav" aria-label="주요 메뉴">
         <a href="../index.html">Home</a>
         <a href="../about.html">About</a>
+        <a href="../categories/index.html">Categories</a>
         <a href="index.html" aria-current="page">Posts</a>
         <a href="https://github.com/katarinabluu-gosegulover" target="_blank" rel="noreferrer">GitHub</a>
       </nav>
@@ -30,27 +31,77 @@
       <section class="panel article-hero" data-reveal>
         <p class="eyebrow">Post Index</p>
         <h1>글 목록</h1>
-        <p>샘플 글 두 개를 넣어 두었습니다. 여기에 같은 형식으로 새 HTML 파일을 추가하면 블로그가 계속 확장됩니다.</p>
+        <p>모든 글을 한 곳에 모아두되, 아래에서 카테고리별로 다시 나누어 정리했습니다. 각 카테고리 페이지로도 바로 이동할 수 있습니다.</p>
+        <div class="category-links">
+          <a class="category-badge" href="../categories/projects.html">프로젝트</a>
+          <a class="category-badge" href="../categories/notes.html">노트</a>
+          <a class="category-badge" href="../categories/archive.html">아카이브</a>
+        </div>
       </section>
 
-      <section class="post-list" data-reveal>
-        <article class="panel post-row">
-          <div>
-            <p class="post-meta">2026.04.03 · Start</p>
-            <h2><a href="first-steps.html">이 블로그를 왜 만들었는지</a></h2>
-            <p>정리하기 위한 공간이 왜 필요한지, 그리고 GitHub Pages를 선택한 이유를 짧게 적은 첫 글입니다.</p>
+      <section class="section-stack" data-reveal>
+        <section class="category-section panel">
+          <div class="section-heading">
+            <p class="eyebrow">Category 01</p>
+            <h2>프로젝트</h2>
+            <p class="section-copy">직접 만든 블로그와 기능 추가 과정을 정리하는 글입니다.</p>
           </div>
-          <a class="button button-secondary" href="first-steps.html">읽기</a>
-        </article>
+          <div class="post-list">
+            <article class="panel post-row compact-row">
+              <div>
+                <div class="kicker-row">
+                  <a class="category-badge" href="../categories/projects.html">프로젝트</a>
+                  <p class="post-meta">2026.04.03</p>
+                </div>
+                <h2><a href="first-steps.html">이 블로그를 왜 만들었는지</a></h2>
+                <p>블로그 제작을 시작한 이유와 앞으로 어떻게 채워 갈지 정리한 첫 프로젝트 로그입니다.</p>
+              </div>
+              <a class="button button-secondary" href="first-steps.html">읽기</a>
+            </article>
+          </div>
+        </section>
 
-        <article class="panel post-row">
-          <div>
-            <p class="post-meta">2026.04.03 · Design</p>
-            <h2><a href="design-note.html">첫 화면 디자인 노트</a></h2>
-            <p>레이아웃, 색감, 글자 크기, 여백을 어떤 기준으로 잡았는지 간단히 설명한 글입니다.</p>
+        <section class="category-section panel">
+          <div class="section-heading">
+            <p class="eyebrow">Category 02</p>
+            <h2>노트</h2>
+            <p class="section-copy">디자인, 공부, 아이디어처럼 빠르게 축적하는 기록을 모아두는 영역입니다.</p>
           </div>
-          <a class="button button-secondary" href="design-note.html">읽기</a>
-        </article>
+          <div class="post-list">
+            <article class="panel post-row compact-row">
+              <div>
+                <div class="kicker-row">
+                  <a class="category-badge" href="../categories/notes.html">노트</a>
+                  <p class="post-meta">2026.04.03</p>
+                </div>
+                <h2><a href="design-note.html">첫 화면 디자인 노트</a></h2>
+                <p>메인 화면의 색감과 카드 구조를 어떤 기준으로 잡았는지 정리한 디자인 메모입니다.</p>
+              </div>
+              <a class="button button-secondary" href="design-note.html">읽기</a>
+            </article>
+          </div>
+        </section>
+
+        <section class="category-section panel">
+          <div class="section-heading">
+            <p class="eyebrow">Category 03</p>
+            <h2>아카이브</h2>
+            <p class="section-copy">활동 기록, 수정 이력, 회고처럼 다시 참고하기 좋은 내용을 모아 보관합니다.</p>
+          </div>
+          <div class="post-list">
+            <article class="panel post-row compact-row">
+              <div>
+                <div class="kicker-row">
+                  <a class="category-badge" href="../categories/archive.html">아카이브</a>
+                  <p class="post-meta">2026.04.03</p>
+                </div>
+                <h2><a href="activity-note.html">카테고리 구조를 다시 정리한 기록</a></h2>
+                <p>미션 피드백을 반영해 글 구조를 재정리한 과정과 변경 내용을 남긴 기록입니다.</p>
+              </div>
+              <a class="button button-secondary" href="activity-note.html">읽기</a>
+            </article>
+          </div>
+        </section>
       </section>
     </main>
 

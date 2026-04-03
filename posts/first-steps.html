@@ -21,6 +21,7 @@
       <nav class="site-nav" aria-label="주요 메뉴">
         <a href="../index.html">Home</a>
         <a href="../about.html">About</a>
+        <a href="../categories/index.html">Categories</a>
         <a href="index.html">Posts</a>
         <a href="https://github.com/katarinabluu-gosegulover" target="_blank" rel="noreferrer">GitHub</a>
       </nav>
@@ -28,17 +29,20 @@
 
     <main class="subpage-layout">
       <article class="panel article-page" data-reveal>
-        <p class="post-meta">2026.04.03 · Start</p>
+        <div class="kicker-row">
+          <a class="category-badge" href="../categories/projects.html">프로젝트</a>
+          <p class="post-meta">2026.04.03</p>
+        </div>
         <h1>이 블로그를 왜 만들었는지</h1>
         <p class="lead">
           빠르게 흘러가는 메모를 오래 남는 기록으로 바꾸고 싶어서 이 공간을 만들었다.
-          GitHub Pages는 복잡한 세팅 없이 정적 파일만으로도 바로 공개할 수 있어서 시작점으로 적절했다.
+          GitHub Pages는 복잡한 세팅 없이 정적 파일만으로도 바로 공개할 수 있고, 카테고리 구조도 직접 설계할 수 있어서 시작점으로 적절했다.
         </p>
 
         <h2>작게 시작하기</h2>
         <p>
-          처음부터 완벽한 블로그를 만들려 하면 금방 멈춘다. 그래서 이번에는 메인 페이지, 소개 페이지,
-          글 목록, 글 두 개만 먼저 만들어 두고 이후에 필요한 부분을 추가하는 구조로 잡았다.
+          처음부터 완벽한 블로그를 만들려 하면 금방 멈춘다. 그래서 이번에는 메인 페이지, 카테고리 허브,
+          전체 글 목록, 카테고리별 페이지를 먼저 만들어 기본 구조를 분명하게 잡았다.
         </p>
 
         <h2>무엇을 기록할지</h2>
@@ -49,8 +53,8 @@
 
         <h2>다음 단계</h2>
         <p>
-          이 샘플 글을 지우고 실제 첫 글을 올리면 된다. 제목과 날짜를 바꾸고, 같은 폴더에 새 HTML 파일을
-          추가한 뒤 `posts/index.html` 에 링크만 연결하면 블로그가 바로 확장된다.
+          이후에는 새 글을 만들 때 먼저 어느 카테고리에 들어갈 글인지 정하고, 해당 카테고리 페이지와
+          `posts/index.html` 에 함께 연결하면 된다. 그러면 홈과 글 목록, 카테고리 페이지가 모두 일관되게 유지된다.
         </p>
       </article>
     </main>
