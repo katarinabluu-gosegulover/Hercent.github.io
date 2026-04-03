@@ -3,6 +3,12 @@ const root = document.documentElement;
 const body = document.body;
 const themeToggle = document.querySelector("[data-theme-toggle]");
 const forcedTheme = body?.dataset.forceTheme;
+const siteScript =
+  document.currentScript ||
+  Array.from(document.scripts).find(
+    (script) => script.src.includes("/assets/site.js") || script.src.endsWith("assets/site.js")
+  );
+const assetBaseUrl = siteScript?.src ? new URL(".", siteScript.src) : new URL("./assets/", window.location.href);
 
 const getPreferredTheme = () => {
   if (forcedTheme === "light" || forcedTheme === "dark") {
@@ -150,49 +156,44 @@ const initSpaceBackdrop = () => {
 initSpaceBackdrop();
 
 const initBlackHoleBackdrop = () => {
-  if (!body || body.classList.contains("error-page") || document.querySelector(".space-singularity")) {
+  if (!body || body.classList.contains("error-page") || document.querySelector(".space-blackhole-shell")) {
     return;
   }
 
-  const singularity = document.createElement("div");
-  singularity.className = "space-singularity";
-  singularity.setAttribute("aria-hidden", "true");
+  const shell = document.createElement("div");
+  shell.className = "space-blackhole-shell";
+  shell.setAttribute("aria-hidden", "true");
 
-  const backRing = document.createElement("span");
-  backRing.className = "space-singularity-ring space-singularity-ring-back";
+  const glow = document.createElement("div");
+  glow.className = "space-blackhole-glow";
 
-  const jet = document.createElement("span");
-  jet.className = "space-singularity-jet";
+  const video = document.createElement("video");
+  video.className = "space-blackhole-video";
+  video.autoplay = true;
+  video.muted = true;
+  video.loop = true;
+  video.playsInline = true;
+  video.preload = "auto";
 
-  const lensing = document.createElement("span");
-  lensing.className = "space-singularity-lensing";
+  const source = document.createElement("source");
+  source.src = new URL("blackhole.webm", assetBaseUrl).href;
+  source.type = "video/webm";
 
-  const horizon = document.createElement("span");
-  horizon.className = "space-singularity-horizon";
-
-  const infall = document.createElement("span");
-  infall.className = "space-singularity-infall";
-
-  const corona = document.createElement("span");
-  corona.className = "space-singularity-corona";
-
-  const core = document.createElement("span");
-  core.className = "space-singularity-core";
-
-  const shadow = document.createElement("span");
-  shadow.className = "space-singularity-shadow";
-
-  const frontRing = document.createElement("span");
-  frontRing.className = "space-singularity-ring space-singularity-ring-front";
-
-  singularity.append(backRing, jet, lensing, infall, corona, horizon, core, shadow, frontRing);
+  video.append(source);
+  shell.append(glow, video);
 
   const backdrop = document.querySelector(".space-backdrop");
 
   if (backdrop) {
-    backdrop.insertAdjacentElement("afterend", singularity);
+    backdrop.insertAdjacentElement("afterend", shell);
   } else {
-    body.prepend(singularity);
+    body.prepend(shell);
+  }
+
+  const playPromise = video.play();
+
+  if (playPromise && typeof playPromise.catch === "function") {
+    playPromise.catch(() => {});
   }
 };
 
