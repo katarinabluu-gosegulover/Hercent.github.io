@@ -1,8 +1,14 @@
 const THEME_KEY = "hercent-theme";
 const root = document.documentElement;
+const body = document.body;
 const themeToggle = document.querySelector("[data-theme-toggle]");
+const forcedTheme = body?.dataset.forceTheme;
 
 const getPreferredTheme = () => {
+  if (forcedTheme === "light" || forcedTheme === "dark") {
+    return forcedTheme;
+  }
+
   const savedTheme = localStorage.getItem(THEME_KEY);
 
   if (savedTheme === "light" || savedTheme === "dark") {
@@ -26,12 +32,14 @@ const applyTheme = (theme) => {
 
 applyTheme(getPreferredTheme());
 
-if (themeToggle) {
+if (themeToggle && !forcedTheme) {
   themeToggle.addEventListener("click", () => {
     const nextTheme = root.dataset.theme === "dark" ? "light" : "dark";
     localStorage.setItem(THEME_KEY, nextTheme);
     applyTheme(nextTheme);
   });
+} else if (themeToggle && forcedTheme) {
+  themeToggle.hidden = true;
 }
 
 const yearTarget = document.querySelector("[data-year]");

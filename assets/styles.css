@@ -574,11 +574,38 @@ h3 {
   overflow: hidden;
 }
 
+.error-page {
+  background:
+    radial-gradient(circle at 50% 0%, rgba(250, 204, 21, 0.16), transparent 22%),
+    radial-gradient(circle at 50% 24%, rgba(250, 204, 21, 0.10), transparent 30%),
+    linear-gradient(180deg, #020617, #0b1728 42%, #0f172a 100%);
+}
+
+.error-page .page-shell {
+  position: relative;
+  z-index: 1;
+}
+
+.error-page .error-layout {
+  margin-top: 18vh;
+  background: rgba(8, 15, 29, 0.74);
+  border-color: rgba(148, 163, 184, 0.16);
+  box-shadow: 0 28px 72px rgba(2, 6, 23, 0.48);
+}
+
+.error-page .eyebrow {
+  color: #f8d56b;
+}
+
+.error-page .error-layout p {
+  color: #cbd5e1;
+}
+
 .lamp_moving {
   position: fixed;
   left: 50%;
-  top: -40px;
-  width: 300px;
+  top: -28px;
+  width: 360px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -614,17 +641,17 @@ h3 {
   height: 12px;
   transform: translateX(-50%);
   border-radius: 999px;
-  background: rgba(255, 244, 214, 0.86);
-  filter: blur(2px);
+  background: rgba(255, 244, 214, 0.96);
+  filter: blur(3px);
 }
 
 .lamp_glow {
-  width: 320px;
-  height: 320px;
-  margin-top: -8px;
+  width: 520px;
+  height: 520px;
+  margin-top: -20px;
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(255, 232, 166, 0.28) 0%, rgba(255, 232, 166, 0.14) 28%, rgba(255, 232, 166, 0.04) 56%, transparent 72%);
-  filter: blur(10px);
+  background: radial-gradient(circle, rgba(255, 232, 166, 0.44) 0%, rgba(255, 232, 166, 0.24) 24%, rgba(255, 232, 166, 0.10) 46%, rgba(255, 232, 166, 0.03) 62%, transparent 76%);
+  filter: blur(16px);
 }
 
 @keyframes move {
@@ -681,7 +708,7 @@ h3 {
 }
 
 :root[data-theme="dark"] .lamp_glow {
-  background: radial-gradient(circle, rgba(250, 204, 21, 0.32) 0%, rgba(250, 204, 21, 0.18) 26%, rgba(250, 204, 21, 0.06) 56%, transparent 72%);
+  background: radial-gradient(circle, rgba(250, 204, 21, 0.54) 0%, rgba(250, 204, 21, 0.28) 24%, rgba(250, 204, 21, 0.12) 48%, rgba(250, 204, 21, 0.04) 64%, transparent 78%);
 }
 
 [data-reveal] {
@@ -723,12 +750,12 @@ h3 {
   }
 
   .lamp_moving {
-    width: 220px;
+    width: 240px;
   }
 
   .lamp_glow {
-    width: 240px;
-    height: 240px;
+    width: 300px;
+    height: 300px;
   }
 }
 
