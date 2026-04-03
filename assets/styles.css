@@ -134,7 +134,7 @@ img {
   object-fit: cover;
   object-position: center top;
   filter: brightness(1.16) contrast(1.08) saturate(1.14);
-  transform: scale(1.14);
+  transform: scale(1.14) scaleY(-1);
 }
 
 .space-blackhole-glow {
@@ -1394,7 +1394,7 @@ h3 {
   }
 
   .space-blackhole-video {
-    transform: scale(1.2);
+    transform: scale(1.2) scaleY(-1);
     object-position: center 0;
   }
 
