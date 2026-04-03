@@ -95,7 +95,7 @@ img {
 
 .page-shell {
   position: relative;
-  z-index: 1;
+  z-index: 2;
   width: min(1160px, calc(100% - 32px));
   margin: 0 auto;
   padding: 24px 0 48px;
@@ -113,16 +113,16 @@ img {
 
 .space-singularity {
   position: fixed;
-  top: clamp(88px, 12vh, 132px);
-  right: clamp(-28px, 2vw, 24px);
-  width: clamp(180px, 24vw, 340px);
+  top: clamp(104px, 13vh, 148px);
+  right: clamp(20px, 5vw, 84px);
+  width: clamp(240px, 26vw, 360px);
   aspect-ratio: 1;
   border-radius: 50%;
   pointer-events: none;
-  z-index: 0;
-  opacity: 0.62;
+  z-index: 1;
+  opacity: 0.88;
   isolation: isolate;
-  filter: saturate(1.12);
+  filter: saturate(1.18) drop-shadow(0 0 28px rgba(76, 29, 149, 0.18));
 }
 
 .space-singularity::before,
@@ -134,28 +134,28 @@ img {
 }
 
 .space-singularity::before {
-  inset: -10%;
+  inset: -12%;
   background:
     conic-gradient(
       from 0deg,
       rgba(122, 92, 255, 0) 0deg,
-      rgba(122, 92, 255, 0.74) 58deg,
-      rgba(74, 163, 255, 0.82) 136deg,
-      rgba(122, 92, 255, 0.22) 210deg,
-      rgba(122, 92, 255, 0.74) 302deg,
+      rgba(122, 92, 255, 0.88) 58deg,
+      rgba(74, 163, 255, 0.92) 136deg,
+      rgba(122, 92, 255, 0.30) 210deg,
+      rgba(122, 92, 255, 0.88) 302deg,
       rgba(122, 92, 255, 0) 360deg
     );
-  filter: blur(14px);
+  filter: blur(16px);
   animation: singularity-spin 18s linear infinite;
 }
 
 .space-singularity::after {
-  inset: 12%;
+  inset: 10%;
   background:
-    radial-gradient(circle, rgba(1, 3, 10, 1) 0 38%, rgba(5, 7, 18, 0.98) 39% 52%, rgba(83, 39, 170, 0.24) 68%, transparent 100%);
+    radial-gradient(circle, rgba(1, 3, 10, 1) 0 34%, rgba(5, 7, 18, 0.98) 35% 50%, rgba(83, 39, 170, 0.34) 68%, transparent 100%);
   box-shadow:
-    0 0 42px rgba(57, 93, 194, 0.22),
-    0 0 88px rgba(77, 35, 171, 0.18);
+    0 0 52px rgba(57, 93, 194, 0.28),
+    0 0 108px rgba(77, 35, 171, 0.24);
 }
 
 .space-singularity-ring,
@@ -165,35 +165,35 @@ img {
 }
 
 .space-singularity-ring {
-  top: 44%;
+  top: 43%;
   left: 2%;
   right: 2%;
-  height: 14%;
+  height: 16%;
   border-radius: 999px;
   background:
     linear-gradient(
       90deg,
       transparent 0%,
-      rgba(171, 133, 255, 0.18) 12%,
-      rgba(96, 165, 250, 0.82) 48%,
-      rgba(171, 133, 255, 0.22) 82%,
+      rgba(171, 133, 255, 0.28) 12%,
+      rgba(96, 165, 250, 0.94) 48%,
+      rgba(171, 133, 255, 0.30) 82%,
       transparent 100%
     );
   box-shadow:
-    0 0 18px rgba(96, 165, 250, 0.22),
-    0 0 28px rgba(124, 58, 237, 0.16);
-  filter: blur(4px);
+    0 0 22px rgba(96, 165, 250, 0.30),
+    0 0 36px rgba(124, 58, 237, 0.24);
+  filter: blur(3px);
   transform: rotate(-18deg);
   transform-origin: center;
   animation: singularity-breathe 6.2s ease-in-out infinite;
 }
 
 .space-singularity-core {
-  inset: 28%;
+  inset: 24%;
   border-radius: 50%;
   background:
-    radial-gradient(circle at 44% 42%, rgba(8, 11, 22, 1) 0 42%, rgba(0, 0, 0, 0.98) 60%, transparent 61%);
-  box-shadow: 0 0 36px rgba(2, 6, 23, 0.68);
+    radial-gradient(circle at 44% 42%, rgba(8, 11, 22, 1) 0 40%, rgba(0, 0, 0, 0.98) 56%, transparent 57%);
+  box-shadow: 0 0 40px rgba(2, 6, 23, 0.74);
 }
 
 .site-header {
@@ -974,7 +974,7 @@ h3 {
 }
 
 :root[data-theme="dark"] .space-singularity {
-  opacity: 0.9;
+  opacity: 1;
 }
 
 :root[data-theme="dark"] .space-singularity-ring {
@@ -1114,10 +1114,10 @@ h3 {
   }
 
   .space-singularity {
-    top: 108px;
-    right: -42px;
-    width: clamp(150px, 42vw, 220px);
-    opacity: 0.48;
+    top: 120px;
+    right: -10px;
+    width: clamp(180px, 46vw, 240px);
+    opacity: 0.7;
   }
 
   .hero,
