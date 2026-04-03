@@ -149,6 +149,34 @@ const initSpaceBackdrop = () => {
 
 initSpaceBackdrop();
 
+const initBlackHoleBackdrop = () => {
+  if (!body || body.classList.contains("error-page") || document.querySelector(".space-singularity")) {
+    return;
+  }
+
+  const singularity = document.createElement("div");
+  singularity.className = "space-singularity";
+  singularity.setAttribute("aria-hidden", "true");
+
+  const ring = document.createElement("span");
+  ring.className = "space-singularity-ring";
+
+  const core = document.createElement("span");
+  core.className = "space-singularity-core";
+
+  singularity.append(ring, core);
+
+  const backdrop = document.querySelector(".space-backdrop");
+
+  if (backdrop) {
+    backdrop.insertAdjacentElement("afterend", singularity);
+  } else {
+    body.prepend(singularity);
+  }
+};
+
+initBlackHoleBackdrop();
+
 const yearTarget = document.querySelector("[data-year]");
 
 if (yearTarget) {
