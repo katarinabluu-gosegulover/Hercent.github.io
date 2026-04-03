@@ -120,14 +120,12 @@ img {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 42px;
-  padding: 0 14px;
+  width: 44px;
+  height: 44px;
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: 50%;
   background: var(--surface-strong);
   color: var(--ink);
-  font: inherit;
-  font-family: "IBM Plex Mono", Consolas, monospace;
   cursor: pointer;
   transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease;
 }
@@ -136,10 +134,55 @@ img {
   transform: translateY(-1px);
 }
 
-.theme-toggle-label::before {
-  content: "$ theme";
-  margin-right: 10px;
-  color: var(--accent-deep);
+.theme-toggle-icon {
+  position: relative;
+  width: 18px;
+  height: 18px;
+}
+
+.theme-toggle-icon::before,
+.theme-toggle-icon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  margin: auto;
+  transition: transform 180ms ease, opacity 180ms ease, box-shadow 180ms ease, background-color 180ms ease;
+}
+
+.theme-toggle-icon::before {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--ink);
+  box-shadow: inset -5px -5px 0 0 var(--surface-strong);
+}
+
+.theme-toggle-icon::after {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--gold);
+  opacity: 0;
+  transform: scale(0.72);
+  box-shadow:
+    0 -12px 0 -8px var(--gold),
+    0 12px 0 -8px var(--gold),
+    12px 0 0 -8px var(--gold),
+    -12px 0 0 -8px var(--gold),
+    8px 8px 0 -8px var(--gold),
+    -8px -8px 0 -8px var(--gold),
+    8px -8px 0 -8px var(--gold),
+    -8px 8px 0 -8px var(--gold);
+}
+
+:root[data-theme="dark"] .theme-toggle-icon::before {
+  opacity: 0;
+  transform: scale(0.72);
+}
+
+:root[data-theme="dark"] .theme-toggle-icon::after {
+  opacity: 1;
+  transform: scale(1);
 }
 
 .panel {
@@ -589,8 +632,7 @@ h3 {
   }
 
   .theme-toggle {
-    width: 100%;
-    justify-content: center;
+    width: 44px;
   }
 }
 

@@ -1,7 +1,6 @@
 const THEME_KEY = "hercent-theme";
 const root = document.documentElement;
 const themeToggle = document.querySelector("[data-theme-toggle]");
-const themeLabel = document.querySelector("[data-theme-label]");
 
 const getPreferredTheme = () => {
   const savedTheme = localStorage.getItem(THEME_KEY);
@@ -15,10 +14,6 @@ const getPreferredTheme = () => {
 
 const applyTheme = (theme) => {
   root.dataset.theme = theme;
-
-  if (themeLabel) {
-    themeLabel.textContent = theme === "dark" ? "Light" : "Dark";
-  }
 
   if (themeToggle) {
     themeToggle.setAttribute(
