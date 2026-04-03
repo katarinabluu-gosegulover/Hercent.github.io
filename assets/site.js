@@ -158,13 +158,19 @@ const initBlackHoleBackdrop = () => {
   singularity.className = "space-singularity";
   singularity.setAttribute("aria-hidden", "true");
 
-  const ring = document.createElement("span");
-  ring.className = "space-singularity-ring";
+  const backRing = document.createElement("span");
+  backRing.className = "space-singularity-ring space-singularity-ring-back";
+
+  const lensing = document.createElement("span");
+  lensing.className = "space-singularity-lensing";
 
   const core = document.createElement("span");
   core.className = "space-singularity-core";
 
-  singularity.append(ring, core);
+  const frontRing = document.createElement("span");
+  frontRing.className = "space-singularity-ring space-singularity-ring-front";
+
+  singularity.append(backRing, lensing, core, frontRing);
 
   const backdrop = document.querySelector(".space-backdrop");
 
