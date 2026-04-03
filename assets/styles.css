@@ -113,7 +113,7 @@ img {
 
 .space-blackhole-shell {
   position: fixed;
-  top: -108px;
+  top: -32px;
   left: 50%;
   width: min(1480px, 100vw);
   height: 420px;
@@ -134,7 +134,7 @@ img {
   object-fit: cover;
   object-position: center top;
   filter: brightness(1.16) contrast(1.08) saturate(1.14);
-  transform: scale(1.14) scaleY(-1);
+  transform: translateY(56px) scale(1.14) scaleY(-1);
 }
 
 .space-blackhole-glow {
@@ -1387,14 +1387,14 @@ h3 {
   }
 
   .space-blackhole-shell {
-    top: -24px;
+    top: 4px;
     width: min(1120px, 150vw);
     height: 240px;
     opacity: 0.96;
   }
 
   .space-blackhole-video {
-    transform: scale(1.2) scaleY(-1);
+    transform: translateY(30px) scale(1.2) scaleY(-1);
     object-position: center 0;
   }
 
