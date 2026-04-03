@@ -452,19 +452,24 @@ h3 {
   min-height: 42px;
   margin-top: 18px;
   padding: 0 16px;
-  border: 1px solid var(--border);
+  border: 1px solid rgba(37, 99, 235, 0.18);
   border-radius: 14px;
-  background: rgba(255, 255, 255, 0.72);
-  color: var(--ink);
+  background: linear-gradient(180deg, #ffffff, #eef4ff);
+  color: var(--accent-deep);
   font-family: "IBM Plex Mono", Consolas, monospace;
   font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   text-transform: lowercase;
-  transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease;
+  box-shadow: 0 10px 18px rgba(37, 99, 235, 0.10);
+  transition: transform 160ms ease, background-color 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
 }
 
 .view-link:hover {
-  transform: translateY(-1px);
-  background: rgba(37, 99, 235, 0.08);
+  transform: translateY(-2px);
+  background: linear-gradient(180deg, #f8fbff, #e6efff);
+  border-color: rgba(37, 99, 235, 0.32);
+  box-shadow: 0 14px 24px rgba(37, 99, 235, 0.16);
 }
 
 .kicker-row {
@@ -720,7 +725,16 @@ h3 {
 }
 
 :root[data-theme="dark"] .view-link {
-  background: rgba(15, 23, 42, 0.62);
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.96), rgba(15, 23, 42, 0.96));
+  border-color: rgba(96, 165, 250, 0.22);
+  color: #bfdbfe;
+  box-shadow: 0 12px 20px rgba(2, 6, 23, 0.28);
+}
+
+:root[data-theme="dark"] .view-link:hover {
+  background: linear-gradient(180deg, rgba(37, 99, 235, 0.24), rgba(15, 23, 42, 0.96));
+  border-color: rgba(96, 165, 250, 0.42);
+  box-shadow: 0 16px 26px rgba(2, 6, 23, 0.36);
 }
 
 :root[data-theme="dark"] .category-badge {
