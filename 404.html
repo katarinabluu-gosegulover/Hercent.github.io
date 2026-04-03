@@ -5,10 +5,119 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>404 | Hercent Archive</title>
   <meta name="description" content="페이지를 찾을 수 없습니다.">
+  <script>
+    document.documentElement.dataset.theme = "dark";
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/Hercent.github.io/assets/styles.css">
+  <style>
+    html {
+      color-scheme: dark;
+      background: #020617;
+    }
+
+    body.error-page {
+      margin: 0;
+      min-height: 100vh;
+      color: #e2e8f0;
+      background:
+        radial-gradient(circle at 50% 0%, rgba(250, 204, 21, 0.18), transparent 22%),
+        radial-gradient(circle at 50% 24%, rgba(250, 204, 21, 0.10), transparent 30%),
+        linear-gradient(180deg, #020617, #0b1728 42%, #0f172a 100%);
+    }
+
+    body.error-page .page-shell {
+      position: relative;
+      z-index: 1;
+    }
+
+    body.error-page .error-layout {
+      margin-top: 18vh;
+      background: rgba(8, 15, 29, 0.78);
+      border-color: rgba(148, 163, 184, 0.16);
+      box-shadow: 0 28px 72px rgba(2, 6, 23, 0.48);
+    }
+
+    body.error-page .eyebrow {
+      color: #f8d56b;
+    }
+
+    body.error-page .error-layout p {
+      color: #cbd5e1;
+    }
+
+    .lamp_moving {
+      position: fixed;
+      left: 50%;
+      top: -28px;
+      width: 360px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      transform: translateX(-50%);
+      transform-origin: center top;
+      animation: move 5.1s infinite;
+      animation-timing-function: cubic-bezier(0.6, 0, 0.38, 1);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .lamp_wire {
+      width: 2px;
+      height: 108px;
+      background: linear-gradient(180deg, rgba(148, 163, 184, 0.14), rgba(148, 163, 184, 0.88));
+    }
+
+    .lamp_head {
+      width: 88px;
+      height: 46px;
+      border-radius: 44px 44px 18px 18px;
+      background: linear-gradient(180deg, #020617, #1e293b);
+      box-shadow: 0 14px 28px rgba(15, 23, 42, 0.28);
+      position: relative;
+    }
+
+    .lamp_head::after {
+      content: "";
+      position: absolute;
+      left: 50%;
+      bottom: 8px;
+      width: 38px;
+      height: 12px;
+      transform: translateX(-50%);
+      border-radius: 999px;
+      background: rgba(255, 244, 214, 0.96);
+      filter: blur(3px);
+    }
+
+    .lamp_glow {
+      width: 520px;
+      height: 520px;
+      margin-top: -20px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(250, 204, 21, 0.54) 0%, rgba(250, 204, 21, 0.28) 24%, rgba(250, 204, 21, 0.12) 48%, rgba(250, 204, 21, 0.04) 64%, transparent 78%);
+      filter: blur(16px);
+    }
+
+    @keyframes move {
+      0% { transform: translateX(-50%) rotate(8deg); }
+      50% { transform: translateX(-50%) rotate(-8deg); }
+      100% { transform: translateX(-50%) rotate(8deg); }
+    }
+
+    @media (max-width: 900px) {
+      .lamp_moving {
+        width: 240px;
+      }
+
+      .lamp_glow {
+        width: 300px;
+        height: 300px;
+      }
+    }
+  </style>
   <script src="/Hercent.github.io/assets/site.js" defer></script>
 </head>
 <body data-force-theme="dark" class="error-page">
