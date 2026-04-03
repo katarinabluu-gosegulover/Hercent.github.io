@@ -541,6 +541,72 @@ h3 {
   font-family: "IBM Plex Mono", Consolas, monospace;
 }
 
+.account-strip {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr);
+  gap: 20px;
+  padding: 24px;
+}
+
+.account-intro,
+.account-links {
+  display: grid;
+  gap: 12px;
+}
+
+.account-label {
+  margin: 0;
+  color: var(--teal);
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-family: "IBM Plex Mono", Consolas, monospace;
+}
+
+.account-copy {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.75;
+}
+
+.account-links {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.account-chip {
+  display: grid;
+  gap: 6px;
+  min-height: 112px;
+  padding: 18px;
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(241, 245, 249, 0.92));
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.06);
+  transition: transform 160ms ease, border-color 160ms ease, box-shadow 160ms ease;
+}
+
+.account-chip:hover {
+  transform: translateY(-2px);
+  border-color: rgba(37, 99, 235, 0.22);
+  box-shadow: 0 18px 34px rgba(37, 99, 235, 0.10);
+}
+
+.account-chip[aria-disabled="true"] {
+  cursor: default;
+}
+
+.account-chip-label {
+  color: var(--ink);
+  font-weight: 700;
+}
+
+.account-chip-handle {
+  color: var(--muted);
+  font-family: "IBM Plex Mono", Consolas, monospace;
+  font-size: 0.92rem;
+  word-break: break-word;
+}
+
 .category-section {
   background: rgba(241, 246, 246, 0.72);
 }
@@ -766,6 +832,16 @@ h3 {
   background: rgba(8, 15, 29, 0.54);
 }
 
+:root[data-theme="dark"] .account-chip {
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.96), rgba(15, 23, 42, 0.96));
+  box-shadow: 0 16px 30px rgba(2, 6, 23, 0.28);
+}
+
+:root[data-theme="dark"] .account-chip:hover {
+  border-color: rgba(96, 165, 250, 0.34);
+  box-shadow: 0 20px 34px rgba(2, 6, 23, 0.34);
+}
+
 :root[data-theme="dark"] .empty-state {
   background: rgba(15, 23, 42, 0.42);
 }
@@ -809,6 +885,11 @@ h3 {
   .category-grid,
   .check-grid,
   .about-grid,
+  .account-strip,
+  .account-links {
+    grid-template-columns: 1fr;
+  }
+
   .post-row,
   .site-header,
   .site-footer {
