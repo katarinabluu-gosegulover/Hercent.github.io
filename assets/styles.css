@@ -47,10 +47,10 @@ body {
   position: relative;
   overflow-x: hidden;
   background:
-    radial-gradient(circle at 50% -12%, rgba(154, 110, 255, 0.22), transparent 28%),
-    radial-gradient(circle at 14% 18%, rgba(37, 99, 235, 0.14), transparent 24%),
-    radial-gradient(circle at 82% 12%, rgba(56, 189, 248, 0.10), transparent 20%),
-    linear-gradient(180deg, #050816 0%, #081123 36%, var(--bg) 100%);
+    radial-gradient(circle at 50% -18%, rgba(136, 92, 246, 0.18), transparent 22%),
+    radial-gradient(circle at 18% 16%, rgba(37, 99, 235, 0.08), transparent 24%),
+    radial-gradient(circle at 82% 14%, rgba(14, 165, 233, 0.06), transparent 20%),
+    linear-gradient(180deg, #01030a 0%, #030711 26%, #050b17 58%, #091223 100%);
 }
 
 body::before,
@@ -64,23 +64,24 @@ body::after {
 body::before {
   z-index: 0;
   background:
-    radial-gradient(circle at 18% 24%, rgba(124, 58, 237, 0.16), transparent 22%),
-    radial-gradient(circle at 78% 16%, rgba(59, 130, 246, 0.14), transparent 24%),
-    radial-gradient(circle at 50% 72%, rgba(14, 165, 233, 0.08), transparent 26%);
-  filter: blur(18px);
-  opacity: 0.9;
+    radial-gradient(circle at 20% 26%, rgba(76, 29, 149, 0.14), transparent 20%),
+    radial-gradient(circle at 78% 18%, rgba(37, 99, 235, 0.10), transparent 22%),
+    radial-gradient(circle at 50% 76%, rgba(14, 165, 233, 0.05), transparent 28%);
+  filter: blur(32px);
+  opacity: 0.72;
 }
 
 body::after {
   z-index: 0;
   background:
-    radial-gradient(circle at 22% 28%, rgba(255, 255, 255, 0.18) 0 1px, transparent 1.6px),
-    radial-gradient(circle at 74% 18%, rgba(255, 255, 255, 0.14) 0 1px, transparent 1.8px),
-    radial-gradient(circle at 62% 46%, rgba(255, 255, 255, 0.12) 0 1px, transparent 1.8px),
-    radial-gradient(circle at 34% 66%, rgba(255, 255, 255, 0.10) 0 1px, transparent 1.6px),
-    radial-gradient(circle at 86% 74%, rgba(255, 255, 255, 0.16) 0 1px, transparent 1.8px);
-  background-size: 240px 240px, 320px 320px, 280px 280px, 360px 360px, 300px 300px;
-  opacity: 0.55;
+    radial-gradient(circle at 18% 24%, rgba(255, 255, 255, 0.16) 0 0.8px, transparent 1.4px),
+    radial-gradient(circle at 72% 14%, rgba(255, 255, 255, 0.12) 0 0.9px, transparent 1.5px),
+    radial-gradient(circle at 56% 42%, rgba(255, 255, 255, 0.10) 0 0.8px, transparent 1.4px),
+    radial-gradient(circle at 32% 64%, rgba(255, 255, 255, 0.09) 0 0.8px, transparent 1.4px),
+    radial-gradient(circle at 84% 70%, rgba(255, 255, 255, 0.14) 0 0.9px, transparent 1.6px),
+    radial-gradient(circle at 46% 86%, rgba(255, 255, 255, 0.10) 0 0.8px, transparent 1.4px);
+  background-size: 220px 220px, 280px 280px, 320px 320px, 360px 360px, 400px 400px, 420px 420px;
+  opacity: 0.28;
 }
 
 a {
@@ -1202,22 +1203,22 @@ h3 {
 
 :root[data-theme="dark"] body {
   background:
-    radial-gradient(circle at 50% -10%, rgba(167, 139, 250, 0.24), transparent 30%),
-    radial-gradient(circle at 14% 18%, rgba(59, 130, 246, 0.16), transparent 24%),
-    radial-gradient(circle at 82% 14%, rgba(45, 212, 191, 0.10), transparent 22%),
-    linear-gradient(180deg, #020617 0%, #07111f 42%, #07111f 100%);
+    radial-gradient(circle at 50% -14%, rgba(124, 58, 237, 0.22), transparent 24%),
+    radial-gradient(circle at 16% 18%, rgba(29, 78, 216, 0.12), transparent 22%),
+    radial-gradient(circle at 82% 14%, rgba(8, 145, 178, 0.07), transparent 20%),
+    linear-gradient(180deg, #000103 0%, #02050d 24%, #040915 56%, #07101c 100%);
 }
 
 :root[data-theme="dark"] body::before {
   background:
-    radial-gradient(circle at 18% 24%, rgba(124, 58, 237, 0.22), transparent 22%),
-    radial-gradient(circle at 78% 16%, rgba(59, 130, 246, 0.18), transparent 24%),
-    radial-gradient(circle at 50% 72%, rgba(14, 165, 233, 0.12), transparent 28%);
-  opacity: 1;
+    radial-gradient(circle at 20% 24%, rgba(109, 40, 217, 0.18), transparent 20%),
+    radial-gradient(circle at 78% 16%, rgba(37, 99, 235, 0.14), transparent 22%),
+    radial-gradient(circle at 50% 74%, rgba(8, 145, 178, 0.08), transparent 28%);
+  opacity: 0.86;
 }
 
 :root[data-theme="dark"] body::after {
-  opacity: 0.72;
+  opacity: 0.38;
 }
 
 :root[data-theme="dark"] .space-singularity {

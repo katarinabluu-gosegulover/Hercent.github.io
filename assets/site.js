@@ -69,19 +69,87 @@ const initSpaceBackdrop = () => {
   let height = 0;
   let stars = [];
   let animationFrame = 0;
+  const randomBetween = (min, max) => min + Math.random() * (max - min);
+  const pickStarTone = () => {
+    const roll = Math.random();
 
-  const createStars = () => {
-    const count = Math.max(90, Math.round((width * height) / 12000));
+    if (roll < 0.68) {
+      return {
+        dark: [248, 250, 252],
+        light: [255, 255, 255]
+      };
+    }
 
-    stars = Array.from({ length: count }, () => ({
+    if (roll < 0.86) {
+      return {
+        dark: [191, 219, 254],
+        light: [219, 234, 254]
+      };
+    }
+
+    if (roll < 0.96) {
+      return {
+        dark: [254, 240, 138],
+        light: [255, 247, 214]
+      };
+    }
+
+    return {
+      dark: [226, 232, 240],
+      light: [241, 245, 249]
+    };
+  };
+  const toRgba = (tone, alpha) => `rgba(${tone[0]}, ${tone[1]}, ${tone[2]}, ${alpha})`;
+  const createStar = () => {
+    const layerRoll = Math.random();
+    let radius = 0;
+    let alpha = 0;
+    let glow = 0;
+    let twinkleStrength = 0;
+    let driftScale = 0;
+
+    if (layerRoll < 0.76) {
+      radius = randomBetween(0.14, 0.52);
+      alpha = randomBetween(0.10, 0.30);
+      twinkleStrength = randomBetween(0.02, 0.07);
+      driftScale = 0.010;
+    } else if (layerRoll < 0.95) {
+      radius = randomBetween(0.50, 1.04);
+      alpha = randomBetween(0.24, 0.50);
+      glow = randomBetween(0.6, 1.4);
+      twinkleStrength = randomBetween(0.05, 0.11);
+      driftScale = 0.018;
+    } else {
+      radius = randomBetween(1.05, 1.85);
+      alpha = randomBetween(0.42, 0.80);
+      glow = randomBetween(1.4, 2.8);
+      twinkleStrength = randomBetween(0.08, 0.16);
+      driftScale = 0.028;
+    }
+
+    const tone = pickStarTone();
+
+    return {
       x: Math.random() * width,
       y: Math.random() * height,
-      radius: Math.random() * 1.4 + 0.2,
-      alpha: Math.random() * 0.45 + 0.2,
-      speed: Math.random() * 0.0006 + 0.0002,
-      drift: (Math.random() - 0.5) * 0.04,
-      phase: Math.random() * Math.PI * 2
-    }));
+      radius,
+      alpha,
+      glow,
+      speed: randomBetween(0.00008, 0.00028),
+      driftX: (Math.random() - 0.5) * driftScale,
+      driftY: (Math.random() - 0.5) * driftScale * 0.35,
+      phase: Math.random() * Math.PI * 2,
+      twinkleStrength,
+      flare: radius > 1.2 && Math.random() > 0.6,
+      darkTone: tone.dark,
+      lightTone: tone.light
+    };
+  };
+
+  const createStars = () => {
+    const count = Math.max(180, Math.round((width * height) / 7600));
+
+    stars = Array.from({ length: count }, createStar).sort((left, right) => left.radius - right.radius);
   };
 
   const resizeCanvas = () => {
@@ -103,31 +171,46 @@ const initSpaceBackdrop = () => {
     context.clearRect(0, 0, width, height);
 
     stars.forEach((star) => {
-      const twinkle = 0.55 + Math.sin(time * star.speed + star.phase) * 0.45;
-      const alpha = star.alpha * twinkle;
+      const twinkle = 1 + Math.sin(time * star.speed + star.phase) * star.twinkleStrength;
+      const alpha = Math.max(0.04, star.alpha * twinkle * (isDark ? 1 : 0.78));
+      const tone = isDark ? star.darkTone : star.lightTone;
 
-      star.x += star.drift;
+      star.x += star.driftX;
+      star.y += star.driftY;
 
-      if (star.x < -6) {
-        star.x = width + 6;
-      } else if (star.x > width + 6) {
-        star.x = -6;
+      if (star.x < -12) {
+        star.x = width + 12;
+      } else if (star.x > width + 12) {
+        star.x = -12;
+      }
+
+      if (star.y < -12) {
+        star.y = height + 12;
+      } else if (star.y > height + 12) {
+        star.y = -12;
+      }
+
+      if (star.glow > 0) {
+        context.beginPath();
+        context.fillStyle = toRgba(tone, alpha * (isDark ? 0.16 : 0.10));
+        context.arc(star.x, star.y, star.radius * (2.2 + star.glow), 0, Math.PI * 2);
+        context.fill();
       }
 
       context.beginPath();
-      context.fillStyle = isDark
-        ? `rgba(226, 232, 240, ${alpha})`
-        : `rgba(255, 255, 255, ${Math.min(alpha + 0.08, 0.75)})`;
+      context.fillStyle = toRgba(tone, alpha);
       context.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
       context.fill();
 
-      if (star.radius > 1.1) {
+      if (star.flare) {
         context.beginPath();
-        context.fillStyle = isDark
-          ? `rgba(96, 165, 250, ${alpha * 0.35})`
-          : `rgba(147, 197, 253, ${alpha * 0.3})`;
-        context.arc(star.x, star.y, star.radius * 2.4, 0, Math.PI * 2);
-        context.fill();
+        context.strokeStyle = toRgba([255, 255, 255], alpha * (isDark ? 0.16 : 0.10));
+        context.lineWidth = 0.55;
+        context.moveTo(star.x - star.radius * 3.2, star.y);
+        context.lineTo(star.x + star.radius * 3.2, star.y);
+        context.moveTo(star.x, star.y - star.radius * 3.2);
+        context.lineTo(star.x, star.y + star.radius * 3.2);
+        context.stroke();
       }
     });
   };
