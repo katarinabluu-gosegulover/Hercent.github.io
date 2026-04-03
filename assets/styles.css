@@ -496,6 +496,19 @@ h3 {
   background: rgba(241, 246, 246, 0.72);
 }
 
+.empty-state {
+  padding: 20px;
+  border: 1px dashed var(--border);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.46);
+}
+
+.empty-state p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
 .compact-row {
   padding: 20px;
 }
@@ -689,6 +702,10 @@ h3 {
 
 :root[data-theme="dark"] .category-section {
   background: rgba(8, 15, 29, 0.54);
+}
+
+:root[data-theme="dark"] .empty-state {
+  background: rgba(15, 23, 42, 0.42);
 }
 
 :root[data-theme="dark"] .check-number {
