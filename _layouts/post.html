@@ -1,0 +1,17 @@
+---
+layout: default
+---
+{% assign category = site.data.categories | where: "key", page.category_key | first %}
+<main class="subpage-layout">
+  <article class="panel article-page" data-reveal>
+    <div class="kicker-row">
+      <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
+      <p class="post-meta">{{ page.date | date: "%Y.%m.%d" }}</p>
+    </div>
+    <h1>{{ page.title }}</h1>
+    {% if page.lead %}
+      <p class="lead">{{ page.lead }}</p>
+    {% endif %}
+    {{ content }}
+  </article>
+</main>

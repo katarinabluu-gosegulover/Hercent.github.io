@@ -1,0 +1,8 @@
+title: Hercent Archive
+description: 카테고리별로 글을 정리하는 Hercent의 GitHub Pages 블로그
+baseurl: "/Hercent.github.io"
+url: "https://katarinabluu-gosegulover.github.io"
+markdown: kramdown
+permalink: /posts/:slug.html
+exclude:
+  - README.md

@@ -1,0 +1,16 @@
+<header class="site-header">
+  <a class="brand" href="{{ '/' | relative_url }}">
+    <img class="brand-avatar" src="{{ '/assets/profile.png' | relative_url }}" alt="Hercent profile image">
+    <span>Hercent</span>
+  </a>
+  <nav class="site-nav" aria-label="주요 메뉴">
+    <a href="{{ '/' | relative_url }}"{% if page.nav == "home" %} aria-current="page"{% endif %}>Home</a>
+    <a href="{{ '/about.html' | relative_url }}"{% if page.nav == "about" %} aria-current="page"{% endif %}>About</a>
+    <a href="{{ '/categories/index.html' | relative_url }}"{% if page.nav == "categories" %} aria-current="page"{% endif %}>Categories</a>
+    <a href="{{ '/posts/index.html' | relative_url }}"{% if page.nav == "posts" %} aria-current="page"{% endif %}>Posts</a>
+    <a href="https://github.com/katarinabluu-gosegulover" target="_blank" rel="noreferrer">GitHub</a>
+  </nav>
+  <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드 전환" aria-pressed="false">
+    <span class="theme-toggle-icon" aria-hidden="true"></span>
+  </button>
+</header>

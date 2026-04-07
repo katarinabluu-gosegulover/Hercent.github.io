@@ -1,0 +1,37 @@
+---
+layout: default
+---
+{% assign category = site.data.categories | where: "key", page.category_key | first %}
+{% assign posts_in_category = site.posts | where: "category_key", page.category_key %}
+<main class="subpage-layout">
+  <section class="panel article-hero" data-reveal>
+    <div class="kicker-row">
+      <a class="category-badge" href="{{ '/categories/index.html' | relative_url }}">카테고리</a>
+      <p class="post-meta">{{ category.title }}</p>
+    </div>
+    <h1>{{ category.title }}</h1>
+    <p>{{ category.category_description }}</p>
+  </section>
+
+  {% if posts_in_category.size > 0 %}
+    <section class="post-list" data-reveal>
+      {% for post in posts_in_category %}
+        <article class="panel post-row">
+          <div>
+            <div class="kicker-row">
+              <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
+              <p class="post-meta">{{ post.date | date: "%Y.%m.%d" }}</p>
+            </div>
+            <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
+            <p>{{ post.summary }}</p>
+          </div>
+          <a class="view-link" href="{{ post.url | relative_url }}">view</a>
+        </article>
+      {% endfor %}
+    </section>
+  {% else %}
+    <div class="empty-state" data-reveal>
+      <p>{{ category.empty_text }}</p>
+    </div>
+  {% endif %}
+</main>

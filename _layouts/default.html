@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% if page.title %}{{ page.title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
+  <meta name="description" content="{{ page.page_description | default: site.description }}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/styles.css' | relative_url }}">
+  <script src="{{ '/assets/site.js' | relative_url }}" defer></script>
+</head>
+<body{% if page.body_class %} class="{{ page.body_class }}"{% endif %}>
+  <div class="page-shell">
+    {% include site-header.html %}
+    {{ content }}
+    {% include site-footer.html %}
+  </div>
+</body>
+</html>

@@ -1024,6 +1024,18 @@ h3 {
   font-size: 1.4rem;
 }
 
+.article-page ul,
+.article-page ol {
+  margin: 16px 0;
+  padding-left: 22px;
+  color: var(--muted);
+  line-height: 1.85;
+}
+
+.article-page li + li {
+  margin-top: 8px;
+}
+
 .article-actions {
   display: flex;
   flex-wrap: wrap;

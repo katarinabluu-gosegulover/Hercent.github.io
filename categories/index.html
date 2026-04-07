@@ -1,98 +1,25 @@
-<!DOCTYPE html>
-<html lang="ko">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Categories | Hercent Archive</title>
-  <meta name="description" content="Hercent Archive 카테고리 목록">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../assets/styles.css">
-  <script src="../assets/site.js" defer></script>
-</head>
-<body>
-  <div class="page-shell">
-    <header class="site-header">
-      <a class="brand" href="../index.html">
-        <img class="brand-avatar" src="../assets/profile.png" alt="Hercent profile image">
-        <span>Hercent</span>
-      </a>
-      <nav class="site-nav" aria-label="주요 메뉴">
-        <a href="../index.html">Home</a>
-        <a href="../about.html">About</a>
-        <a href="index.html" aria-current="page">Categories</a>
-        <a href="../posts/index.html">Posts</a>
-        <a href="https://github.com/katarinabluu-gosegulover" target="_blank" rel="noreferrer">GitHub</a>
-      </nav>
-      <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드 전환" aria-pressed="false">
-        <span class="theme-toggle-icon" aria-hidden="true"></span>
-      </button>
-    </header>
+---
+layout: default
+title: Categories
+page_description: Hercent Archive 카테고리 목록
+nav: categories
+---
+<main class="subpage-layout">
+  <section class="panel article-hero" data-reveal>
+    <p class="eyebrow">Category Hub</p>
+    <h1>카테고리</h1>
+    <p>프로젝트부터 CTF/Wargame, BugBounty, 블로그/기술문서, 논문/컨퍼런스, 공모전/자격증, 업적까지 총 8개의 카테고리 기준으로 글을 관리합니다.</p>
+  </section>
 
-    <main class="subpage-layout">
-      <section class="panel article-hero" data-reveal>
-        <p class="eyebrow">Category Hub</p>
-        <h1>카테고리</h1>
-        <p>프로젝트부터 CTF/Wargame, BugBounty, 블로그/기술문서, 논문/컨퍼런스, 공모전/자격증, 업적까지 총 8개의 카테고리 기준으로 글을 관리합니다.</p>
-      </section>
-
-      <section class="category-grid" data-reveal>
-        <article class="category-card panel">
-          <p class="category-count">1 Post</p>
-          <h2>프로젝트</h2>
-          <p>프로젝트 제작, 실행, 구조 설계를 기록합니다.</p>
-          <a class="view-link" href="projects.html">view</a>
-        </article>
-        <article class="category-card panel">
-          <p class="category-count">1 Post</p>
-          <h2>개발</h2>
-          <p>기능 구현과 구조 변경, 개발 메모를 정리합니다.</p>
-          <a class="view-link" href="development.html">view</a>
-        </article>
-        <article class="category-card panel">
-          <p class="category-count">0 Post</p>
-          <h2>CTF/Wargame</h2>
-          <p>문제 풀이와 워게임 접근 전략을 정리합니다.</p>
-          <a class="view-link" href="ctf-wargame.html">view</a>
-        </article>
-        <article class="category-card panel">
-          <p class="category-count">0 Post</p>
-          <h2>BugBounty</h2>
-          <p>취약점 분석과 제보 과정을 기록합니다.</p>
-          <a class="view-link" href="bugbounty.html">view</a>
-        </article>
-        <article class="category-card panel">
-          <p class="category-count">1 Post</p>
-          <h2>블로그/기술문서</h2>
-          <p>블로그 구조, 기술 문서, 정리 방식을 다룹니다.</p>
-          <a class="view-link" href="blog-docs.html">view</a>
-        </article>
-        <article class="category-card panel">
-          <p class="category-count">0 Post</p>
-          <h2>논문/컨퍼런스</h2>
-          <p>논문 읽기와 컨퍼런스 세션 기록을 모읍니다.</p>
-          <a class="view-link" href="papers-conferences.html">view</a>
-        </article>
-        <article class="category-card panel">
-          <p class="category-count">0 Post</p>
-          <h2>공모전/자격증</h2>
-          <p>준비 과정과 회고, 학습 계획을 정리합니다.</p>
-          <a class="view-link" href="contests-certifications.html">view</a>
-        </article>
-        <article class="category-card panel">
-          <p class="category-count">0 Post</p>
-          <h2>업적</h2>
-          <p>수상, 합격, 랭킹, 마일스톤처럼 결과로 남는 기록을 정리합니다.</p>
-          <a class="view-link" href="achievements.html">view</a>
-        </article>
-      </section>
-    </main>
-
-    <footer class="site-footer">
-      <p>Built with static HTML on GitHub Pages.</p>
-      <p>&copy; <span data-year></span> Hercent</p>
-    </footer>
-  </div>
-</body>
-</html>
+  <section class="category-grid" data-reveal>
+    {% for category in site.data.categories %}
+      {% assign post_count = site.posts | where: "category_key", category.key | size %}
+      <article class="category-card panel">
+        <p class="category-count">{{ post_count }} Post{% unless post_count == 1 %}s{% endunless %}</p>
+        <h2>{{ category.title }}</h2>
+        <p>{{ category.category_description }}</p>
+        <a class="view-link" href="{{ category.path | relative_url }}">view</a>
+      </article>
+    {% endfor %}
+  </section>
+</main>
