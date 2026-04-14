@@ -47,12 +47,14 @@ nav: home
       {% for post in featured_posts limit: 3 %}
         {% assign category = site.data.categories | where: "key", post.category_key | first %}
         <article class="post-card panel">
-          <div class="kicker-row">
-            <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
-            <p class="post-meta">{{ post.date | date: "%Y.%m.%d" }}</p>
+          <div class="card-body">
+            <div class="kicker-row">
+              <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
+              <p class="post-meta">{{ post.date | date: "%Y.%m.%d" }}</p>
+            </div>
+            <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
+            <p>{{ post.summary }}</p>
           </div>
-          <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
-          <p>{{ post.summary }}</p>
           <a class="view-link" href="{{ post.url | relative_url }}">view</a>
         </article>
       {% endfor %}
@@ -68,9 +70,11 @@ nav: home
       {% for category in site.data.categories %}
         {% assign category_posts = site.posts | where: "category_key", category.key %}
         <article class="category-card panel">
-          <p class="category-count">{{ category.english }}</p>
-          <h3>{{ category.title }}</h3>
-          <p>{{ category.home_description }}</p>
+          <div class="card-body">
+            <p class="category-count">{{ category.english }}</p>
+            <h3>{{ category.title }}</h3>
+            <p>{{ category.home_description }}</p>
+          </div>
           <a class="view-link" href="{{ category.path | relative_url }}">view</a>
         </article>
       {% endfor %}

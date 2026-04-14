@@ -796,11 +796,10 @@ h3 {
   padding: 24px;
 }
 
-.post-card,
-.category-card {
+.card-body {
   display: flex;
   flex-direction: column;
-  height: 100%;
+  flex: 1;
 }
 
 .post-meta {
