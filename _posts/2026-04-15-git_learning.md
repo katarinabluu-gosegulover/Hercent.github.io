@@ -9,7 +9,7 @@ featured: false
 feature_order: 0
 ---
 
-# Git 명령어 학습하기 (메인)
+## Git 명령어 학습하기 (메인)
 
 커밋 명령어: git commit
 ---
