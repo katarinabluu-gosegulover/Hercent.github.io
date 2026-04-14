@@ -134,12 +134,9 @@ git describe <ref>
 
 명령어의 출력은 다음과 같은 형태로 나타납니다:
 
-```text
+```bash
 <tag>-<numCommits>-g<hash>
 ```
 
 tag는 가장 가까운 부모 태그를 나타낸다. numCommits은 그 태그가 몇 커밋 멀리있는지를 나타낸다. <hash>는 묘사하고있는 커밋의 해시를 나타낸다.
 
----
-
-![git-learning screenshot]({{ '/assets/images/git-learning1.png' | relative_url }})
