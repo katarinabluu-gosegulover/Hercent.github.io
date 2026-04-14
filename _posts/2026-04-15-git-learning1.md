@@ -130,16 +130,16 @@ Git describe 는 다음의 형태를 가지고 있음:
 git describe <ref>
 ```
 
-<ref>에는 commit을 의미하는 그 어떤것이던 쓸 수 있고, 만약 ref를 특정 지어주지 않으면, git은 그냥 지금 체크아웃된곳을 사용한다 (HEAD).
+`<ref>`에는 commit을 의미하는 그 어떤것이던 쓸 수 있고, 만약 ref를 특정 지어주지 않으면, git은 그냥 지금 체크아웃된곳을 사용한다 (HEAD).
 
 명령어의 출력은 다음과 같은 형태로 나타납니다:
 
-```bash
+```text
 <tag>-<numCommits>-g<hash>
 ```
 
-tag는 가장 가까운 부모 태그를 나타낸다. numCommits은 그 태그가 몇 커밋 멀리있는지를 나타낸다. <hash>는 묘사하고있는 커밋의 해시를 나타낸다.
+`<tag>`는 가장 가까운 부모 태그를 나타낸다. `numCommits`은 그 태그가 몇 커밋 멀리있는지를 나타낸다. `<hash>`는 묘사하고있는 커밋의 해시를 나타낸다.
 
 ---
 
-![git 배우기 첫 번째 사진](/Hercent.github.io/assets/images/git-learning1.png)
+![git 배우기 첫 번째 사진]({{ '/assets/images/git-learning1.png' | relative_url }})
