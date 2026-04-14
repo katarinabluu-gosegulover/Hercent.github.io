@@ -796,6 +796,13 @@ h3 {
   padding: 24px;
 }
 
+.post-card,
+.category-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
 .post-meta {
   margin: 0;
   color: var(--teal);
@@ -890,6 +897,11 @@ h3 {
 
 .category-card p {
   margin: 0;
+}
+
+.post-card .view-link,
+.category-card .view-link {
+  margin-top: auto;
 }
 
 .category-count {
