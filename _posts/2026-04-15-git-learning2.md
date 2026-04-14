@@ -71,3 +71,7 @@ totallyNotMain라는 이름의 새 브랜치를 생성하고 o/main를 추적하
 main를 "place"인자로 지정해서 우리가 git에게 어디서부터 커밋이 오는지, 그리고 어디로 커밋이 가야하는지 알려준다. 두 저장소간에 동기화 작업을 할 "장소"를 지정해 주는것이라고 볼 수 있다.
 
 `git push origin <source>:<destination>` 를 이용하여 더 자세히 지정가능.
+
+---
+
+![git 배우기 두 번째 사진]({{ '/assets/images/git-learning2.png' | relative_url }})
