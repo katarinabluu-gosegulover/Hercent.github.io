@@ -3,7 +3,7 @@ layout: post
 title: Git 배우기 1
 page_description: Git 기본 명령어와 브랜치, 리베이스, 태그 개념을 정리한 학습 글입니다.
 category_key: development
-summary: Git 기본 명령어와 브랜치, 리베이스, HEAD, 태그 개념을 정리한 학습 노트입니다.
+summary: Git 기본 명령어와 브랜치, 리베이스, HEAD, 태그 개념을 정리한 학습 기록입니다.
 lead: Git의 기본 명령어와 브랜치 이동, 리베이스, HEAD, 태그 같은 핵심 개념을 한 번에 복습할 수 있도록 정리한 글입니다.
 featured: false
 feature_order: 0
