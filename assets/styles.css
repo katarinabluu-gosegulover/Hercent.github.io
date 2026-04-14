@@ -901,6 +901,8 @@ h3 {
 .post-card .view-link,
 .category-card .view-link {
   margin-top: auto;
+  align-self: flex-start;
+  transform: translateY(8px);
 }
 
 .category-count {
