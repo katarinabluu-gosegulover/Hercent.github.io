@@ -140,3 +140,6 @@ git describe <ref>
 
 tag는 가장 가까운 부모 태그를 나타낸다. numCommits은 그 태그가 몇 커밋 멀리있는지를 나타낸다. <hash>는 묘사하고있는 커밋의 해시를 나타낸다.
 
+---
+
+![git 배우기 첫 번째 사진](/Hercent.github.io/assets/images/git-learning1.png)
