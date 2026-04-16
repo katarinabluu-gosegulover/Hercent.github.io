@@ -282,6 +282,40 @@ const initBlackHoleBackdrop = () => {
 
 initBlackHoleBackdrop();
 
+const initTabbedWriteups = () => {
+  const groups = document.querySelectorAll("[data-tab-group]");
+
+  groups.forEach((group) => {
+    const triggers = Array.from(group.querySelectorAll("[data-tab-trigger]"));
+    const panels = Array.from(group.querySelectorAll("[data-tab-panel]"));
+
+    if (triggers.length === 0 || panels.length === 0) {
+      return;
+    }
+
+    const activateTab = (targetId) => {
+      triggers.forEach((trigger) => {
+        const isActive = trigger.dataset.tabTrigger === targetId;
+        trigger.classList.toggle("is-active", isActive);
+        trigger.setAttribute("aria-selected", isActive ? "true" : "false");
+        trigger.tabIndex = isActive ? 0 : -1;
+      });
+
+      panels.forEach((panel) => {
+        panel.hidden = panel.dataset.tabPanel !== targetId;
+      });
+    };
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener("click", () => activateTab(trigger.dataset.tabTrigger));
+    });
+
+    activateTab(triggers[0].dataset.tabTrigger);
+  });
+};
+
+initTabbedWriteups();
+
 const yearTarget = document.querySelector("[data-year]");
 
 if (yearTarget) {
