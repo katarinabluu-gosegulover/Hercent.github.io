@@ -55,7 +55,7 @@ _기술적 공격 분석_
 1. **T1486 ESXi - Impact — Ransomware Deployment**
    **VMware ESXi 타깃 DragonForce**: Linux 기반 ESXi 암호화기로 가상 머신 파일(.vmdk, .vmx) 직접 암호화. 다중 VM 호스트 동시 공격으로 최대 피해 유도. 이중 갈취(암호화 + 데이터 유출)로 랜섬 압박 극대화.
 
-### // DragonForce RaaS 모델
+### DragonForce RaaS 모델
 
 DragonForce는 랜섬웨어-서비스(RaaS) 플랫폼으로, Scattered Spider 같은 공격 그룹이 자체 브랜딩으로 랜섬웨어를 임대 사용할 수 있도록 한다. 기술이 부족한 범죄자도 랜섬웨어 인프라를 임대해 고급 공격을 수행할 수 있다는 점에서 사이버 범죄의 "SaaS화"를 상징하는 사례다.
 
