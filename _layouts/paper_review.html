@@ -3,7 +3,7 @@ layout: default
 ---
 {% assign category = site.data.categories | where: "key", page.category_key | first %}
 <main class="subpage-layout">
-  <article class="panel article-page paper-review-page" data-reveal>
+  <article class="panel article-page paper-review-page is-visible">
     <div class="paper-review-hero">
       <div class="paper-review-kicker-row">
         <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
