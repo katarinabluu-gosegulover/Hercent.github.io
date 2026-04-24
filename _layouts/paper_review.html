@@ -1,0 +1,43 @@
+---
+layout: default
+---
+{% assign category = site.data.categories | where: "key", page.category_key | first %}
+<main class="subpage-layout">
+  <article class="panel article-page paper-review-page" data-reveal>
+    <div class="paper-review-hero">
+      <div class="paper-review-kicker-row">
+        <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
+        {% if page.paper_venue %}
+          <span class="paper-review-venue">{{ page.paper_venue }}</span>
+        {% endif %}
+        <p class="post-meta">{{ page.date | date: "%Y.%m.%d" }}</p>
+      </div>
+      <p class="eyebrow">Paper Review</p>
+      <h1>{{ page.title }}</h1>
+      {% if page.lead %}
+        <p class="lead">{{ page.lead }}</p>
+      {% endif %}
+      <div class="paper-review-hero-grid">
+        <section class="paper-review-hero-card">
+          <p class="paper-review-mini-label">Paper</p>
+          {% if page.paper_title %}
+            <h2>{{ page.paper_title }}</h2>
+          {% endif %}
+          {% if page.paper_venue %}
+            <p><strong>Venue</strong> {{ page.paper_venue }}</p>
+          {% endif %}
+          {% if page.paper_authors %}
+            <p><strong>Authors</strong> {{ page.paper_authors }}</p>
+          {% endif %}
+        </section>
+        {% if page.paper_reason %}
+          <section class="paper-review-hero-card">
+            <p class="paper-review-mini-label">Why This Paper</p>
+            <p>{{ page.paper_reason }}</p>
+          </section>
+        {% endif %}
+      </div>
+    </div>
+    {{ content }}
+  </article>
+</main>
