@@ -1371,6 +1371,99 @@ h3 {
   color: var(--muted);
 }
 
+.document-viewer {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.document-toolbar,
+.document-frame-shell {
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.56);
+}
+
+.document-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+}
+
+.document-toolbar-meta {
+  display: grid;
+  gap: 6px;
+}
+
+.document-toolbar-label,
+.document-page-indicator {
+  margin: 0;
+  font-family: "IBM Plex Mono", Consolas, monospace;
+}
+
+.document-toolbar-label {
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.74rem;
+  color: var(--accent-deep);
+}
+
+.document-toolbar-title {
+  margin: 0;
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.document-pager {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.document-page-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.88);
+  color: var(--ink);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 180ms ease, border-color 180ms ease, background 180ms ease;
+}
+
+.document-page-button:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: rgba(37, 99, 235, 0.28);
+}
+
+.document-page-button:disabled {
+  opacity: 0.42;
+  cursor: not-allowed;
+}
+
+.document-page-indicator {
+  min-width: 74px;
+  text-align: center;
+  color: var(--muted);
+}
+
+.document-frame-shell {
+  padding: 12px;
+}
+
+.document-frame-shell .document-frame {
+  margin-top: 0;
+}
+
 .tabbed-writeup {
   display: grid;
   gap: 18px;
@@ -1729,8 +1822,20 @@ h3 {
 }
 
 :root[data-theme="dark"] .document-meta,
-:root[data-theme="dark"] .document-frame {
+:root[data-theme="dark"] .document-frame,
+:root[data-theme="dark"] .document-toolbar,
+:root[data-theme="dark"] .document-frame-shell {
   background: rgba(8, 15, 29, 0.68);
+}
+
+:root[data-theme="dark"] .document-page-button {
+  background: linear-gradient(180deg, rgba(30, 41, 59, 0.94), rgba(15, 23, 42, 0.96));
+  border-color: rgba(96, 165, 250, 0.22);
+  color: #e2e8f0;
+}
+
+:root[data-theme="dark"] .document-page-button:hover:not(:disabled) {
+  border-color: rgba(96, 165, 250, 0.42);
 }
 
 :root[data-theme="dark"] .tabbed-writeup-nav,
@@ -1978,6 +2083,15 @@ h3 {
 
   .document-frame {
     min-height: 68vh;
+  }
+
+  .document-toolbar {
+    align-items: stretch;
+  }
+
+  .document-pager {
+    width: 100%;
+    justify-content: space-between;
   }
 
   .tabbed-writeup-gallery {

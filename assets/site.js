@@ -316,6 +316,75 @@ const initTabbedWriteups = () => {
 
 initTabbedWriteups();
 
+const initDocumentViewers = () => {
+  const viewers = document.querySelectorAll("[data-document-viewer]");
+
+  viewers.forEach((viewer) => {
+    const frame = viewer.querySelector("[data-document-frame]");
+    const prevButton = viewer.querySelector("[data-document-prev]");
+    const nextButton = viewer.querySelector("[data-document-next]");
+    const currentTarget = viewer.querySelector("[data-document-current]");
+    const totalTarget = viewer.querySelector("[data-document-total]");
+    const pdfSrc = viewer.dataset.documentSrc;
+    const totalPages = Number.parseInt(viewer.dataset.documentPages || "0", 10);
+
+    if (!frame || !prevButton || !nextButton || !currentTarget || !pdfSrc) {
+      return;
+    }
+
+    let currentPage = 1;
+    const safeTotalPages = Number.isFinite(totalPages) && totalPages > 0 ? totalPages : 0;
+
+    const render = () => {
+      const pageFragment = `#page=${currentPage}&view=FitH`;
+      frame.src = `${pdfSrc}${pageFragment}`;
+      currentTarget.textContent = String(currentPage);
+
+      if (totalTarget) {
+        totalTarget.textContent = safeTotalPages > 0 ? String(safeTotalPages) : "-";
+      }
+
+      prevButton.disabled = currentPage <= 1;
+      nextButton.disabled = safeTotalPages > 0 && currentPage >= safeTotalPages;
+    };
+
+    const movePage = (delta) => {
+      const nextPage = currentPage + delta;
+
+      if (nextPage < 1) {
+        return;
+      }
+
+      if (safeTotalPages > 0 && nextPage > safeTotalPages) {
+        return;
+      }
+
+      currentPage = nextPage;
+      render();
+    };
+
+    prevButton.addEventListener("click", () => movePage(-1));
+    nextButton.addEventListener("click", () => movePage(1));
+
+    viewer.tabIndex = 0;
+    viewer.addEventListener("keydown", (event) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        movePage(-1);
+      }
+
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        movePage(1);
+      }
+    });
+
+    render();
+  });
+};
+
+initDocumentViewers();
+
 const yearTarget = document.querySelector("[data-year]");
 
 if (yearTarget) {
