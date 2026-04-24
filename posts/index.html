@@ -27,7 +27,7 @@ nav: posts
           <h2>{{ category.title }}</h2>
           <p class="section-copy">{{ category.posts_description }}</p>
         </div>
-        {% if entries_in_category.size > 0 %}
+        {% if entries_in_category.size > 0 or category.key == 'papers-conferences' %}
           <div class="post-list">
             {% for post in entries_in_category %}
               <article class="panel post-row compact-row">
@@ -42,6 +42,19 @@ nav: posts
                 <a class="view-link" href="{{ post.url | relative_url }}">view</a>
               </article>
             {% endfor %}
+            {% if category.key == 'papers-conferences' %}
+              <article class="panel post-row compact-row">
+                <div>
+                  <div class="kicker-row">
+                    <a class="category-badge" href="{{ '/categories/papers-conferences.html' | relative_url }}">논문/컨퍼런스</a>
+                    <p class="post-meta">2026.04.24</p>
+                  </div>
+                  <h2><a href="{{ '/posts/thesis-review-mission.html' | relative_url }}">Thesis Review about ASI (Account Security Interface) Design Error</a></h2>
+                  <p>USENIX Security 2026 ASI 논문 리뷰를 HTML 슬라이드 방식으로 넘겨보는 페이지입니다.</p>
+                </div>
+                <a class="view-link" href="{{ '/posts/thesis-review-mission.html' | relative_url }}">view</a>
+              </article>
+            {% endif %}
           </div>
         {% else %}
           <div class="empty-state">
