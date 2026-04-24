@@ -11,7 +11,6 @@
 <style>
   :root {
     --bg: #09111f;
-    --bg-soft: #0f172a;
     --line: rgba(148, 163, 184, 0.18);
     --card: rgba(8, 15, 29, 0.74);
     --white: #ffffff;
@@ -168,6 +167,7 @@
   .slide-host {
     width: 100%;
     height: 100%;
+    position: relative;
   }
 
   .review-controls {
@@ -532,6 +532,12 @@
     font-weight: 700;
   }
 
+  .no-script-note {
+    margin-top: 10px;
+    color: #cbd5e1;
+    font-size: 0.84rem;
+  }
+
   @media (max-width: 980px) {
     body {
       padding: 16px 10px 40px;
@@ -612,25 +618,22 @@
       </div>
     </section>
 
-    <section class="review-nav" id="reviewNav"></section>
+    <section class="review-nav" id="reviewNav">
+      <button type="button" class="is-active" data-slide-target="0">표지</button>
+      <button type="button" data-slide-target="1">목차</button>
+      <button type="button" data-slide-target="2">문제 정의</button>
+      <button type="button" data-slide-target="3">배경</button>
+      <button type="button" data-slide-target="4">방법론</button>
+      <button type="button" data-slide-target="5">ASI 유형</button>
+      <button type="button" data-slide-target="6">결과</button>
+      <button type="button" data-slide-target="7">개선 원칙</button>
+      <button type="button" data-slide-target="8">한계점</button>
+      <button type="button" data-slide-target="9">앞으로</button>
+    </section>
 
     <section class="slide-frame">
-      <div class="slide-host" id="slideHost"></div>
-    </section>
-
-    <section class="review-controls">
-      <button type="button" id="prevSlide" aria-label="이전 슬라이드">&#8592;</button>
-      <span class="review-counter" id="slideCounter">1 / 10</span>
-      <button type="button" id="nextSlide" aria-label="다음 슬라이드">&#8594;</button>
-    </section>
-  </main>
-
-  <script>
-    const slides = [
-      {
-        label: "표지",
-        html: `
-        <div class="slide slide-cover is-active" id="slide-0">
+      <div class="slide-host" id="slideHost">
+        <section class="slide slide-cover is-active" data-slide-index="0">
           <div class="cover-top">
             <span class="date">2026.04.24.</span>
             <div class="cover-title">웹 서비스의 계정 보안 인터페이스(ASI)는<br>얼마나 믿을 수 있을까?</div>
@@ -643,12 +646,9 @@
               <div class="conf">Bhattacharya et al. · Inconsistent, Incomplete, and Insecure: A Survey of ASIs</div>
             </div>
           </div>
-        </div>`
-      },
-      {
-        label: "목차",
-        html: `
-        <div class="slide slide-toc" id="slide-1">
+        </section>
+
+        <section class="slide slide-toc" data-slide-index="1">
           <div class="toc-left">
             <div class="toc-label">Table of Contents</div>
             <div class="toc-title">목차</div>
@@ -663,58 +663,46 @@
             <div class="toc-item"><div class="toc-bar"></div>한계점 &amp; 앞으로 해볼 것</div>
           </div>
           <div class="slide-num-badge">2 / 10</div>
-        </div>`
-      },
-      {
-        label: "문제 정의",
-        html: `
-        <div class="slide slide-content" id="slide-2">
+        </section>
+
+        <section class="slide slide-content" data-slide-index="2">
           <div class="content-header"><h2>논문 선정 이유 &amp; 문제 정의</h2></div>
           <div class="content-body">
-            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">왜 이 논문인가?</span> 구글·페이스북 계정의 "최근 로그인 기기" 메뉴 — 실제로 얼마나 믿을 수 있는가? 직접 경험한 의문에서 출발</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">ASI(Account Security Interface)</span>란 로그인 기록, 연결 기기 목록, 보안 알림 등 무단 접근을 사용자 스스로 감지하도록 돕는 인터페이스</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">왜 이 논문인가?</span> 구글·페이스북 계정의 "최근 로그인 기기" 메뉴. 실제로 얼마나 믿을 수 있는가라는 의문에서 출발했다.</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">ASI(Account Security Interface)</span>는 로그인 기록, 연결 기기 목록, 보안 알림 등 무단 접근을 사용자가 스스로 감지하도록 돕는 인터페이스다.</span></div>
             <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">핵심 질문:</span> 실제 100개 인기 서비스의 ASI는 제대로 설계·구현되어 있는가?</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>특히 <span class="highlight">대인 폭력(intimate partner abuse)</span> 상황에서 피해자가 계정 침해를 스스로 탐지할 수 있는 유일한 수단이 ASI</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>USENIX Security 2026 게재 — 스푸핑 공격이라는 실제 위협과 직결된 실험 포함</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span>특히 <span class="highlight">대인 폭력(intimate partner abuse)</span> 상황에서 피해자가 계정 침해를 스스로 탐지할 수 있는 유일한 수단이 ASI다.</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span>USENIX Security 2026 게재 논문으로, 스푸핑 공격과 직결된 실험까지 포함한다.</span></div>
           </div>
           <div class="slide-num-badge">3 / 10</div>
-        </div>`
-      },
-      {
-        label: "배경",
-        html: `
-        <div class="slide slide-content" id="slide-3">
+        </section>
+
+        <section class="slide slide-content" data-slide-index="3">
           <div class="content-header"><h2>배경 &amp; 기존 연구의 한계</h2></div>
           <div class="content-body">
-            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">Daffalla et al. (2023)</span>이 선행 연구로 Google, Apple, Facebook, WhatsApp 4개 서비스 분석 → 범위 협소, 일반화 불가</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>기존 연구는 "알림을 어떻게 더 잘 보낼까"에 집중 — <span class="highlight">ASI 자체의 설계 결함·보안 취약성은 비어 있었음</span></span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>강력한 인증 수단(패스키, MFA)이 있어도 이미 접근이 허용된 상황이라면 소용없음 → 침해 탐지 도구의 질이 중요</span></div>
-            <div class="bullet red"><div class="bullet-dot"></div><span>스푸핑·접근 숨기기(access hiding) 공격에 ASI가 얼마나 취약한지 체계적으로 측정한 연구가 없었음</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">Daffalla et al. (2023)</span>는 Google, Apple, Facebook, WhatsApp 4개 서비스만 분석했다. 범위가 좁아 일반화에 한계가 있었다.</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span>기존 연구는 "알림을 어떻게 더 잘 보낼까"에 집중했고, <span class="highlight">ASI 자체의 설계 결함과 보안 취약성</span>은 비어 있었다.</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span>패스키나 MFA가 있어도 이미 접근이 허용된 뒤라면 소용없다. 그래서 침해 탐지 도구의 질이 중요하다.</span></div>
+            <div class="bullet red"><div class="bullet-dot"></div><span>스푸핑과 접근 숨기기(access hiding) 공격에 ASI가 얼마나 취약한지 체계적으로 측정한 연구가 없었다.</span></div>
           </div>
           <div class="slide-num-badge">4 / 10</div>
-        </div>`
-      },
-      {
-        label: "방법론",
-        html: `
-        <div class="slide slide-content" id="slide-4">
+        </section>
+
+        <section class="slide slide-content" data-slide-index="4">
           <div class="content-header"><h2>핵심 아이디어 &amp; 방법론</h2></div>
           <div class="content-body">
-            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">100개 인기 서비스</span>(TRANCO 기준)를 직접 손으로 조사 — 역대 최대 규모 ASI 실측 연구</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">피해자 기기 + 공격자 기기</span> 2대를 사용해 실제 스푸핑 시나리오 재현</span></div>
-            <div class="bullet sub"><div class="bullet-dot"></div><span>① VPN + SOCKS 프록시 → 위치 정보 위조</span></div>
-            <div class="bullet sub"><div class="bullet-dot"></div><span>② HTTP User-Agent 문자열 변조 → 기기·브라우저 정보 위조</span></div>
-            <div class="bullet sub"><div class="bullet-dot"></div><span>③ 시스템 시계 3시간 조작 → 시간 정보 위조</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>발견된 ASI를 귀납·연역 코딩으로 분석해 <span class="navy">7가지 유형론(Typology)</span> 구축</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>정보 유용성 <span class="navy">6단계 척도</span> 정의: 정보 없음 → 날짜/시간 → 위치 → OS/브라우저 종류 → 버전 정보 → 기기 고유 식별자</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">100개 인기 서비스</span>(TRANCO 기준)를 직접 조사한 대규모 ASI 실측 연구다.</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">피해자 기기 + 공격자 기기</span> 2대를 사용해 실제 스푸핑 시나리오를 재현했다.</span></div>
+            <div class="bullet sub"><div class="bullet-dot"></div><span>① VPN + SOCKS 프록시로 위치 정보 위조</span></div>
+            <div class="bullet sub"><div class="bullet-dot"></div><span>② HTTP User-Agent 문자열 변조로 기기·브라우저 정보 위조</span></div>
+            <div class="bullet sub"><div class="bullet-dot"></div><span>③ 시스템 시계 3시간 조작으로 시간 정보 위조</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span>발견된 ASI를 귀납·연역 코딩으로 분석해 <span class="navy">7가지 유형론(Typology)</span>을 구축했다.</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span>정보 유용성도 <span class="navy">6단계 척도</span>로 평가했다.</span></div>
           </div>
           <div class="slide-num-badge">5 / 10</div>
-        </div>`
-      },
-      {
-        label: "ASI 유형",
-        html: `
-        <div class="slide slide-table" id="slide-5">
+        </section>
+
+        <section class="slide slide-table" data-slide-index="5">
           <div class="content-header"><h2>ASI 유형론 (Typology) — 7가지 분류</h2></div>
           <div class="content-body">
             <table>
@@ -729,22 +717,19 @@
               <tbody>
                 <tr><td><span class="tag">보안 알림</span> Security Notification</td><td>Off-service</td><td>계정 보안 변경 시 이메일/SMS 알림</td><td>Twitch, Shopify</td></tr>
                 <tr><td><span class="tag">인증 알림</span> Verification Notification</td><td>Off-service</td><td>로그인 시 인증 코드 포함 알림</td><td>Zoom, Amazon</td></tr>
-                <tr><td><span class="tag">보안 로그</span> Security Log</td><td>On-service</td><td>로그인·비밀번호 변경 등 보안 이벤트 목록</td><td>Yahoo, Ubuntu</td></tr>
-                <tr><td><span class="tag">활동 로그</span> Activity Log</td><td>On-service</td><td>검색·구매 등 비보안 활동 기록</td><td>Facebook, eBay</td></tr>
+                <tr><td><span class="tag">보안 로그</span> Security Log</td><td>On-service</td><td>로그인, 비밀번호 변경 등 보안 이벤트 목록</td><td>Yahoo, Ubuntu</td></tr>
+                <tr><td><span class="tag">활동 로그</span> Activity Log</td><td>On-service</td><td>검색, 구매 등 비보안 활동 기록</td><td>Facebook, eBay</td></tr>
                 <tr><td><span class="tag">기기 로그</span> Device Log</td><td>On-service</td><td>계정에 접속한 기기 목록</td><td>Forbes, Intuit</td></tr>
-                <tr><td><span class="tag">감사 로그</span> Audit Log</td><td>On-service</td><td>개발자·관리자용 기술적 이벤트 기록</td><td>GitHub, Fastly</td></tr>
+                <tr><td><span class="tag">감사 로그</span> Audit Log</td><td>On-service</td><td>개발자·관리자용 기술 이벤트 기록</td><td>GitHub, Fastly</td></tr>
                 <tr><td><span class="tag">세션 로그</span> Session Log</td><td>On-service</td><td>로그인 세션 단위 접속 기록</td><td>Roblox, Reddit</td></tr>
               </tbody>
             </table>
             <div style="margin-top:2%; font-size:clamp(7px,0.85vw,10px); color:#666;">71개 서비스에서 총 200개 ASI 발견 | 29개 서비스는 ASI 자체 없음</div>
           </div>
           <div class="slide-num-badge">6 / 10</div>
-        </div>`
-      },
-      {
-        label: "결과",
-        html: `
-        <div class="slide slide-content" id="slide-6">
+        </section>
+
+        <section class="slide slide-content" data-slide-index="6">
           <div class="content-header"><h2>실험 결과 &amp; 스푸핑 취약성</h2></div>
           <div class="content-body">
             <div class="stat-row">
@@ -761,18 +746,15 @@
                 <div class="stat-desc">스푸핑 후 날짜·시간만<br>신뢰 가능한 수준으로 추락</div>
               </div>
             </div>
-            <div class="bullet"><div class="bullet-dot"></div><span>위치 정보는 <span class="highlight">70개 서비스 전부</span>에서 VPN으로 위조 가능 (intuit.com 1개 예외)</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>twitter.com — 세션 로그에 활성 세션 3개 표시, 실제 수치와 불일치 (잘못된 정보 제공)</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>ASI 도달까지 평균 <span class="navy">3.34번 클릭</span> 필요, instagram.com은 최대 <span class="navy">7단계</span></span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>기기 고유 식별자(시리얼 번호) 제공 서비스: <span class="navy">apple.com, icloud.com 2개뿐</span></span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span>위치 정보는 <span class="highlight">70개 서비스 전부</span>에서 VPN으로 위조 가능했다. intuit.com 1개만 예외였다.</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span>twitter.com은 세션 로그에 활성 세션 3개를 표시했지만 실제 수치와 불일치했다.</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span>ASI 도달까지 평균 <span class="navy">3.34번 클릭</span>이 필요했고, instagram.com은 최대 <span class="navy">7단계</span>였다.</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span>기기 고유 식별자를 제공한 서비스는 <span class="navy">apple.com, icloud.com 2개뿐</span>이었다.</span></div>
           </div>
           <div class="slide-num-badge">7 / 10</div>
-        </div>`
-      },
-      {
-        label: "개선 원칙",
-        html: `
-        <div class="slide slide-content" id="slide-7">
+        </section>
+
+        <section class="slide slide-content" data-slide-index="7">
           <div class="content-header"><h2>ASI 개선을 위한 6가지 원칙 — 단 하나도 충족한 서비스 없음</h2></div>
           <div class="content-body">
             <div class="principles">
@@ -799,7 +781,7 @@
               <div class="p-card">
                 <div class="p-num">P5</div>
                 <div class="p-title">효과적인 안내</div>
-                <div class="p-desc">침해 징후와 구체적 대응 방법을 ASI 내에서 안내</div>
+                <div class="p-desc">침해 징후와 구체적 대응 방법을 ASI 내부에서 안내</div>
               </div>
               <div class="p-card">
                 <div class="p-num">P6</div>
@@ -809,94 +791,86 @@
             </div>
           </div>
           <div class="slide-num-badge">8 / 10</div>
-        </div>`
-      },
-      {
-        label: "한계점",
-        html: `
-        <div class="slide slide-content" id="slide-8">
+        </section>
+
+        <section class="slide slide-content" data-slide-index="8">
           <div class="content-header"><h2>한계점 &amp; 아쉬운 점</h2></div>
           <div class="content-body">
-            <div class="bullet"><div class="bullet-dot"></div><span><span class="highlight">영어 서비스만 대상</span> — 비영어권 서비스, 금융·의료 등 규제 산업 제외</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span><span class="highlight">모바일 앱 제외</span> — iOS/Android ASI는 측정 범위 밖, 별도 연구 필요</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>30분 탐색 제한 → Gmail의 숨겨진 "Details" 세션 로그처럼 놓친 ASI 존재 가능</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>수동 스텝스루 방식 → 확장성 한계, 자동화 탐색 파이프라인 부재</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>버그 바운티 공시 시 대부분 "범위 밖" 또는 "MFA 있으니 괜찮음"으로 거절 — <span class="navy">기존 취약점 공시 체계와 침해 탐지 연구의 간극</span> 확인</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span><span class="highlight">영어 서비스만 대상</span>이라 비영어권 서비스, 금융·의료 등 규제 산업은 제외되었다.</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span><span class="highlight">모바일 앱 제외</span>. iOS/Android ASI는 별도 연구가 필요하다.</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span>30분 탐색 제한 때문에 Gmail의 숨겨진 "Details" 세션 로그처럼 놓친 ASI가 있을 수 있다.</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span>수동 스텝스루 방식이라 자동화 탐색 파이프라인으로 확장하는 후속 연구가 필요하다.</span></div>
+            <div class="bullet"><div class="bullet-dot"></div><span>버그 바운티 공시 결과도 인상적이었다. 많은 서비스가 "범위 밖" 혹은 "MFA가 있으니 괜찮다"는 식으로 응답했다.</span></div>
           </div>
           <div class="slide-num-badge">9 / 10</div>
-        </div>`
-      },
-      {
-        label: "앞으로",
-        html: `
-        <div class="slide slide-content" id="slide-9">
+        </section>
+
+        <section class="slide slide-content" data-slide-index="9">
           <div class="content-header"><h2>느낀 점 &amp; 앞으로 해볼 것</h2></div>
           <div class="content-body">
             <div class="two-col">
               <div class="col">
                 <div class="col-label">느낀 점</div>
-                <div class="bullet sub"><div class="bullet-dot"></div><span>100개 중 29개는 ASI 없음, 41개는 스푸핑에 뚫림 — 숫자가 주는 경각심이 강렬</span></div>
-                <div class="bullet sub"><div class="bullet-dot"></div><span>버그 바운티 공시 결과가 보여주는 보안 생태계의 인식 격차 인상적</span></div>
-                <div class="bullet sub"><div class="bullet-dot"></div><span>ASI 품질 기준이 없다는 것 자체가 문제의 근원임을 새삼 깨달음</span></div>
+                <div class="bullet sub"><div class="bullet-dot"></div><span>100개 중 29개는 ASI가 없고, 41개는 스푸핑에 뚫린다는 숫자가 가장 강하게 남았다.</span></div>
+                <div class="bullet sub"><div class="bullet-dot"></div><span>보안 알림과 인증만 강화해도 되는 문제가 아니라, 침해 탐지 인터페이스 자체가 연구 대상이라는 점이 인상적이었다.</span></div>
+                <div class="bullet sub"><div class="bullet-dot"></div><span>ASI 품질 기준이 사실상 없다는 것이 이 분야의 핵심 공백처럼 보였다.</span></div>
               </div>
               <div class="col">
-                <div class="col-label">더 읽을 논문</div>
-                <div class="bullet sub"><div class="bullet-dot"></div><span>Daffalla et al. (USENIX Security 2023) — 4개 서비스 심층 선행 연구</span></div>
-                <div class="bullet sub"><div class="bullet-dot"></div><span>Ortega Pérez et al. (USENIX 2025) — 암호화 접근 로그로 스푸핑 해결 접근</span></div>
-                <div class="col-label" style="margin-top:6px;">직접 해보고 싶은 것</div>
-                <div class="bullet sub"><div class="bullet-dot"></div><span>Playwright/Selenium으로 ASI 탐색·스크린샷 수집 자동화 파이프라인 구성</span></div>
-                <div class="bullet sub"><div class="bullet-dot"></div><span>6가지 원칙을 정량 지표로 변환 → 서비스별 <span class="navy">ASI 보안 점수</span> 자동 산출 프레임워크</span></div>
-                <div class="bullet sub"><div class="bullet-dot"></div><span>모바일 앱 ASI 측정으로 연구 확장</span></div>
+                <div class="col-label">앞으로 해볼 것</div>
+                <div class="bullet sub"><div class="bullet-dot"></div><span>Daffalla et al. (USENIX Security 2023), Ortega Pérez et al. (USENIX 2025)까지 연결해서 읽어볼 생각이다.</span></div>
+                <div class="bullet sub"><div class="bullet-dot"></div><span>Playwright나 Selenium으로 ASI 탐색과 스크린샷 수집을 자동화하는 파이프라인을 직접 만들어보고 싶다.</span></div>
+                <div class="bullet sub"><div class="bullet-dot"></div><span>6가지 원칙을 정량 지표로 바꿔 서비스별 ASI 점수를 계산하는 프레임워크도 시도해볼 만하다.</span></div>
               </div>
             </div>
           </div>
           <div class="slide-num-badge">10 / 10</div>
-        </div>`
-      }
-    ];
+        </section>
+      </div>
+    </section>
 
-    const host = document.getElementById("slideHost");
-    const nav = document.getElementById("reviewNav");
+    <section class="review-controls">
+      <button type="button" id="prevSlide" aria-label="이전 슬라이드">&#8592;</button>
+      <span class="review-counter" id="slideCounter">1 / 10</span>
+      <button type="button" id="nextSlide" aria-label="다음 슬라이드">&#8594;</button>
+    </section>
+
+    <noscript>
+      <p class="no-script-note">스크립트를 꺼도 첫 슬라이드는 바로 보입니다. 전체 넘김만 비활성화됩니다.</p>
+    </noscript>
+  </main>
+
+  <script>
+    const slideEls = Array.from(document.querySelectorAll("[data-slide-index]"));
+    const navButtons = Array.from(document.querySelectorAll("[data-slide-target]"));
     const counter = document.getElementById("slideCounter");
     const prev = document.getElementById("prevSlide");
     const next = document.getElementById("nextSlide");
-    const total = slides.length;
+    const total = slideEls.length;
     let current = 0;
 
-    slides.forEach((slide, index) => {
-      host.insertAdjacentHTML("beforeend", slide.html);
-
-      const button = document.createElement("button");
-      button.type = "button";
-      button.textContent = slide.label;
-      button.addEventListener("click", () => goTo(index));
-
-      if (index === 0) {
-        button.classList.add("is-active");
-      }
-
-      nav.appendChild(button);
-    });
-
-    const slideEls = Array.from(host.querySelectorAll(".slide"));
-    const navButtons = Array.from(nav.querySelectorAll("button"));
-
     function goTo(nextIndex) {
+      current = Math.max(0, Math.min(nextIndex, total - 1));
+
       slideEls.forEach((slide, index) => {
-        slide.classList.toggle("is-active", index === nextIndex);
+        slide.classList.toggle("is-active", index === current);
       });
 
       navButtons.forEach((button, index) => {
-        button.classList.toggle("is-active", index === nextIndex);
+        button.classList.toggle("is-active", index === current);
       });
 
-      counter.textContent = `${nextIndex + 1} / ${total}`;
-      current = nextIndex;
+      counter.textContent = `${current + 1} / ${total}`;
     }
 
     function changeSlide(direction) {
       goTo((current + direction + total) % total);
     }
+
+    navButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        goTo(Number(button.dataset.slideTarget));
+      });
+    });
 
     prev.addEventListener("click", () => changeSlide(-1));
     next.addEventListener("click", () => changeSlide(1));
