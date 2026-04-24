@@ -3,6 +3,8 @@ layout: default
 ---
 {% assign category = site.data.categories | where: "key", page.category_key | first %}
 {% assign posts_in_category = site.posts | where: "category_key", page.category_key %}
+{% assign pages_in_category = site.pages | where: "category_key", page.category_key | where: "layout", "post" %}
+{% assign entries_in_category = posts_in_category | concat: pages_in_category | sort: "date" | reverse %}
 <main class="subpage-layout">
   <section class="panel article-hero" data-reveal>
     <div class="kicker-row">
@@ -13,9 +15,9 @@ layout: default
     <p>{{ category.category_description }}</p>
   </section>
 
-  {% if posts_in_category.size > 0 %}
+  {% if entries_in_category.size > 0 %}
     <section class="post-list" data-reveal>
-      {% for post in posts_in_category %}
+      {% for post in entries_in_category %}
         <article class="panel post-row">
           <div>
             <div class="kicker-row">

@@ -19,15 +19,17 @@ nav: posts
   <section class="section-stack" data-reveal>
     {% for category in site.data.categories %}
       {% assign posts_in_category = site.posts | where: "category_key", category.key %}
+      {% assign pages_in_category = site.pages | where: "category_key", category.key | where: "layout", "post" %}
+      {% assign entries_in_category = posts_in_category | concat: pages_in_category | sort: "date" | reverse %}
       <section class="category-section panel">
         <div class="section-heading">
           <p class="eyebrow">Category {{ forloop.index | prepend: '0' | slice: -2, 2 }}</p>
           <h2>{{ category.title }}</h2>
           <p class="section-copy">{{ category.posts_description }}</p>
         </div>
-        {% if posts_in_category.size > 0 %}
+        {% if entries_in_category.size > 0 %}
           <div class="post-list">
-            {% for post in posts_in_category %}
+            {% for post in entries_in_category %}
               <article class="panel post-row compact-row">
                 <div>
                   <div class="kicker-row">
