@@ -316,28 +316,30 @@ const initTabbedWriteups = () => {
 
 initTabbedWriteups();
 
-const initDocumentViewers = () => {
-  const viewers = document.querySelectorAll("[data-document-viewer]");
+const initDocumentDecks = () => {
+  const viewers = document.querySelectorAll("[data-document-deck]");
 
   viewers.forEach((viewer) => {
-    const frame = viewer.querySelector("[data-document-frame]");
+    const slides = Array.from(viewer.querySelectorAll("[data-document-slide]"));
     const prevButton = viewer.querySelector("[data-document-prev]");
     const nextButton = viewer.querySelector("[data-document-next]");
     const currentTarget = viewer.querySelector("[data-document-current]");
     const totalTarget = viewer.querySelector("[data-document-total]");
-    const pdfSrc = viewer.dataset.documentSrc;
     const totalPages = Number.parseInt(viewer.dataset.documentPages || "0", 10);
 
-    if (!frame || !prevButton || !nextButton || !currentTarget || !pdfSrc) {
+    if (slides.length === 0 || !prevButton || !nextButton || !currentTarget) {
       return;
     }
 
     let currentPage = 1;
-    const safeTotalPages = Number.isFinite(totalPages) && totalPages > 0 ? totalPages : 0;
+    const safeTotalPages =
+      Number.isFinite(totalPages) && totalPages > 0 ? totalPages : slides.length;
 
     const render = () => {
-      const pageFragment = `#page=${currentPage}&view=FitH`;
-      frame.src = `${pdfSrc}${pageFragment}`;
+      slides.forEach((slide, index) => {
+        slide.hidden = index !== currentPage - 1;
+      });
+
       currentTarget.textContent = String(currentPage);
 
       if (totalTarget) {
@@ -383,7 +385,7 @@ const initDocumentViewers = () => {
   });
 };
 
-initDocumentViewers();
+initDocumentDecks();
 
 const yearTarget = document.querySelector("[data-year]");
 
