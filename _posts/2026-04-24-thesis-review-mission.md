@@ -10,21 +10,6 @@ date: 2026-04-24
 ---
 <section class="paper-review-section">
   <div class="paper-review-section-heading">
-    <p class="paper-review-section-kicker">Document</p>
-    <h2>문서 정보</h2>
-  </div>
-
-  <div class="document-meta">
-    <p><strong>파일명</strong> thesis-review-mission.pdf</p>
-    <p><strong>형식</strong> PDF 문서</p>
-    <p><strong>카테고리</strong> 논문/컨퍼런스</p>
-    <p><strong>페이지</strong> 15 pages</p>
-    <p><strong>업로드일</strong> 2026.04.24</p>
-  </div>
-</section>
-
-<section class="paper-review-section">
-  <div class="paper-review-section-heading">
     <p class="paper-review-section-kicker">Viewer</p>
     <h2>논문 리뷰 보기</h2>
   </div>
