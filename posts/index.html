@@ -19,13 +19,14 @@ nav: posts
   <section class="section-stack" data-reveal>
     {% for category in site.data.categories %}
       {% assign posts_in_category = site.posts | where: "category_key", category.key %}
+      {% assign standalone_pages_in_category = site.data.standalone_pages | where: "category_key", category.key %}
       <section class="category-section panel">
         <div class="section-heading">
           <p class="eyebrow">Category {{ forloop.index | prepend: '0' | slice: -2, 2 }}</p>
           <h2>{{ category.title }}</h2>
           <p class="section-copy">{{ category.posts_description }}</p>
         </div>
-        {% if posts_in_category.size > 0 %}
+        {% if posts_in_category.size > 0 or standalone_pages_in_category.size > 0 %}
           <div class="post-list">
             {% for post in posts_in_category %}
               <article class="panel post-row compact-row">
@@ -38,6 +39,19 @@ nav: posts
                   <p>{{ post.summary }}</p>
                 </div>
                 <a class="view-link" href="{{ post.url | relative_url }}">view</a>
+              </article>
+            {% endfor %}
+            {% for entry in standalone_pages_in_category %}
+              <article class="panel post-row compact-row">
+                <div>
+                  <div class="kicker-row">
+                    <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
+                    <p class="post-meta">{{ entry.date }}</p>
+                  </div>
+                  <h2><a href="{{ entry.url | relative_url }}">{{ entry.title }}</a></h2>
+                  <p>{{ entry.summary }}</p>
+                </div>
+                <a class="view-link" href="{{ entry.url | relative_url }}">view</a>
               </article>
             {% endfor %}
           </div>

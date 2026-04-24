@@ -3,6 +3,7 @@ layout: default
 ---
 {% assign category = site.data.categories | where: "key", page.category_key | first %}
 {% assign posts_in_category = site.posts | where: "category_key", page.category_key %}
+{% assign standalone_pages_in_category = site.data.standalone_pages | where: "category_key", page.category_key %}
 <main class="subpage-layout">
   <section class="panel article-hero" data-reveal>
     <div class="kicker-row">
@@ -13,7 +14,7 @@ layout: default
     <p>{{ category.category_description }}</p>
   </section>
 
-  {% if posts_in_category.size > 0 %}
+  {% if posts_in_category.size > 0 or standalone_pages_in_category.size > 0 %}
     <section class="post-list" data-reveal>
       {% for post in posts_in_category %}
         <article class="panel post-row">
@@ -26,6 +27,19 @@ layout: default
             <p>{{ post.summary }}</p>
           </div>
           <a class="view-link" href="{{ post.url | relative_url }}">view</a>
+        </article>
+      {% endfor %}
+      {% for entry in standalone_pages_in_category %}
+        <article class="panel post-row">
+          <div>
+            <div class="kicker-row">
+              <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
+              <p class="post-meta">{{ entry.date }}</p>
+            </div>
+            <h2><a href="{{ entry.url | relative_url }}">{{ entry.title }}</a></h2>
+            <p>{{ entry.summary }}</p>
+          </div>
+          <a class="view-link" href="{{ entry.url | relative_url }}">view</a>
         </article>
       {% endfor %}
     </section>
