@@ -4,23 +4,20 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Thesis Review about ASI (Account Security Interface) Design Error</title>
-<meta name="description" content="Inconsistent, Incomplete, and Insecure: A Survey of ASIs at USENIX Security 2026">
+<meta name="description" content="Thesis Review Mission PDF를 슬라이드 형식으로 넘겨보는 HTML 페이지">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Montserrat:wght@700;800;900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #09111f;
-    --line: rgba(148, 163, 184, 0.18);
-    --card: rgba(8, 15, 29, 0.74);
-    --white: #ffffff;
-    --navy: #0f1f75;
-    --navy-strong: #1d4ed8;
-    --navy-light: #dbe5ff;
-    --gray: #f8fafc;
-    --text: #182033;
+    --bg: #08101d;
+    --bg-soft: #101827;
+    --panel: rgba(9, 16, 29, 0.82);
+    --line: rgba(148, 163, 184, 0.16);
+    --text: #e2e8f0;
     --muted: #94a3b8;
-    --red: #c62828;
+    --accent: #2563eb;
+    --accent-soft: #bfdbfe;
   }
 
   * {
@@ -31,16 +28,16 @@
 
   body {
     min-height: 100vh;
-    font-family: "Noto Sans KR", sans-serif;
-    background:
-      radial-gradient(circle at 50% -10%, rgba(59, 130, 246, 0.16), transparent 28%),
-      linear-gradient(180deg, #020617, #081120 40%, #09111f 100%);
-    color: #e2e8f0;
     padding: 24px 16px 56px;
+    color: var(--text);
+    font-family: "IBM Plex Sans KR", sans-serif;
+    background:
+      radial-gradient(circle at 50% -10%, rgba(37, 99, 235, 0.18), transparent 30%),
+      linear-gradient(180deg, #020617, #08101d 44%, #09111f 100%);
   }
 
   .review-page {
-    width: min(1200px, 100%);
+    width: min(1280px, 100%);
     margin: 0 auto;
     display: grid;
     gap: 18px;
@@ -55,11 +52,12 @@
     padding: 16px 18px;
     border: 1px solid var(--line);
     border-radius: 20px;
-    background: var(--card);
+    background: var(--panel);
     box-shadow: 0 24px 60px rgba(2, 6, 23, 0.22);
   }
 
-  .review-meta {
+  .review-meta,
+  .review-actions {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
@@ -67,41 +65,32 @@
   }
 
   .badge,
-  .meta-pill {
-    display: inline-flex;
-    align-items: center;
-    min-height: 34px;
-    padding: 0 12px;
-    border-radius: 999px;
-    border: 1px solid var(--line);
-    background: rgba(255, 255, 255, 0.06);
-    color: #e2e8f0;
-    text-decoration: none;
-    font-size: 0.84rem;
-  }
-
-  .meta-pill {
-    font-family: "IBM Plex Mono", Consolas, monospace;
-    color: #bfdbfe;
-  }
-
-  .review-actions {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-  }
-
+  .meta-pill,
   .review-actions a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-height: 40px;
-    padding: 0 16px;
-    border-radius: 12px;
-    text-decoration: none;
-    font-family: "IBM Plex Mono", Consolas, monospace;
-    font-size: 0.82rem;
+    min-height: 38px;
+    padding: 0 14px;
+    border-radius: 999px;
     border: 1px solid var(--line);
+    text-decoration: none;
+    font-size: 0.84rem;
+  }
+
+  .badge,
+  .meta-pill {
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text);
+  }
+
+  .meta-pill {
+    color: var(--accent-soft);
+    font-family: "IBM Plex Mono", Consolas, monospace;
+  }
+
+  .review-actions a {
+    font-family: "IBM Plex Mono", Consolas, monospace;
     transition: transform 180ms ease, background-color 180ms ease, border-color 180ms ease;
   }
 
@@ -116,15 +105,26 @@
     color: #dbeafe;
   }
 
-  .review-actions a:hover {
+  .review-actions a:hover,
+  .review-nav button:hover,
+  .review-controls button:hover {
     transform: translateY(-1px);
   }
 
   .review-nav {
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
     gap: 10px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .review-nav::-webkit-scrollbar {
+    height: 8px;
+  }
+
+  .review-nav::-webkit-scrollbar-thumb {
+    background: rgba(148, 163, 184, 0.3);
+    border-radius: 999px;
   }
 
   .review-nav button,
@@ -137,21 +137,21 @@
   }
 
   .review-nav button {
+    flex: 0 0 auto;
+    min-width: 58px;
     min-height: 38px;
     padding: 0 14px;
     border-radius: 999px;
-    font-size: 0.79rem;
+    font-size: 0.8rem;
     font-family: "IBM Plex Mono", Consolas, monospace;
-    letter-spacing: 0.02em;
   }
 
-  .review-nav button:hover,
   .review-nav button.is-active,
-  .review-controls button:hover {
-    background: #1d4ed8;
+  .review-controls button:hover,
+  .review-nav button:hover {
+    background: var(--accent);
     border-color: #3b82f6;
     color: #fff;
-    transform: translateY(-1px);
   }
 
   .slide-frame {
@@ -160,29 +160,47 @@
     position: relative;
     overflow: hidden;
     border-radius: 24px;
+    border: 1px solid var(--line);
+    background: #030712;
     box-shadow: 0 36px 100px rgba(2, 6, 23, 0.42);
-    background: #ffffff;
   }
 
-  .slide-host {
+  .slide {
+    display: none;
+    position: absolute;
+    inset: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: #030712;
+  }
+
+  .slide.is-active {
+    display: flex;
+  }
+
+  .slide-image {
     width: 100%;
     height: 100%;
-    position: relative;
+    object-fit: contain;
+    border-radius: 14px;
+    box-shadow: 0 20px 50px rgba(2, 6, 23, 0.34);
+    background: #030712;
   }
 
   .review-controls {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 20px;
-    color: #aab4ca;
+    gap: 18px;
+    color: var(--muted);
     font-size: 0.86rem;
     font-family: "IBM Plex Mono", Consolas, monospace;
   }
 
   .review-controls button {
-    width: 40px;
-    height: 40px;
+    width: 42px;
+    height: 42px;
     border-radius: 999px;
     font-size: 1rem;
     display: inline-flex;
@@ -191,351 +209,14 @@
   }
 
   .review-counter {
-    min-width: 74px;
+    min-width: 82px;
     text-align: center;
   }
 
-  .slide {
-    display: none;
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    inset: 0;
-  }
-
-  .slide.is-active {
-    display: flex;
-  }
-
-  .slide-cover {
-    background: var(--white);
-    flex-direction: column;
-  }
-
-  .cover-top {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 6% 8%;
-    position: relative;
-  }
-
-  .date {
-    position: absolute;
-    top: 7%;
-    right: 8%;
-    font-size: clamp(10px, 1.2vw, 14px);
-    color: #64748b;
-    font-weight: 700;
-  }
-
-  .cover-title,
-  .toc-title,
-  .content-header h2 {
-    font-family: "Montserrat", "Noto Sans KR", sans-serif;
-    letter-spacing: -0.03em;
-  }
-
-  .cover-title {
-    max-width: 82%;
-    font-weight: 900;
-    font-size: clamp(24px, 3.6vw, 46px);
-    line-height: 1.14;
-    color: var(--navy);
-  }
-
-  .cover-sub {
-    margin-top: 12px;
-    font-size: clamp(10px, 1.08vw, 13px);
-    color: #64748b;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-  }
-
-  .cover-bottom {
-    background: linear-gradient(135deg, #0f1f75, #1c358f);
-    padding: 3% 8%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-
-  .author {
-    color: #fff;
-    font-weight: 700;
-    font-size: clamp(10px, 1.25vw, 15px);
-  }
-
-  .conf {
-    color: var(--navy-light);
-    font-size: clamp(9px, 1vw, 12px);
-  }
-
-  .slide-toc {
-    background: #ffffff;
-    flex-direction: row;
-  }
-
-  .toc-left {
-    width: 38%;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 8%;
-  }
-
-  .toc-label {
-    font-family: "IBM Plex Mono", Consolas, monospace;
-    font-size: clamp(8px, 1vw, 11px);
-    color: #94a3b8;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    margin-bottom: 8px;
-  }
-
-  .toc-title {
-    font-weight: 900;
-    font-size: clamp(18px, 2.8vw, 36px);
-    color: var(--navy);
-    line-height: 1.08;
-  }
-
-  .toc-right {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 6% 8%;
-    gap: 3%;
-  }
-
-  .toc-item {
-    display: flex;
-    align-items: center;
-    gap: 14px;
-    font-weight: 700;
-    font-size: clamp(11px, 1.45vw, 18px);
-    color: var(--navy);
-  }
-
-  .toc-bar {
-    width: 4px;
-    height: clamp(16px, 2vw, 24px);
-    background: var(--navy);
-    border-radius: 999px;
-    flex-shrink: 0;
-  }
-
-  .slide-content,
-  .slide-table {
-    background: #ffffff;
-    flex-direction: column;
-  }
-
-  .content-header {
-    padding: 4.5% 8% 3%;
-    border-bottom: 3px solid var(--navy);
-  }
-
-  .content-header h2 {
-    font-weight: 900;
-    font-size: clamp(14px, 2.2vw, 28px);
-    color: var(--navy);
-  }
-
-  .content-body {
-    flex: 1;
-    padding: 3% 8%;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    gap: 2%;
-  }
-
-  .bullet {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    font-size: clamp(9px, 1.2vw, 14px);
-    color: var(--text);
-    line-height: 1.52;
-  }
-
-  .bullet-dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: var(--navy);
-    margin-top: 0.5em;
-    flex-shrink: 0;
-  }
-
-  .bullet.sub {
-    padding-left: 22px;
-    font-size: clamp(8px, 1.05vw, 12px);
-    color: #475569;
-  }
-
-  .bullet.sub .bullet-dot {
-    width: 5px;
-    height: 5px;
-    background: #94a3b8;
-  }
-
-  .bullet.red span,
-  .highlight {
-    color: var(--red);
-    font-weight: 700;
-  }
-
-  .navy {
-    color: var(--navy);
-    font-weight: 700;
-  }
-
-  .two-col {
-    display: flex;
-    gap: 4%;
-    flex: 1;
-  }
-
-  .col {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    gap: 2%;
-  }
-
-  .col-label {
-    font-family: "Montserrat", "Noto Sans KR", sans-serif;
-    font-weight: 700;
-    font-size: clamp(9px, 1.1vw, 13px);
-    color: var(--navy);
-    border-bottom: 2px solid var(--navy);
-    padding-bottom: 4px;
-    margin-bottom: 4px;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: clamp(7px, 0.9vw, 11px);
-  }
-
-  th {
-    background: var(--navy);
-    color: #fff;
-    padding: 5px 8px;
-    text-align: left;
-    font-weight: 700;
-  }
-
-  td {
-    padding: 4px 8px;
-    border-bottom: 1px solid #e2e8f0;
-    color: var(--text);
-    vertical-align: top;
-  }
-
-  tr:nth-child(even) td {
-    background: var(--gray);
-  }
-
-  .tag {
-    display: inline-block;
-    background: var(--navy);
-    color: #fff;
-    font-size: clamp(6px, 0.8vw, 9px);
-    padding: 1px 6px;
-    border-radius: 999px;
-    font-weight: 700;
-  }
-
-  .stat-row {
-    display: flex;
-    gap: 3%;
-    margin: 2% 0;
-  }
-
-  .stat-box {
-    flex: 1;
-    background: linear-gradient(135deg, #0f1f75, #1e40af);
-    border-radius: 10px;
-    padding: 4% 5%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+  .review-note {
+    color: var(--muted);
+    font-size: 0.88rem;
     text-align: center;
-    gap: 4px;
-  }
-
-  .stat-num {
-    font-family: "Montserrat", "Noto Sans KR", sans-serif;
-    font-weight: 900;
-    font-size: clamp(18px, 3vw, 40px);
-    color: #fff;
-  }
-
-  .stat-desc {
-    font-size: clamp(7px, 0.9vw, 11px);
-    color: var(--navy-light);
-    line-height: 1.34;
-  }
-
-  .principles {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 2%;
-    flex: 1;
-  }
-
-  .p-card {
-    background: var(--gray);
-    border-left: 4px solid var(--navy);
-    border-radius: 8px;
-    padding: 4% 5%;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-  }
-
-  .p-num {
-    font-family: "Montserrat", "Noto Sans KR", sans-serif;
-    font-weight: 900;
-    font-size: clamp(10px, 1.4vw, 16px);
-    color: var(--navy);
-  }
-
-  .p-title {
-    font-weight: 700;
-    font-size: clamp(8px, 1vw, 12px);
-    color: var(--navy);
-  }
-
-  .p-desc {
-    font-size: clamp(7px, 0.85vw, 10px);
-    color: #475569;
-    line-height: 1.4;
-  }
-
-  .slide-num-badge {
-    position: absolute;
-    right: 4%;
-    bottom: 3%;
-    font-size: clamp(8px, 0.9vw, 11px);
-    color: #94a3b8;
-    font-family: "IBM Plex Mono", Consolas, monospace;
-    font-weight: 700;
-  }
-
-  .no-script-note {
-    margin-top: 10px;
-    color: #cbd5e1;
-    font-size: 0.84rem;
   }
 
   @media (max-width: 980px) {
@@ -545,60 +226,11 @@
 
     .slide-frame {
       aspect-ratio: auto;
-      min-height: 74vh;
+      min-height: 72vh;
     }
 
-    .slide.is-active {
-      position: relative;
-      min-height: 74vh;
-    }
-
-    .slide-toc,
-    .two-col,
-    .stat-row {
-      flex-direction: column;
-    }
-
-    .toc-left,
-    .toc-right,
-    .content-body,
-    .cover-top,
-    .cover-bottom {
-      padding: 24px;
-    }
-
-    .toc-left {
-      width: 100%;
-      padding-bottom: 0;
-    }
-
-    .cover-title {
-      max-width: 100%;
-    }
-
-    .principles {
-      grid-template-columns: repeat(2, 1fr);
-      gap: 10px;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .review-topbar {
-      padding: 14px;
-    }
-
-    .review-nav {
-      justify-content: flex-start;
-      overflow-x: auto;
-      padding-bottom: 4px;
-    }
-
-    .review-controls {
-      gap: 12px;
-    }
-
-    .principles {
-      grid-template-columns: 1fr;
+    .slide {
+      padding: 10px;
     }
   }
 </style>
@@ -609,7 +241,7 @@
       <div class="review-meta">
         <a class="badge" href="/Hercent.github.io/">Home</a>
         <a class="badge" href="/Hercent.github.io/categories/papers-conferences.html">논문/컨퍼런스</a>
-        <span class="meta-pill">USENIX Security 2026</span>
+        <span class="meta-pill">15 pages</span>
         <span class="meta-pill">2026.04.24</span>
       </div>
       <div class="review-actions">
@@ -619,224 +251,78 @@
     </section>
 
     <section class="review-nav" id="reviewNav">
-      <button type="button" class="is-active" data-slide-target="0">표지</button>
-      <button type="button" data-slide-target="1">목차</button>
-      <button type="button" data-slide-target="2">문제 정의</button>
-      <button type="button" data-slide-target="3">배경</button>
-      <button type="button" data-slide-target="4">방법론</button>
-      <button type="button" data-slide-target="5">ASI 유형</button>
-      <button type="button" data-slide-target="6">결과</button>
-      <button type="button" data-slide-target="7">개선 원칙</button>
-      <button type="button" data-slide-target="8">한계점</button>
-      <button type="button" data-slide-target="9">앞으로</button>
+      <button type="button" class="is-active" data-slide-target="0">01</button>
+      <button type="button" data-slide-target="1">02</button>
+      <button type="button" data-slide-target="2">03</button>
+      <button type="button" data-slide-target="3">04</button>
+      <button type="button" data-slide-target="4">05</button>
+      <button type="button" data-slide-target="5">06</button>
+      <button type="button" data-slide-target="6">07</button>
+      <button type="button" data-slide-target="7">08</button>
+      <button type="button" data-slide-target="8">09</button>
+      <button type="button" data-slide-target="9">10</button>
+      <button type="button" data-slide-target="10">11</button>
+      <button type="button" data-slide-target="11">12</button>
+      <button type="button" data-slide-target="12">13</button>
+      <button type="button" data-slide-target="13">14</button>
+      <button type="button" data-slide-target="14">15</button>
     </section>
 
     <section class="slide-frame">
-      <div class="slide-host" id="slideHost">
-        <section class="slide slide-cover is-active" data-slide-index="0">
-          <div class="cover-top">
-            <span class="date">2026.04.24.</span>
-            <div class="cover-title">웹 서비스의 계정 보안 인터페이스(ASI)는<br>얼마나 믿을 수 있을까?</div>
-            <div class="cover-sub">Paper Review · USENIX Security 2026</div>
-            <div class="slide-num-badge">1 / 10</div>
-          </div>
-          <div class="cover-bottom">
-            <div>
-              <div class="author">고려대 스마트보안학부 김수민</div>
-              <div class="conf">Bhattacharya et al. · Inconsistent, Incomplete, and Insecure: A Survey of ASIs</div>
-            </div>
-          </div>
-        </section>
-
-        <section class="slide slide-toc" data-slide-index="1">
-          <div class="toc-left">
-            <div class="toc-label">Table of Contents</div>
-            <div class="toc-title">목차</div>
-          </div>
-          <div class="toc-right">
-            <div class="toc-item"><div class="toc-bar"></div>논문 선정 이유 &amp; 문제 정의</div>
-            <div class="toc-item"><div class="toc-bar"></div>배경 &amp; 기존 연구의 한계</div>
-            <div class="toc-item"><div class="toc-bar"></div>핵심 아이디어 &amp; 방법론</div>
-            <div class="toc-item"><div class="toc-bar"></div>ASI 유형론(Typology)</div>
-            <div class="toc-item"><div class="toc-bar"></div>실험 결과 &amp; 스푸핑 취약성</div>
-            <div class="toc-item"><div class="toc-bar"></div>6가지 개선 원칙</div>
-            <div class="toc-item"><div class="toc-bar"></div>한계점 &amp; 앞으로 해볼 것</div>
-          </div>
-          <div class="slide-num-badge">2 / 10</div>
-        </section>
-
-        <section class="slide slide-content" data-slide-index="2">
-          <div class="content-header"><h2>논문 선정 이유 &amp; 문제 정의</h2></div>
-          <div class="content-body">
-            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">왜 이 논문인가?</span> 구글·페이스북 계정의 "최근 로그인 기기" 메뉴. 실제로 얼마나 믿을 수 있는가라는 의문에서 출발했다.</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">ASI(Account Security Interface)</span>는 로그인 기록, 연결 기기 목록, 보안 알림 등 무단 접근을 사용자가 스스로 감지하도록 돕는 인터페이스다.</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">핵심 질문:</span> 실제 100개 인기 서비스의 ASI는 제대로 설계·구현되어 있는가?</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>특히 <span class="highlight">대인 폭력(intimate partner abuse)</span> 상황에서 피해자가 계정 침해를 스스로 탐지할 수 있는 유일한 수단이 ASI다.</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>USENIX Security 2026 게재 논문으로, 스푸핑 공격과 직결된 실험까지 포함한다.</span></div>
-          </div>
-          <div class="slide-num-badge">3 / 10</div>
-        </section>
-
-        <section class="slide slide-content" data-slide-index="3">
-          <div class="content-header"><h2>배경 &amp; 기존 연구의 한계</h2></div>
-          <div class="content-body">
-            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">Daffalla et al. (2023)</span>는 Google, Apple, Facebook, WhatsApp 4개 서비스만 분석했다. 범위가 좁아 일반화에 한계가 있었다.</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>기존 연구는 "알림을 어떻게 더 잘 보낼까"에 집중했고, <span class="highlight">ASI 자체의 설계 결함과 보안 취약성</span>은 비어 있었다.</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>패스키나 MFA가 있어도 이미 접근이 허용된 뒤라면 소용없다. 그래서 침해 탐지 도구의 질이 중요하다.</span></div>
-            <div class="bullet red"><div class="bullet-dot"></div><span>스푸핑과 접근 숨기기(access hiding) 공격에 ASI가 얼마나 취약한지 체계적으로 측정한 연구가 없었다.</span></div>
-          </div>
-          <div class="slide-num-badge">4 / 10</div>
-        </section>
-
-        <section class="slide slide-content" data-slide-index="4">
-          <div class="content-header"><h2>핵심 아이디어 &amp; 방법론</h2></div>
-          <div class="content-body">
-            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">100개 인기 서비스</span>(TRANCO 기준)를 직접 조사한 대규모 ASI 실측 연구다.</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span><span class="navy">피해자 기기 + 공격자 기기</span> 2대를 사용해 실제 스푸핑 시나리오를 재현했다.</span></div>
-            <div class="bullet sub"><div class="bullet-dot"></div><span>① VPN + SOCKS 프록시로 위치 정보 위조</span></div>
-            <div class="bullet sub"><div class="bullet-dot"></div><span>② HTTP User-Agent 문자열 변조로 기기·브라우저 정보 위조</span></div>
-            <div class="bullet sub"><div class="bullet-dot"></div><span>③ 시스템 시계 3시간 조작으로 시간 정보 위조</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>발견된 ASI를 귀납·연역 코딩으로 분석해 <span class="navy">7가지 유형론(Typology)</span>을 구축했다.</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>정보 유용성도 <span class="navy">6단계 척도</span>로 평가했다.</span></div>
-          </div>
-          <div class="slide-num-badge">5 / 10</div>
-        </section>
-
-        <section class="slide slide-table" data-slide-index="5">
-          <div class="content-header"><h2>ASI 유형론 (Typology) — 7가지 분류</h2></div>
-          <div class="content-body">
-            <table>
-              <thead>
-                <tr>
-                  <th>유형</th>
-                  <th>채널</th>
-                  <th>설명</th>
-                  <th>예시 서비스</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr><td><span class="tag">보안 알림</span> Security Notification</td><td>Off-service</td><td>계정 보안 변경 시 이메일/SMS 알림</td><td>Twitch, Shopify</td></tr>
-                <tr><td><span class="tag">인증 알림</span> Verification Notification</td><td>Off-service</td><td>로그인 시 인증 코드 포함 알림</td><td>Zoom, Amazon</td></tr>
-                <tr><td><span class="tag">보안 로그</span> Security Log</td><td>On-service</td><td>로그인, 비밀번호 변경 등 보안 이벤트 목록</td><td>Yahoo, Ubuntu</td></tr>
-                <tr><td><span class="tag">활동 로그</span> Activity Log</td><td>On-service</td><td>검색, 구매 등 비보안 활동 기록</td><td>Facebook, eBay</td></tr>
-                <tr><td><span class="tag">기기 로그</span> Device Log</td><td>On-service</td><td>계정에 접속한 기기 목록</td><td>Forbes, Intuit</td></tr>
-                <tr><td><span class="tag">감사 로그</span> Audit Log</td><td>On-service</td><td>개발자·관리자용 기술 이벤트 기록</td><td>GitHub, Fastly</td></tr>
-                <tr><td><span class="tag">세션 로그</span> Session Log</td><td>On-service</td><td>로그인 세션 단위 접속 기록</td><td>Roblox, Reddit</td></tr>
-              </tbody>
-            </table>
-            <div style="margin-top:2%; font-size:clamp(7px,0.85vw,10px); color:#666;">71개 서비스에서 총 200개 ASI 발견 | 29개 서비스는 ASI 자체 없음</div>
-          </div>
-          <div class="slide-num-badge">6 / 10</div>
-        </section>
-
-        <section class="slide slide-content" data-slide-index="6">
-          <div class="content-header"><h2>실험 결과 &amp; 스푸핑 취약성</h2></div>
-          <div class="content-body">
-            <div class="stat-row">
-              <div class="stat-box">
-                <div class="stat-num">29 / 100</div>
-                <div class="stat-desc">ASI 자체가 없는 서비스<br>(tiktok.com, booking.com 등)</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-num">41 / 61</div>
-                <div class="stat-desc">기기 정보 ASI를 제공하지만<br>스푸핑에 뚫린 서비스 (67.2%)</div>
-              </div>
-              <div class="stat-box">
-                <div class="stat-num">45개</div>
-                <div class="stat-desc">스푸핑 후 날짜·시간만<br>신뢰 가능한 수준으로 추락</div>
-              </div>
-            </div>
-            <div class="bullet"><div class="bullet-dot"></div><span>위치 정보는 <span class="highlight">70개 서비스 전부</span>에서 VPN으로 위조 가능했다. intuit.com 1개만 예외였다.</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>twitter.com은 세션 로그에 활성 세션 3개를 표시했지만 실제 수치와 불일치했다.</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>ASI 도달까지 평균 <span class="navy">3.34번 클릭</span>이 필요했고, instagram.com은 최대 <span class="navy">7단계</span>였다.</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>기기 고유 식별자를 제공한 서비스는 <span class="navy">apple.com, icloud.com 2개뿐</span>이었다.</span></div>
-          </div>
-          <div class="slide-num-badge">7 / 10</div>
-        </section>
-
-        <section class="slide slide-content" data-slide-index="7">
-          <div class="content-header"><h2>ASI 개선을 위한 6가지 원칙 — 단 하나도 충족한 서비스 없음</h2></div>
-          <div class="content-body">
-            <div class="principles">
-              <div class="p-card">
-                <div class="p-num">P1</div>
-                <div class="p-title">완전한 로깅</div>
-                <div class="p-desc">활성·비활성·로그아웃 세션 모두 빠짐없이 기록</div>
-              </div>
-              <div class="p-card">
-                <div class="p-num">P2</div>
-                <div class="p-title">높은 유용성</div>
-                <div class="p-desc">기기 구분이 가능한 정보 제공, 스푸핑 가능 여부 명시</div>
-              </div>
-              <div class="p-card">
-                <div class="p-num">P3</div>
-                <div class="p-title">명확한 용어</div>
-                <div class="p-desc">세션·기기 혼용 금지, 일관된 보안 용어 사용</div>
-              </div>
-              <div class="p-card">
-                <div class="p-num">P4</div>
-                <div class="p-title">ASI 동작 가시성</div>
-                <div class="p-desc">왜 이 항목이 기록됐는지, 어느 서비스에서 온 것인지 설명</div>
-              </div>
-              <div class="p-card">
-                <div class="p-num">P5</div>
-                <div class="p-title">효과적인 안내</div>
-                <div class="p-desc">침해 징후와 구체적 대응 방법을 ASI 내부에서 안내</div>
-              </div>
-              <div class="p-card">
-                <div class="p-num">P6</div>
-                <div class="p-title">쉬운 접근</div>
-                <div class="p-desc">일관된 경로, 온·오프 서비스 ASI 병행 제공</div>
-              </div>
-            </div>
-          </div>
-          <div class="slide-num-badge">8 / 10</div>
-        </section>
-
-        <section class="slide slide-content" data-slide-index="8">
-          <div class="content-header"><h2>한계점 &amp; 아쉬운 점</h2></div>
-          <div class="content-body">
-            <div class="bullet"><div class="bullet-dot"></div><span><span class="highlight">영어 서비스만 대상</span>이라 비영어권 서비스, 금융·의료 등 규제 산업은 제외되었다.</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span><span class="highlight">모바일 앱 제외</span>. iOS/Android ASI는 별도 연구가 필요하다.</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>30분 탐색 제한 때문에 Gmail의 숨겨진 "Details" 세션 로그처럼 놓친 ASI가 있을 수 있다.</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>수동 스텝스루 방식이라 자동화 탐색 파이프라인으로 확장하는 후속 연구가 필요하다.</span></div>
-            <div class="bullet"><div class="bullet-dot"></div><span>버그 바운티 공시 결과도 인상적이었다. 많은 서비스가 "범위 밖" 혹은 "MFA가 있으니 괜찮다"는 식으로 응답했다.</span></div>
-          </div>
-          <div class="slide-num-badge">9 / 10</div>
-        </section>
-
-        <section class="slide slide-content" data-slide-index="9">
-          <div class="content-header"><h2>느낀 점 &amp; 앞으로 해볼 것</h2></div>
-          <div class="content-body">
-            <div class="two-col">
-              <div class="col">
-                <div class="col-label">느낀 점</div>
-                <div class="bullet sub"><div class="bullet-dot"></div><span>100개 중 29개는 ASI가 없고, 41개는 스푸핑에 뚫린다는 숫자가 가장 강하게 남았다.</span></div>
-                <div class="bullet sub"><div class="bullet-dot"></div><span>보안 알림과 인증만 강화해도 되는 문제가 아니라, 침해 탐지 인터페이스 자체가 연구 대상이라는 점이 인상적이었다.</span></div>
-                <div class="bullet sub"><div class="bullet-dot"></div><span>ASI 품질 기준이 사실상 없다는 것이 이 분야의 핵심 공백처럼 보였다.</span></div>
-              </div>
-              <div class="col">
-                <div class="col-label">앞으로 해볼 것</div>
-                <div class="bullet sub"><div class="bullet-dot"></div><span>Daffalla et al. (USENIX Security 2023), Ortega Pérez et al. (USENIX 2025)까지 연결해서 읽어볼 생각이다.</span></div>
-                <div class="bullet sub"><div class="bullet-dot"></div><span>Playwright나 Selenium으로 ASI 탐색과 스크린샷 수집을 자동화하는 파이프라인을 직접 만들어보고 싶다.</span></div>
-                <div class="bullet sub"><div class="bullet-dot"></div><span>6가지 원칙을 정량 지표로 바꿔 서비스별 ASI 점수를 계산하는 프레임워크도 시도해볼 만하다.</span></div>
-              </div>
-            </div>
-          </div>
-          <div class="slide-num-badge">10 / 10</div>
-        </section>
-      </div>
+      <section class="slide is-active" data-slide-index="0">
+        <img class="slide-image" src="/Hercent.github.io/assets/images/thesis-review-mission-pages/page-01.webp" alt="Thesis Review Mission page 1" fetchpriority="high">
+      </section>
+      <section class="slide" data-slide-index="1">
+        <img class="slide-image" src="/Hercent.github.io/assets/images/thesis-review-mission-pages/page-02.webp" alt="Thesis Review Mission page 2" loading="lazy">
+      </section>
+      <section class="slide" data-slide-index="2">
+        <img class="slide-image" src="/Hercent.github.io/assets/images/thesis-review-mission-pages/page-03.webp" alt="Thesis Review Mission page 3" loading="lazy">
+      </section>
+      <section class="slide" data-slide-index="3">
+        <img class="slide-image" src="/Hercent.github.io/assets/images/thesis-review-mission-pages/page-04.webp" alt="Thesis Review Mission page 4" loading="lazy">
+      </section>
+      <section class="slide" data-slide-index="4">
+        <img class="slide-image" src="/Hercent.github.io/assets/images/thesis-review-mission-pages/page-05.webp" alt="Thesis Review Mission page 5" loading="lazy">
+      </section>
+      <section class="slide" data-slide-index="5">
+        <img class="slide-image" src="/Hercent.github.io/assets/images/thesis-review-mission-pages/page-06.webp" alt="Thesis Review Mission page 6" loading="lazy">
+      </section>
+      <section class="slide" data-slide-index="6">
+        <img class="slide-image" src="/Hercent.github.io/assets/images/thesis-review-mission-pages/page-07.webp" alt="Thesis Review Mission page 7" loading="lazy">
+      </section>
+      <section class="slide" data-slide-index="7">
+        <img class="slide-image" src="/Hercent.github.io/assets/images/thesis-review-mission-pages/page-08.webp" alt="Thesis Review Mission page 8" loading="lazy">
+      </section>
+      <section class="slide" data-slide-index="8">
+        <img class="slide-image" src="/Hercent.github.io/assets/images/thesis-review-mission-pages/page-09.webp" alt="Thesis Review Mission page 9" loading="lazy">
+      </section>
+      <section class="slide" data-slide-index="9">
+        <img class="slide-image" src="/Hercent.github.io/assets/images/thesis-review-mission-pages/page-10.webp" alt="Thesis Review Mission page 10" loading="lazy">
+      </section>
+      <section class="slide" data-slide-index="10">
+        <img class="slide-image" src="/Hercent.github.io/assets/images/thesis-review-mission-pages/page-11.webp" alt="Thesis Review Mission page 11" loading="lazy">
+      </section>
+      <section class="slide" data-slide-index="11">
+        <img class="slide-image" src="/Hercent.github.io/assets/images/thesis-review-mission-pages/page-12.webp" alt="Thesis Review Mission page 12" loading="lazy">
+      </section>
+      <section class="slide" data-slide-index="12">
+        <img class="slide-image" src="/Hercent.github.io/assets/images/thesis-review-mission-pages/page-13.webp" alt="Thesis Review Mission page 13" loading="lazy">
+      </section>
+      <section class="slide" data-slide-index="13">
+        <img class="slide-image" src="/Hercent.github.io/assets/images/thesis-review-mission-pages/page-14.webp" alt="Thesis Review Mission page 14" loading="lazy">
+      </section>
+      <section class="slide" data-slide-index="14">
+        <img class="slide-image" src="/Hercent.github.io/assets/images/thesis-review-mission-pages/page-15.webp" alt="Thesis Review Mission page 15" loading="lazy">
+      </section>
     </section>
 
     <section class="review-controls">
-      <button type="button" id="prevSlide" aria-label="이전 슬라이드">&#8592;</button>
-      <span class="review-counter" id="slideCounter">1 / 10</span>
-      <button type="button" id="nextSlide" aria-label="다음 슬라이드">&#8594;</button>
+      <button type="button" id="prevSlide" aria-label="이전 페이지">&#8592;</button>
+      <span class="review-counter" id="slideCounter">1 / 15</span>
+      <button type="button" id="nextSlide" aria-label="다음 페이지">&#8594;</button>
     </section>
 
-    <noscript>
-      <p class="no-script-note">스크립트를 꺼도 첫 슬라이드는 바로 보입니다. 전체 넘김만 비활성화됩니다.</p>
-    </noscript>
+    <p class="review-note">원본 PDF 페이지를 그대로 이미지로 변환해 넘기는 방식입니다.</p>
   </main>
 
   <script>
