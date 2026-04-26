@@ -2,7 +2,7 @@
 layout: post
 title: 인코그니토 AINHA 팀 AI CHARACTER CHAT SIMULATOR 프로젝트
 page_description: 2026.01 ~ 2026.04
-category_key: blog-docs
+category_key: projects
 summary: 2026.01 ~ 2026.04
 lead: 2026.01 ~ 2026.04
 featured: false
