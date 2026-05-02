@@ -1,4 +1,4 @@
-# Ethernaut Level 0
+# Ethernaut Level 0 - Hello ethernaut
 
 ## 문제 설명
 
