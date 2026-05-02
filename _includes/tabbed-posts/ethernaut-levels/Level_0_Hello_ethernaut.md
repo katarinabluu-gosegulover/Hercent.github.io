@@ -1,4 +1,4 @@
-## Ethernaut Level 0
+# Ethernaut Level 0
 
 ## 문제 설명
 
@@ -93,7 +93,9 @@ contract
 콘솔에 `contract`를 입력하면 사용 가능한 모든 메서드가 출력됩니다.
 
 ```javascript
-Object { constructor: r(), methods: {…}, abi: (11) […], address: "0x6FB97c3f243b08959c5eeb7Ca6B40882F325C38b", transactionHash: undefined, contract: {…}, authenticate: send(), getCleared: call(), info: call(), info1: call(), … }
+Object { constructor: r(), methods: {…}, abi: (11) […],
+address: "0x6FB97c3f243b08959c5eeb7Ca6B40882F325C38b", transactionHash: undefined,
+contract: {…}, authenticate: send(), getCleared: call(), info: call(), info1: call(), … }
 ​
 abi: Array(11) [ {…}, {…}, {…}, … ]
 ​
