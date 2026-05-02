@@ -1,4 +1,4 @@
-## Ethernaut Level 2
+# Ethernaut Level 2 - Fallout
 
 ## 문제 설명
 
