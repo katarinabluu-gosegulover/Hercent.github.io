@@ -288,12 +288,32 @@ const initTabbedWriteups = () => {
   groups.forEach((group) => {
     const triggers = Array.from(group.querySelectorAll("[data-tab-trigger]"));
     const panels = Array.from(group.querySelectorAll("[data-tab-panel]"));
+    const syncHash = group.hasAttribute("data-tab-sync-hash");
 
     if (triggers.length === 0 || panels.length === 0) {
       return;
     }
 
+    const triggerIds = new Set(triggers.map((trigger) => trigger.dataset.tabTrigger));
+    const setHash = (targetId) => {
+      if (!syncHash) {
+        return;
+      }
+
+      const nextHash = `#${targetId}`;
+
+      if (window.location.hash === nextHash) {
+        return;
+      }
+
+      window.history.replaceState(null, "", nextHash);
+    };
+
     const activateTab = (targetId) => {
+      if (!triggerIds.has(targetId)) {
+        return;
+      }
+
       triggers.forEach((trigger) => {
         const isActive = trigger.dataset.tabTrigger === targetId;
         trigger.classList.toggle("is-active", isActive);
@@ -304,13 +324,40 @@ const initTabbedWriteups = () => {
       panels.forEach((panel) => {
         panel.hidden = panel.dataset.tabPanel !== targetId;
       });
+
+      setHash(targetId);
     };
 
-    triggers.forEach((trigger) => {
+    triggers.forEach((trigger, index) => {
       trigger.addEventListener("click", () => activateTab(trigger.dataset.tabTrigger));
+      trigger.addEventListener("keydown", (event) => {
+        let nextIndex = index;
+
+        if (event.key === "ArrowRight" || event.key === "ArrowDown") {
+          nextIndex = (index + 1) % triggers.length;
+        } else if (event.key === "ArrowLeft" || event.key === "ArrowUp") {
+          nextIndex = (index - 1 + triggers.length) % triggers.length;
+        } else if (event.key === "Home") {
+          nextIndex = 0;
+        } else if (event.key === "End") {
+          nextIndex = triggers.length - 1;
+        } else {
+          return;
+        }
+
+        event.preventDefault();
+        const nextTrigger = triggers[nextIndex];
+        nextTrigger.focus();
+        activateTab(nextTrigger.dataset.tabTrigger);
+      });
     });
 
-    activateTab(triggers[0].dataset.tabTrigger);
+    const requestedTabId = syncHash ? window.location.hash.slice(1) : "";
+    const initialTabId = triggerIds.has(requestedTabId)
+      ? requestedTabId
+      : triggers[0].dataset.tabTrigger;
+
+    activateTab(initialTabId);
   });
 };
 
