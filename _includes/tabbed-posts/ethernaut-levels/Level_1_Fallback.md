@@ -1,4 +1,4 @@
-## Ethernaut Level 1
+# Ethernaut Level 1 - Fallback
 
 ---
 
