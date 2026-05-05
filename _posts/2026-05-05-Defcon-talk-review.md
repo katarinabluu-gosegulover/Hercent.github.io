@@ -15,10 +15,14 @@ feature_order: 0
 
 ## 1. 선택한 강연 및 이유
 
+---
+
 ### 1-1 선택한 강연
 
 DEF CON 33 - Kill List: Hacking an Assassination Site on the Dark Web - Carl Miller, Chris Monteiro
-[Link](https://www.youtube.com/watch?v=cYZmRp90hss&t=2s)
+  -> [Link](https://www.youtube.com/watch?v=cYZmRp90hss&t=2s)
+
+---
 
 ### 1-2 선택한 이유
 
