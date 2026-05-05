@@ -1,7 +1,7 @@
 ---
 layout: post
 title: DEF CON 33 강연 리뷰
-page_description: Theme: Kill List: Hacking an Assassination Site on the Dark Web
+page_description: "Theme: Kill List: Hacking an Assassination Site on the Dark Web"
 category_key: papers-conferences
 summary: 다크웹의 암살 사이트 해킹
 lead: 다크웹의 암살 사이트 해킹
