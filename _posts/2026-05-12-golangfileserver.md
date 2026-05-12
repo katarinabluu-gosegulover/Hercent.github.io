@@ -13,9 +13,13 @@ feature_order: 0
 
 서버 주소 https://golang-file-server.onrender.com
 
+---
+
 ## 목표
 
 Go로 웹 백엔드 구조를 익히기 위해 파일 업로드와 외부 공유 링크 생성 기능을 직접 구현했다. 웹 브라우저뿐 아니라 `curl` 명령어로도 업로드와 다운로드가 가능하도록 만들고, 업로드 과정에서 MIME 타입, 확장자, 경로 검증을 적용했다.
+
+---
 
 ## 구현 구조
 
@@ -40,6 +44,8 @@ s.mux.HandleFunc("DELETE /share/{id}", s.handleDelete)
 
 여기서 핵심은 `POST /upload` 하나가 웹 브라우저 업로드와 `curl` 업로드를 모두 처리한다는 점이다.
 
+---
+
 ## 파일 업로드 흐름
 
 1. 사용자가 웹 UI 또는 `curl -F "file=@sample.png"`로 `/upload`에 multipart 요청을 보낸다.
@@ -61,6 +67,8 @@ if err := validateDetectedType(ext, contentType); err != nil {
 ```
 
 파일명은 저장 경로로 직접 쓰지 않았다. 원본 파일명에는 `../secret.txt` 같은 경로 조작 문자열이 들어갈 수 있기 때문이다. 실제 저장 파일명은 서버가 만든 랜덤 ID만 사용한다.
+
+---
 
 ## 웹 업로드와 curl 업로드를 같이 지원한 방식
 
@@ -121,6 +129,8 @@ writeJSON(w, http.StatusCreated, response)
 
 브라우저 form 업로드는 업로드 후 다시 메인 화면으로 보내는 것이 자연스럽기 때문에 redirect를 사용했다. 반면 `curl`이나 API 클라이언트는 결과를 프로그램이 읽기 쉬워야 하므로 JSON을 반환했다.
 
+---
+
 ## 공유 링크와 다운로드
 
 업로드 성공 시 서버는 `/share/{id}` 형식의 공유 링크를 만든다. 다운로드 요청에서는 ID가 32자리 hex 문자열인지 먼저 확인한다. 그 다음 메타데이터에서 실제 저장 파일명을 찾고, 최종 경로가 업로드 디렉터리 안에 있는지 다시 검증한다.
@@ -133,6 +143,8 @@ w.Header().Set("X-Content-Type-Options", "nosniff")
 ```
 
 브라우저가 파일을 페이지 안에서 실행하거나 MIME 타입을 임의로 추측하지 않도록 하기 위해서다.
+
+---
 
 ## curl 테스트
 
@@ -150,6 +162,8 @@ curl.exe -L "http://localhost:8080/share/{id}" -o downloaded.png
 
 웹 UI는 같은 `/upload` 엔드포인트를 사용한다. 즉, 브라우저와 CLI가 같은 백엔드 로직을 공유한다.
 
+---
+
 ## 테스트한 보안 케이스
 
 - 정상 PNG 업로드 후 공유 링크로 다운로드
@@ -164,6 +178,8 @@ curl.exe -L "http://localhost:8080/share/{id}" -o downloaded.png
 ```powershell
 go test ./...
 ```
+
+---
 
 ## 배운 점
 
