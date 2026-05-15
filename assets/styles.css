@@ -121,6 +121,11 @@ img {
   opacity: 0.94;
 }
 
+.space-planets-front {
+  z-index: 3;
+  opacity: 0.86;
+}
+
 .space-planet-shell {
   position: absolute;
   will-change: transform;
@@ -2482,6 +2487,10 @@ h3 {
 
 :root[data-theme="dark"] .space-planets {
   opacity: 1;
+}
+
+:root[data-theme="dark"] .space-planets-front {
+  opacity: 0.9;
 }
 
 :root[data-theme="dark"] .space-planet-shell {

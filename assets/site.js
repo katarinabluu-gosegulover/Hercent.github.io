@@ -287,46 +287,58 @@ const initPlanetBackdrop = () => {
     return;
   }
 
+  const planets = [
+    {
+      name: "saturn",
+      file: "images/space/saturn.webp",
+      foreground: false
+    },
+    {
+      name: "jupiter",
+      file: "images/space/jupiter.webp",
+      foreground: false
+    },
+    {
+      name: "neptune",
+      file: "images/space/neptune.webp",
+      foreground: false
+    },
+    {
+      name: "uranus",
+      file: "images/space/uranus.webp",
+      foreground: false
+    },
+    {
+      name: "mars",
+      file: "images/space/mars.webp",
+      foreground: true
+    },
+    {
+      name: "earth",
+      file: "images/space/earth.webp",
+      foreground: true
+    },
+    {
+      name: "venus",
+      file: "images/space/venus.webp",
+      foreground: true
+    },
+    {
+      name: "mercury",
+      file: "images/space/mercury.webp",
+      foreground: true
+    }
+  ];
+
   const layer = document.createElement("div");
   layer.className = "space-planets";
   layer.setAttribute("aria-hidden", "true");
 
-  const planets = [
-    {
-      name: "saturn",
-      file: "images/space/saturn.webp"
-    },
-    {
-      name: "jupiter",
-      file: "images/space/jupiter.webp"
-    },
-    {
-      name: "neptune",
-      file: "images/space/neptune.webp"
-    },
-    {
-      name: "uranus",
-      file: "images/space/uranus.webp"
-    },
-    {
-      name: "mars",
-      file: "images/space/mars.webp"
-    },
-    {
-      name: "earth",
-      file: "images/space/earth.webp"
-    },
-    {
-      name: "venus",
-      file: "images/space/venus.webp"
-    },
-    {
-      name: "mercury",
-      file: "images/space/mercury.webp"
-    }
-  ];
+  const frontLayer = document.createElement("div");
+  frontLayer.className = "space-planets space-planets-front";
+  frontLayer.setAttribute("aria-hidden", "true");
 
-  planets.forEach(({ name, file }) => {
+  planets.forEach(({ name, file, foreground }) => {
     const shell = document.createElement("div");
     shell.className = `space-planet-shell space-planet-${name}`;
 
@@ -338,7 +350,7 @@ const initPlanetBackdrop = () => {
     image.loading = "eager";
 
     shell.append(image);
-    layer.append(shell);
+    (foreground ? frontLayer : layer).append(shell);
   });
 
   const anchor = document.querySelector(".space-blackhole-shell") || document.querySelector(".space-backdrop");
@@ -348,6 +360,8 @@ const initPlanetBackdrop = () => {
   } else {
     body.prepend(layer);
   }
+
+  body.prepend(frontLayer);
 };
 
 initPlanetBackdrop();
