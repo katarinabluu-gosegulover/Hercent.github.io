@@ -118,7 +118,7 @@ img {
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.68;
+  opacity: 0.82;
 }
 
 .space-planet-shell {
@@ -145,9 +145,9 @@ img {
 }
 
 .space-planet-saturn {
-  top: 16%;
-  right: -52px;
-  width: 286px;
+  top: 18%;
+  right: -12px;
+  width: 248px;
   animation: planet-float-slow 24s ease-in-out infinite;
 }
 
@@ -159,7 +159,7 @@ img {
 .space-planet-jupiter {
   left: 4%;
   top: 53%;
-  width: 138px;
+  width: 142px;
   animation: planet-float-medium 18s ease-in-out infinite;
 }
 
@@ -171,7 +171,7 @@ img {
 .space-planet-neptune {
   right: 7%;
   bottom: 10%;
-  width: 96px;
+  width: 102px;
   animation: planet-float-fast 16s ease-in-out infinite;
 }
 
@@ -181,9 +181,9 @@ img {
 }
 
 .space-planet-uranus {
-  right: 18%;
-  top: 58%;
-  width: 82px;
+  right: 19%;
+  top: 52%;
+  width: 114px;
   animation: planet-float-medium 20s ease-in-out infinite;
 }
 
@@ -193,9 +193,9 @@ img {
 }
 
 .space-planet-mars {
-  left: 14%;
-  top: 26%;
-  width: 74px;
+  left: 10%;
+  top: 30%;
+  width: 110px;
   animation: planet-float-fast 19s ease-in-out infinite;
 }
 
@@ -2443,7 +2443,7 @@ h3 {
 }
 
 :root[data-theme="dark"] .space-planets {
-  opacity: 0.82;
+  opacity: 0.92;
 }
 
 :root[data-theme="dark"] .space-planet-shell {
@@ -2709,9 +2709,9 @@ h3 {
 
 @media (max-width: 900px) {
   .space-planet-saturn {
-    top: 18%;
-    right: -74px;
-    width: 224px;
+    top: 20%;
+    right: -26px;
+    width: 196px;
   }
 
   .space-planet-jupiter {
@@ -2727,15 +2727,15 @@ h3 {
   }
 
   .space-planet-uranus {
-    right: 16%;
-    top: 60%;
-    width: 66px;
+    right: 17%;
+    top: 56%;
+    width: 86px;
   }
 
   .space-planet-mars {
-    left: 10%;
-    top: 30%;
-    width: 58px;
+    left: 5%;
+    top: 34%;
+    width: 78px;
   }
 
   .hero::before {
@@ -2805,13 +2805,13 @@ h3 {
 
 @media (max-width: 640px) {
   .space-planets {
-    opacity: 0.42;
+    opacity: 0.56;
   }
 
   .space-planet-saturn {
-    top: 20%;
-    right: -84px;
-    width: 184px;
+    top: 22%;
+    right: -34px;
+    width: 156px;
   }
 
   .space-planet-jupiter {
@@ -2828,14 +2828,14 @@ h3 {
 
   .space-planet-uranus {
     right: 14%;
-    top: 64%;
-    width: 50px;
+    top: 60%;
+    width: 62px;
   }
 
   .space-planet-mars {
-    left: 4%;
-    top: 34%;
-    width: 44px;
+    left: 2%;
+    top: 38%;
+    width: 58px;
   }
 
   .site-header::after {
