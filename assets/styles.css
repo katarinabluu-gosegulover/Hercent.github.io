@@ -201,8 +201,8 @@ img {
 
 .space-planet-mars {
   right: 16px;
-  top: 28%;
-  width: 72px;
+  top: 42%;
+  width: 82px;
   animation: planet-float-fast 19s ease-in-out infinite;
 }
 
@@ -225,8 +225,8 @@ img {
 
 .space-planet-venus {
   left: 18px;
-  top: 24%;
-  width: 74px;
+  top: 42%;
+  width: 86px;
   animation: planet-float-fast 18s ease-in-out infinite;
 }
 
@@ -237,7 +237,7 @@ img {
 
 .space-planet-mercury {
   left: 24px;
-  top: 62%;
+  top: 76%;
   width: 34px;
   animation: planet-float-fast 17s ease-in-out infinite;
 }
@@ -2793,7 +2793,7 @@ h3 {
 
   .space-planet-mars {
     right: 12px;
-    top: 30%;
+    top: 44%;
     width: 58px;
   }
 
@@ -2805,13 +2805,13 @@ h3 {
 
   .space-planet-venus {
     left: 12px;
-    top: 24%;
+    top: 44%;
     width: 58px;
   }
 
   .space-planet-mercury {
     left: 18px;
-    top: 66%;
+    top: 78%;
     width: 28px;
   }
 
@@ -2911,7 +2911,7 @@ h3 {
 
   .space-planet-mars {
     right: 8px;
-    top: 32%;
+    top: 46%;
     width: 46px;
   }
 
@@ -2923,13 +2923,13 @@ h3 {
 
   .space-planet-venus {
     left: 8px;
-    top: 26%;
+    top: 46%;
     width: 46px;
   }
 
   .space-planet-mercury {
     left: 12px;
-    top: 68%;
+    top: 80%;
     width: 22px;
   }
 
