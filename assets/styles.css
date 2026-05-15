@@ -180,6 +180,30 @@ img {
   background: radial-gradient(circle at center, rgba(125, 211, 252, 0.22) 0%, rgba(59, 130, 246, 0.12) 40%, transparent 72%);
 }
 
+.space-planet-uranus {
+  right: 18%;
+  top: 58%;
+  width: 82px;
+  animation: planet-float-medium 20s ease-in-out infinite;
+}
+
+.space-planet-uranus::before {
+  inset: 12%;
+  background: radial-gradient(circle at center, rgba(191, 219, 254, 0.24) 0%, rgba(34, 211, 238, 0.14) 38%, transparent 72%);
+}
+
+.space-planet-mars {
+  left: 14%;
+  top: 26%;
+  width: 74px;
+  animation: planet-float-fast 19s ease-in-out infinite;
+}
+
+.space-planet-mars::before {
+  inset: 12%;
+  background: radial-gradient(circle at center, rgba(251, 146, 60, 0.20) 0%, rgba(239, 68, 68, 0.12) 40%, transparent 72%);
+}
+
 .space-blackhole-shell {
   position: fixed;
   top: -44px;
@@ -2442,6 +2466,14 @@ h3 {
   background: radial-gradient(circle at center, rgba(125, 211, 252, 0.28) 0%, rgba(59, 130, 246, 0.16) 40%, transparent 72%);
 }
 
+:root[data-theme="dark"] .space-planet-uranus::before {
+  background: radial-gradient(circle at center, rgba(191, 219, 254, 0.28) 0%, rgba(34, 211, 238, 0.18) 38%, transparent 72%);
+}
+
+:root[data-theme="dark"] .space-planet-mars::before {
+  background: radial-gradient(circle at center, rgba(251, 146, 60, 0.24) 0%, rgba(239, 68, 68, 0.16) 40%, transparent 72%);
+}
+
 :root[data-theme="dark"] .space-singularity {
   opacity: 1;
 }
@@ -2694,6 +2726,18 @@ h3 {
     width: 76px;
   }
 
+  .space-planet-uranus {
+    right: 16%;
+    top: 60%;
+    width: 66px;
+  }
+
+  .space-planet-mars {
+    left: 10%;
+    top: 30%;
+    width: 58px;
+  }
+
   .hero::before {
     left: -118px;
     top: -164px;
@@ -2780,6 +2824,18 @@ h3 {
     right: 4%;
     bottom: 8%;
     width: 56px;
+  }
+
+  .space-planet-uranus {
+    right: 14%;
+    top: 64%;
+    width: 50px;
+  }
+
+  .space-planet-mars {
+    left: 4%;
+    top: 34%;
+    width: 44px;
   }
 
   .site-header::after {
