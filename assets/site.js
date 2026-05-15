@@ -282,6 +282,41 @@ const initBlackHoleBackdrop = () => {
 
 initBlackHoleBackdrop();
 
+const initPlanetBackdrop = () => {
+  if (!body || body.classList.contains("error-page") || document.querySelector(".space-planets")) {
+    return;
+  }
+
+  const layer = document.createElement("div");
+  layer.className = "space-planets";
+  layer.setAttribute("aria-hidden", "true");
+
+  const ringedPlanet = document.createElement("div");
+  ringedPlanet.className = "space-planet space-planet-ringed";
+
+  const ring = document.createElement("span");
+  ring.className = "space-planet-ring";
+  ringedPlanet.append(ring);
+
+  const azurePlanet = document.createElement("div");
+  azurePlanet.className = "space-planet space-planet-azure";
+
+  const moonPlanet = document.createElement("div");
+  moonPlanet.className = "space-planet space-planet-moon";
+
+  layer.append(ringedPlanet, azurePlanet, moonPlanet);
+
+  const anchor = document.querySelector(".space-blackhole-shell") || document.querySelector(".space-backdrop");
+
+  if (anchor) {
+    anchor.insertAdjacentElement("afterend", layer);
+  } else {
+    body.prepend(layer);
+  }
+};
+
+initPlanetBackdrop();
+
 const initTabbedWriteups = () => {
   const groups = document.querySelectorAll("[data-tab-group]");
 
