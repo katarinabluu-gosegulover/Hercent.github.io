@@ -4,14 +4,18 @@ layout: default
 {% assign category = site.data.categories | where: "key", page.category_key | first %}
 <main class="subpage-layout">
   <article class="panel article-page">
-    <div class="kicker-row">
-      <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
-      <p class="post-meta">{{ page.date | date: "%Y.%m.%d" }}</p>
+    <header class="article-header">
+      <div class="kicker-row">
+        <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
+        <p class="post-meta">{{ page.date | date: "%Y.%m.%d" }}</p>
+      </div>
+      <h1>{{ page.title }}</h1>
+      {% if page.lead %}
+        <p class="lead">{{ page.lead }}</p>
+      {% endif %}
+    </header>
+    <div class="article-body">
+      {{ content }}
     </div>
-    <h1>{{ page.title }}</h1>
-    {% if page.lead %}
-      <p class="lead">{{ page.lead }}</p>
-    {% endif %}
-    {{ content }}
   </article>
 </main>
