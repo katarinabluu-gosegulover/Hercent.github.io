@@ -1182,20 +1182,20 @@ h3 {
 .article-body > pre::before {
   content: "code";
   position: absolute;
-  top: 7px;
-  right: 10px;
+  top: 6px;
+  right: 8px;
   z-index: 2;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-height: 20px;
-  padding: 0 7px;
+  min-height: 18px;
+  padding: 0 6px;
   border: 1px solid rgba(148, 163, 184, 0.16);
   border-radius: 999px;
   background: rgba(2, 6, 23, 0.44);
   color: var(--code-label);
   font-family: "IBM Plex Mono", Consolas, monospace;
-  font-size: 0.62rem;
+  font-size: 0.58rem;
   font-weight: 600;
   letter-spacing: 0.08em;
   text-transform: uppercase;
@@ -1254,7 +1254,7 @@ h3 {
 .article-body figure.highlight pre,
 .article-body > pre {
   margin: 0;
-  padding: 30px 14px 14px;
+  padding: 24px 14px 14px;
   overflow-x: auto;
   border: 0;
   border-radius: 0;
