@@ -1177,69 +1177,6 @@ h3 {
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.article-body .highlighter-rouge::before,
-.article-body figure.highlight::before,
-.article-body > pre::before {
-  content: "snippet";
-  display: block;
-  padding: 0.78rem 1rem 0.72rem;
-  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
-    rgba(2, 6, 23, 0.18);
-  color: var(--code-label);
-  font-family: "IBM Plex Mono", Consolas, monospace;
-  font-size: 0.76rem;
-  font-weight: 600;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-}
-
-.article-body .language-bash.highlighter-rouge::before,
-.article-body .language-shell.highlighter-rouge::before,
-.article-body .language-sh.highlighter-rouge::before {
-  content: "bash";
-}
-
-.article-body .language-powershell.highlighter-rouge::before {
-  content: "powershell";
-}
-
-.article-body .language-go.highlighter-rouge::before {
-  content: "go";
-}
-
-.article-body .language-html.highlighter-rouge::before {
-  content: "html";
-}
-
-.article-body .language-javascript.highlighter-rouge::before,
-.article-body .language-js.highlighter-rouge::before {
-  content: "javascript";
-}
-
-.article-body .language-json.highlighter-rouge::before {
-  content: "json";
-}
-
-.article-body .language-yaml.highlighter-rouge::before,
-.article-body .language-yml.highlighter-rouge::before {
-  content: "yaml";
-}
-
-.article-body .language-python.highlighter-rouge::before,
-.article-body .language-py.highlighter-rouge::before {
-  content: "python";
-}
-
-.article-body .language-text.highlighter-rouge::before {
-  content: "text";
-}
-
-.article-body .language-diff.highlighter-rouge::before {
-  content: "diff";
-}
-
 .article-body .highlighter-rouge .highlight,
 .article-body figure.highlight .highlight,
 .article-body .highlighter-rouge pre,
