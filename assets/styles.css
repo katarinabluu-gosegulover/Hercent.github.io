@@ -118,7 +118,7 @@ img {
   overflow: hidden;
   pointer-events: none;
   z-index: 0;
-  opacity: 0.82;
+  opacity: 0.94;
 }
 
 .space-planet-shell {
@@ -145,9 +145,9 @@ img {
 }
 
 .space-planet-saturn {
-  top: 34%;
-  left: -58px;
-  width: 188px;
+  top: 38%;
+  left: -12px;
+  width: 240px;
   animation: planet-float-slow 24s ease-in-out infinite;
 }
 
@@ -157,9 +157,9 @@ img {
 }
 
 .space-planet-jupiter {
-  left: -28px;
-  top: 66%;
-  width: 126px;
+  left: -8px;
+  top: 72%;
+  width: 144px;
   animation: planet-float-medium 18s ease-in-out infinite;
 }
 
@@ -169,9 +169,9 @@ img {
 }
 
 .space-planet-neptune {
-  right: 7%;
-  bottom: 10%;
-  width: 102px;
+  right: 6%;
+  bottom: 8%;
+  width: 114px;
   animation: planet-float-fast 16s ease-in-out infinite;
 }
 
@@ -181,9 +181,9 @@ img {
 }
 
 .space-planet-uranus {
-  left: 5%;
-  top: 82%;
-  width: 92px;
+  right: 15%;
+  top: 74%;
+  width: 108px;
   animation: planet-float-medium 20s ease-in-out infinite;
 }
 
@@ -193,9 +193,9 @@ img {
 }
 
 .space-planet-mars {
-  right: 3%;
-  top: 34%;
-  width: 86px;
+  right: 4%;
+  top: 26%;
+  width: 96px;
   animation: planet-float-fast 19s ease-in-out infinite;
 }
 
@@ -2443,7 +2443,7 @@ h3 {
 }
 
 :root[data-theme="dark"] .space-planets {
-  opacity: 0.92;
+  opacity: 1;
 }
 
 :root[data-theme="dark"] .space-planet-shell {
@@ -2709,33 +2709,33 @@ h3 {
 
 @media (max-width: 900px) {
   .space-planet-saturn {
-    top: 34%;
-    left: -52px;
-    width: 152px;
+    top: 38%;
+    left: -18px;
+    width: 184px;
   }
 
   .space-planet-jupiter {
-    left: -24px;
-    top: 70%;
-    width: 92px;
+    left: -6px;
+    top: 76%;
+    width: 108px;
   }
 
   .space-planet-neptune {
     right: 6%;
     bottom: 9%;
-    width: 76px;
+    width: 88px;
   }
 
   .space-planet-uranus {
-    left: 4%;
-    top: 84%;
-    width: 66px;
+    right: 12%;
+    top: 78%;
+    width: 82px;
   }
 
   .space-planet-mars {
     right: 2%;
-    top: 38%;
-    width: 66px;
+    top: 30%;
+    width: 74px;
   }
 
   .hero::before {
@@ -2805,37 +2805,37 @@ h3 {
 
 @media (max-width: 640px) {
   .space-planets {
-    opacity: 0.56;
+    opacity: 0.72;
   }
 
   .space-planet-saturn {
-    top: 30%;
-    left: -48px;
-    width: 118px;
+    top: 34%;
+    left: -14px;
+    width: 132px;
   }
 
   .space-planet-jupiter {
-    left: -20px;
-    top: 74%;
-    width: 68px;
+    left: -2px;
+    top: 80%;
+    width: 74px;
   }
 
   .space-planet-neptune {
     right: 4%;
     bottom: 8%;
-    width: 56px;
+    width: 64px;
   }
 
   .space-planet-uranus {
-    left: 2%;
-    top: 86%;
-    width: 48px;
+    right: 10%;
+    top: 82%;
+    width: 58px;
   }
 
   .space-planet-mars {
     right: 0;
-    top: 40%;
-    width: 50px;
+    top: 32%;
+    width: 56px;
   }
 
   .site-header::after {
