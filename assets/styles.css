@@ -1028,7 +1028,7 @@ h3 {
 .article-hero,
 .article-page {
   position: relative;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .article-hero::before,
@@ -1081,7 +1081,7 @@ h3 {
   margin-bottom: 0;
 }
 
-.article-body > :where(p, ul, ol, h2, h3, h4, h5, blockquote, hr) {
+.article-body > :where(p, ul, ol, h2, h3, h4, h5, blockquote) {
   max-width: var(--article-width);
 }
 
@@ -1152,10 +1152,20 @@ h3 {
   line-height: 1.84;
 }
 
+.article-body > hr {
+  width: 100%;
+  max-width: none;
+  height: 1px;
+  margin: 2.2rem 0;
+  border: 0;
+  background: linear-gradient(90deg, transparent 0%, rgba(148, 163, 184, 0.20) 14%, rgba(148, 163, 184, 0.34) 50%, rgba(148, 163, 184, 0.20) 86%, transparent 100%);
+}
+
 .article-body .highlighter-rouge,
 .article-body figure.highlight,
 .article-body > pre {
   position: relative;
+  width: 100%;
   max-width: var(--article-width-wide);
   margin: 1.6rem 0;
   overflow: hidden;
@@ -1249,6 +1259,7 @@ h3 {
 .article-body > pre code {
   display: block;
   padding: 0;
+  min-width: max-content;
   background: transparent;
   color: var(--code-copy);
   font-size: 0.95rem;
@@ -1257,7 +1268,8 @@ h3 {
 }
 
 .article-body .rouge-table {
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   margin: 0;
   border-collapse: collapse;
 }
