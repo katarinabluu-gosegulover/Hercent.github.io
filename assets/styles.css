@@ -427,6 +427,7 @@ img {
 }
 
 .site-header {
+  position: relative;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -435,7 +436,19 @@ img {
   border-bottom: 1px solid rgba(15, 23, 42, 0.08);
 }
 
+.site-header::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent 0%, rgba(96, 165, 250, 0.24) 20%, rgba(192, 132, 252, 0.34) 50%, rgba(96, 165, 250, 0.24) 80%, transparent 100%);
+  pointer-events: none;
+}
+
 .brand {
+  position: relative;
   display: inline-flex;
   align-items: center;
   gap: 12px;
@@ -463,6 +476,20 @@ img {
   object-fit: cover;
   border: 1px solid var(--border);
   box-shadow: 0 6px 18px rgba(15, 23, 42, 0.12);
+}
+
+.brand::after {
+  content: "";
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  transform: translateY(-50%);
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.16) 0%, rgba(168, 85, 247, 0.08) 42%, transparent 72%);
+  filter: blur(10px);
+  pointer-events: none;
 }
 
 .site-nav {
@@ -572,6 +599,23 @@ img {
   align-items: end;
 }
 
+.hero::before {
+  content: "";
+  position: absolute;
+  left: -92px;
+  top: -148px;
+  width: 420px;
+  height: 420px;
+  border-radius: 50%;
+  border: 1px solid rgba(148, 163, 184, 0.10);
+  box-shadow:
+    0 0 0 34px rgba(96, 165, 250, 0.05),
+    0 0 0 94px rgba(192, 132, 252, 0.04);
+  opacity: 0.92;
+  transform: rotate(-12deg);
+  animation: orbit-drift 18s ease-in-out infinite;
+}
+
 .hero::after {
   content: "";
   position: absolute;
@@ -582,6 +626,31 @@ img {
   border-radius: 24px;
   background: linear-gradient(135deg, rgba(37, 99, 235, 0.07), rgba(15, 118, 110, 0.05));
   transform: rotate(16deg);
+}
+
+.hero-copy,
+.hero-sidebar {
+  position: relative;
+  z-index: 1;
+}
+
+.hero-copy::after {
+  content: "";
+  position: absolute;
+  right: clamp(-8px, 2vw, 28px);
+  top: 6px;
+  width: 132px;
+  height: 132px;
+  background:
+    radial-gradient(circle at 18% 20%, rgba(255, 255, 255, 0.92) 0 2px, transparent 3px),
+    radial-gradient(circle at 66% 16%, rgba(191, 219, 254, 0.88) 0 1.8px, transparent 3px),
+    radial-gradient(circle at 82% 48%, rgba(196, 132, 252, 0.86) 0 2px, transparent 3px),
+    radial-gradient(circle at 44% 62%, rgba(255, 255, 255, 0.72) 0 1.6px, transparent 3px),
+    radial-gradient(circle at 72% 80%, rgba(125, 211, 252, 0.76) 0 1.6px, transparent 3px);
+  opacity: 0.74;
+  filter: drop-shadow(0 0 10px rgba(147, 197, 253, 0.28));
+  animation: star-twinkle 7s ease-in-out infinite;
+  pointer-events: none;
 }
 
 .eyebrow {
@@ -673,8 +742,39 @@ h3 {
 }
 
 .mini-card-accent {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
   background: linear-gradient(160deg, rgba(15, 23, 42, 0.96), rgba(29, 78, 216, 0.92));
   color: white;
+}
+
+.mini-card-accent::before {
+  content: "";
+  position: absolute;
+  top: -26px;
+  right: -12px;
+  width: 98px;
+  height: 98px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 36% 34%, rgba(255, 255, 255, 0.74) 0 10%, rgba(191, 219, 254, 0.48) 20%, rgba(96, 165, 250, 0.20) 42%, transparent 68%);
+  box-shadow:
+    0 0 18px rgba(191, 219, 254, 0.28),
+    0 0 44px rgba(168, 85, 247, 0.22);
+  opacity: 0.92;
+}
+
+.mini-card-accent::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 84% 20%, rgba(255, 255, 255, 0.36) 0 1.2px, transparent 2.6px),
+    radial-gradient(circle at 70% 30%, rgba(255, 255, 255, 0.24) 0 1px, transparent 2.4px),
+    radial-gradient(circle at 76% 56%, rgba(191, 219, 254, 0.22) 0 1.2px, transparent 2.6px);
+  opacity: 0.82;
+  pointer-events: none;
 }
 
 .mini-card-label {
@@ -732,10 +832,21 @@ h3 {
 }
 
 .section-heading-compact {
+  position: relative;
   display: grid;
   gap: 6px;
   margin-bottom: 18px;
   padding: 0 4px;
+}
+
+.section-heading-compact::after {
+  content: "";
+  display: block;
+  width: 112px;
+  height: 1px;
+  margin-top: 8px;
+  background: linear-gradient(90deg, rgba(96, 165, 250, 0.52), rgba(192, 132, 252, 0.34) 62%, transparent 100%);
+  box-shadow: 0 0 16px rgba(96, 165, 250, 0.12);
 }
 
 .section-label {
@@ -803,9 +914,46 @@ h3 {
 
 .post-card,
 .category-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
+  overflow: hidden;
+}
+
+.post-card::before,
+.category-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 88% 12%, rgba(255, 255, 255, 0.34) 0 1.2px, transparent 2.6px),
+    radial-gradient(circle at 82% 18%, rgba(191, 219, 254, 0.30) 0 1px, transparent 2.4px),
+    radial-gradient(circle at 90% 26%, rgba(196, 132, 252, 0.22) 0 1px, transparent 2.4px);
+  opacity: 0.88;
+  pointer-events: none;
+}
+
+.post-card::after,
+.category-card::after {
+  content: "";
+  position: absolute;
+  top: -44px;
+  right: -34px;
+  width: 132px;
+  height: 132px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.12) 0%, rgba(168, 85, 247, 0.08) 34%, transparent 68%);
+  opacity: 0.9;
+  pointer-events: none;
+}
+
+.post-card:hover,
+.category-card:hover {
+  border-color: rgba(96, 165, 250, 0.24);
+  box-shadow:
+    0 22px 38px rgba(2, 6, 23, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.06);
 }
 
 .card-body {
@@ -965,6 +1113,30 @@ h3 {
   transform: translateY(-2px);
   border-color: rgba(37, 99, 235, 0.22);
   box-shadow: 0 18px 34px rgba(37, 99, 235, 0.10);
+}
+
+@keyframes orbit-drift {
+  0%,
+  100% {
+    transform: rotate(-12deg) translate3d(0, 0, 0);
+  }
+
+  50% {
+    transform: rotate(-6deg) translate3d(10px, 8px, 0);
+  }
+}
+
+@keyframes star-twinkle {
+  0%,
+  100% {
+    opacity: 0.54;
+    transform: scale(0.98);
+  }
+
+  50% {
+    opacity: 0.88;
+    transform: scale(1.04);
+  }
 }
 
 .account-chip[aria-disabled="true"] {
@@ -2120,6 +2292,10 @@ h3 {
   border-bottom-color: rgba(148, 163, 184, 0.12);
 }
 
+:root[data-theme="dark"] .site-header::after {
+  background: linear-gradient(90deg, transparent 0%, rgba(96, 165, 250, 0.28) 20%, rgba(192, 132, 252, 0.42) 50%, rgba(96, 165, 250, 0.28) 80%, transparent 100%);
+}
+
 :root[data-theme="dark"] body {
   background:
     radial-gradient(circle at 50% -14%, rgba(124, 58, 237, 0.18), transparent 24%),
@@ -2184,6 +2360,22 @@ h3 {
 
 :root[data-theme="dark"] .panel {
   background: linear-gradient(180deg, rgba(7, 15, 28, 0.95), rgba(9, 18, 33, 0.90));
+}
+
+:root[data-theme="dark"] .hero::before {
+  border-color: rgba(148, 163, 184, 0.14);
+  box-shadow:
+    0 0 0 34px rgba(96, 165, 250, 0.06),
+    0 0 0 94px rgba(192, 132, 252, 0.05);
+}
+
+:root[data-theme="dark"] .hero-copy::after {
+  opacity: 0.82;
+}
+
+:root[data-theme="dark"] .section-heading-compact::after {
+  background: linear-gradient(90deg, rgba(96, 165, 250, 0.64), rgba(192, 132, 252, 0.42) 62%, transparent 100%);
+  box-shadow: 0 0 18px rgba(96, 165, 250, 0.16);
 }
 
 :root[data-theme="dark"] .article-page {
@@ -2293,6 +2485,11 @@ h3 {
   background: rgba(8, 15, 29, 0.72);
 }
 
+:root[data-theme="dark"] .post-card::after,
+:root[data-theme="dark"] .category-card::after {
+  background: radial-gradient(circle, rgba(96, 165, 250, 0.16) 0%, rgba(168, 85, 247, 0.10) 34%, transparent 68%);
+}
+
 :root[data-theme="dark"] .account-chip {
   background: linear-gradient(180deg, rgba(30, 41, 59, 0.96), rgba(15, 23, 42, 0.96));
   box-shadow: 0 16px 30px rgba(2, 6, 23, 0.28);
@@ -2353,6 +2550,21 @@ h3 {
 }
 
 @media (max-width: 900px) {
+  .hero::before {
+    left: -118px;
+    top: -164px;
+    width: 320px;
+    height: 320px;
+  }
+
+  .hero-copy::after {
+    right: 8px;
+    top: 12px;
+    width: 104px;
+    height: 104px;
+    opacity: 0.52;
+  }
+
   .hero,
   .card-grid,
   .focus-list,
@@ -2404,6 +2616,27 @@ h3 {
 }
 
 @media (max-width: 640px) {
+  .site-header::after {
+    left: 8px;
+    right: 8px;
+  }
+
+  .hero::before {
+    left: -128px;
+    top: -172px;
+    width: 260px;
+    height: 260px;
+    opacity: 0.78;
+  }
+
+  .hero-copy::after {
+    width: 82px;
+    height: 82px;
+    right: 0;
+    top: 10px;
+    opacity: 0.38;
+  }
+
   .page-shell {
     width: min(100% - 20px, 1160px);
   }
