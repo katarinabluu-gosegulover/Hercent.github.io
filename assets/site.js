@@ -291,20 +291,35 @@ const initPlanetBackdrop = () => {
   layer.className = "space-planets";
   layer.setAttribute("aria-hidden", "true");
 
-  const ringedPlanet = document.createElement("div");
-  ringedPlanet.className = "space-planet space-planet-ringed";
+  const planets = [
+    {
+      name: "saturn",
+      file: "images/space/saturn.webp"
+    },
+    {
+      name: "jupiter",
+      file: "images/space/jupiter.webp"
+    },
+    {
+      name: "neptune",
+      file: "images/space/neptune.webp"
+    }
+  ];
 
-  const ring = document.createElement("span");
-  ring.className = "space-planet-ring";
-  ringedPlanet.append(ring);
+  planets.forEach(({ name, file }) => {
+    const shell = document.createElement("div");
+    shell.className = `space-planet-shell space-planet-${name}`;
 
-  const azurePlanet = document.createElement("div");
-  azurePlanet.className = "space-planet space-planet-azure";
+    const image = document.createElement("img");
+    image.className = "space-planet-art";
+    image.src = new URL(file, assetBaseUrl).href;
+    image.alt = "";
+    image.decoding = "async";
+    image.loading = "eager";
 
-  const moonPlanet = document.createElement("div");
-  moonPlanet.className = "space-planet space-planet-moon";
-
-  layer.append(ringedPlanet, azurePlanet, moonPlanet);
+    shell.append(image);
+    layer.append(shell);
+  });
 
   const anchor = document.querySelector(".space-blackhole-shell") || document.querySelector(".space-backdrop");
 
