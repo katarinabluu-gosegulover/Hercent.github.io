@@ -200,9 +200,9 @@ img {
 }
 
 .space-planet-mars {
-  right: -14px;
-  top: 30%;
-  width: 88px;
+  right: 16px;
+  top: 28%;
+  width: 72px;
   animation: planet-float-fast 19s ease-in-out infinite;
 }
 
@@ -224,9 +224,9 @@ img {
 }
 
 .space-planet-venus {
-  left: -12px;
-  top: 20%;
-  width: 88px;
+  left: 18px;
+  top: 24%;
+  width: 74px;
   animation: planet-float-fast 18s ease-in-out infinite;
 }
 
@@ -236,9 +236,9 @@ img {
 }
 
 .space-planet-mercury {
-  left: -4px;
-  bottom: 10%;
-  width: 42px;
+  left: 24px;
+  top: 62%;
+  width: 34px;
   animation: planet-float-fast 17s ease-in-out infinite;
 }
 
@@ -2792,9 +2792,9 @@ h3 {
   }
 
   .space-planet-mars {
-    right: -12px;
-    top: 32%;
-    width: 70px;
+    right: 12px;
+    top: 30%;
+    width: 58px;
   }
 
   .space-planet-earth {
@@ -2804,15 +2804,15 @@ h3 {
   }
 
   .space-planet-venus {
-    left: -10px;
-    top: 22%;
-    width: 70px;
+    left: 12px;
+    top: 24%;
+    width: 58px;
   }
 
   .space-planet-mercury {
-    left: -4px;
-    bottom: 12%;
-    width: 34px;
+    left: 18px;
+    top: 66%;
+    width: 28px;
   }
 
   .hero::before {
@@ -2910,9 +2910,9 @@ h3 {
   }
 
   .space-planet-mars {
-    right: -8px;
-    top: 34%;
-    width: 54px;
+    right: 8px;
+    top: 32%;
+    width: 46px;
   }
 
   .space-planet-earth {
@@ -2922,15 +2922,15 @@ h3 {
   }
 
   .space-planet-venus {
-    left: -8px;
-    top: 24%;
-    width: 54px;
+    left: 8px;
+    top: 26%;
+    width: 46px;
   }
 
   .space-planet-mercury {
-    left: -2px;
-    bottom: 12%;
-    width: 28px;
+    left: 12px;
+    top: 68%;
+    width: 22px;
   }
 
   .site-header::after {
