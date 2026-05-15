@@ -914,6 +914,8 @@ h3 {
 .category-card .view-link {
   margin-top: auto;
   align-self: flex-start;
+  position: relative;
+  top: 4px;
   transform: translateY(0);
 }
 
