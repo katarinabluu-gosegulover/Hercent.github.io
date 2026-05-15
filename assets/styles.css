@@ -145,9 +145,9 @@ img {
 }
 
 .space-planet-saturn {
-  top: 18%;
-  right: -12px;
-  width: 248px;
+  top: 34%;
+  left: -58px;
+  width: 188px;
   animation: planet-float-slow 24s ease-in-out infinite;
 }
 
@@ -157,9 +157,9 @@ img {
 }
 
 .space-planet-jupiter {
-  left: 4%;
-  top: 53%;
-  width: 142px;
+  left: -28px;
+  top: 66%;
+  width: 126px;
   animation: planet-float-medium 18s ease-in-out infinite;
 }
 
@@ -181,9 +181,9 @@ img {
 }
 
 .space-planet-uranus {
-  right: 19%;
-  top: 52%;
-  width: 114px;
+  left: 5%;
+  top: 82%;
+  width: 92px;
   animation: planet-float-medium 20s ease-in-out infinite;
 }
 
@@ -193,9 +193,9 @@ img {
 }
 
 .space-planet-mars {
-  left: 10%;
-  top: 30%;
-  width: 110px;
+  right: 3%;
+  top: 34%;
+  width: 86px;
   animation: planet-float-fast 19s ease-in-out infinite;
 }
 
@@ -2709,15 +2709,15 @@ h3 {
 
 @media (max-width: 900px) {
   .space-planet-saturn {
-    top: 20%;
-    right: -26px;
-    width: 196px;
+    top: 34%;
+    left: -52px;
+    width: 152px;
   }
 
   .space-planet-jupiter {
-    left: 3%;
-    top: 58%;
-    width: 112px;
+    left: -24px;
+    top: 70%;
+    width: 92px;
   }
 
   .space-planet-neptune {
@@ -2727,15 +2727,15 @@ h3 {
   }
 
   .space-planet-uranus {
-    right: 17%;
-    top: 56%;
-    width: 86px;
+    left: 4%;
+    top: 84%;
+    width: 66px;
   }
 
   .space-planet-mars {
-    left: 5%;
-    top: 34%;
-    width: 78px;
+    right: 2%;
+    top: 38%;
+    width: 66px;
   }
 
   .hero::before {
@@ -2809,15 +2809,15 @@ h3 {
   }
 
   .space-planet-saturn {
-    top: 22%;
-    right: -34px;
-    width: 156px;
+    top: 30%;
+    left: -48px;
+    width: 118px;
   }
 
   .space-planet-jupiter {
-    left: -12px;
-    top: 62%;
-    width: 86px;
+    left: -20px;
+    top: 74%;
+    width: 68px;
   }
 
   .space-planet-neptune {
@@ -2827,15 +2827,15 @@ h3 {
   }
 
   .space-planet-uranus {
-    right: 14%;
-    top: 60%;
-    width: 62px;
+    left: 2%;
+    top: 86%;
+    width: 48px;
   }
 
   .space-planet-mars {
-    left: 2%;
-    top: 38%;
-    width: 58px;
+    right: 0;
+    top: 40%;
+    width: 50px;
   }
 
   .site-header::after {
