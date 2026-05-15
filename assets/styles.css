@@ -206,6 +206,42 @@ img {
   background: radial-gradient(circle at center, rgba(251, 146, 60, 0.20) 0%, rgba(239, 68, 68, 0.12) 40%, transparent 72%);
 }
 
+.space-planet-earth {
+  right: -18px;
+  top: 56%;
+  width: 88px;
+  animation: planet-float-medium 22s ease-in-out infinite;
+}
+
+.space-planet-earth::before {
+  inset: 10%;
+  background: radial-gradient(circle at center, rgba(191, 219, 254, 0.22) 0%, rgba(56, 189, 248, 0.12) 42%, transparent 72%);
+}
+
+.space-planet-venus {
+  left: -18px;
+  top: 18%;
+  width: 72px;
+  animation: planet-float-fast 18s ease-in-out infinite;
+}
+
+.space-planet-venus::before {
+  inset: 10%;
+  background: radial-gradient(circle at center, rgba(255, 244, 214, 0.22) 0%, rgba(251, 191, 36, 0.12) 40%, transparent 72%);
+}
+
+.space-planet-mercury {
+  left: -8px;
+  bottom: 12%;
+  width: 56px;
+  animation: planet-float-fast 17s ease-in-out infinite;
+}
+
+.space-planet-mercury::before {
+  inset: 10%;
+  background: radial-gradient(circle at center, rgba(226, 232, 240, 0.20) 0%, rgba(148, 163, 184, 0.12) 40%, transparent 72%);
+}
+
 .space-blackhole-shell {
   position: fixed;
   top: -44px;
@@ -2476,6 +2512,18 @@ h3 {
   background: radial-gradient(circle at center, rgba(251, 146, 60, 0.24) 0%, rgba(239, 68, 68, 0.16) 40%, transparent 72%);
 }
 
+:root[data-theme="dark"] .space-planet-earth::before {
+  background: radial-gradient(circle at center, rgba(191, 219, 254, 0.28) 0%, rgba(56, 189, 248, 0.16) 42%, transparent 72%);
+}
+
+:root[data-theme="dark"] .space-planet-venus::before {
+  background: radial-gradient(circle at center, rgba(255, 244, 214, 0.26) 0%, rgba(251, 191, 36, 0.16) 40%, transparent 72%);
+}
+
+:root[data-theme="dark"] .space-planet-mercury::before {
+  background: radial-gradient(circle at center, rgba(226, 232, 240, 0.24) 0%, rgba(148, 163, 184, 0.16) 40%, transparent 72%);
+}
+
 :root[data-theme="dark"] .space-singularity {
   opacity: 1;
 }
@@ -2740,6 +2788,24 @@ h3 {
     width: 74px;
   }
 
+  .space-planet-earth {
+    right: -12px;
+    top: 58%;
+    width: 72px;
+  }
+
+  .space-planet-venus {
+    left: -12px;
+    top: 20%;
+    width: 58px;
+  }
+
+  .space-planet-mercury {
+    left: -6px;
+    bottom: 14%;
+    width: 44px;
+  }
+
   .hero::before {
     left: -118px;
     top: -164px;
@@ -2838,6 +2904,24 @@ h3 {
     right: 0;
     top: 32%;
     width: 56px;
+  }
+
+  .space-planet-earth {
+    right: -10px;
+    top: 60%;
+    width: 54px;
+  }
+
+  .space-planet-venus {
+    left: -10px;
+    top: 22%;
+    width: 46px;
+  }
+
+  .space-planet-mercury {
+    left: -4px;
+    bottom: 14%;
+    width: 34px;
   }
 
   .site-header::after {

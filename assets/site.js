@@ -311,6 +311,18 @@ const initPlanetBackdrop = () => {
     {
       name: "mars",
       file: "images/space/mars.webp"
+    },
+    {
+      name: "earth",
+      file: "images/space/earth.webp"
+    },
+    {
+      name: "venus",
+      file: "images/space/venus.webp"
+    },
+    {
+      name: "mercury",
+      file: "images/space/mercury.webp"
     }
   ];
 
