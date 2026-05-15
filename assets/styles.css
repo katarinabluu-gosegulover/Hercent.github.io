@@ -1059,6 +1059,11 @@ h3 {
   --article-width: 760px;
   --article-width-wide: 920px;
   --article-copy: var(--muted);
+  --code-surface: #07101d;
+  --code-surface-alt: #0c1526;
+  --code-border: rgba(96, 165, 250, 0.18);
+  --code-label: #93c5fd;
+  --code-copy: #dbeafe;
   padding: clamp(28px, 4vw, 40px);
 }
 
@@ -1147,14 +1152,140 @@ h3 {
   line-height: 1.84;
 }
 
-.article-body > :where(pre, .highlight) {
-  margin: 1.4rem 0;
-  padding: 18px 20px;
-  max-width: 100%;
+.article-body .highlighter-rouge,
+.article-body figure.highlight,
+.article-body > pre {
+  position: relative;
+  max-width: var(--article-width-wide);
+  margin: 1.6rem 0;
+  overflow: hidden;
+  border: 1px solid var(--code-border);
+  border-radius: 20px;
+  background: linear-gradient(180deg, var(--code-surface-alt), var(--code-surface));
+  box-shadow:
+    0 20px 36px rgba(2, 6, 23, 0.22),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.article-body .highlighter-rouge::before,
+.article-body figure.highlight::before,
+.article-body > pre::before {
+  content: "snippet";
+  display: block;
+  padding: 0.78rem 1rem 0.72rem;
+  border-bottom: 1px solid rgba(148, 163, 184, 0.14);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0)),
+    rgba(2, 6, 23, 0.18);
+  color: var(--code-label);
+  font-family: "IBM Plex Mono", Consolas, monospace;
+  font-size: 0.76rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.article-body .language-bash.highlighter-rouge::before,
+.article-body .language-shell.highlighter-rouge::before,
+.article-body .language-sh.highlighter-rouge::before {
+  content: "bash";
+}
+
+.article-body .language-powershell.highlighter-rouge::before {
+  content: "powershell";
+}
+
+.article-body .language-go.highlighter-rouge::before {
+  content: "go";
+}
+
+.article-body .language-html.highlighter-rouge::before {
+  content: "html";
+}
+
+.article-body .language-javascript.highlighter-rouge::before,
+.article-body .language-js.highlighter-rouge::before {
+  content: "javascript";
+}
+
+.article-body .language-json.highlighter-rouge::before {
+  content: "json";
+}
+
+.article-body .language-yaml.highlighter-rouge::before,
+.article-body .language-yml.highlighter-rouge::before {
+  content: "yaml";
+}
+
+.article-body .language-python.highlighter-rouge::before,
+.article-body .language-py.highlighter-rouge::before {
+  content: "python";
+}
+
+.article-body .language-text.highlighter-rouge::before {
+  content: "text";
+}
+
+.article-body .language-diff.highlighter-rouge::before {
+  content: "diff";
+}
+
+.article-body .highlighter-rouge .highlight,
+.article-body figure.highlight .highlight,
+.article-body .highlighter-rouge pre,
+.article-body figure.highlight pre,
+.article-body > pre {
+  margin: 0;
+  padding: 18px 20px 20px;
   overflow-x: auto;
-  border: 1px solid rgba(148, 163, 184, 0.16);
-  border-radius: 18px;
-  background: rgba(241, 245, 249, 0.88);
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.article-body .highlighter-rouge code,
+.article-body figure.highlight code,
+.article-body > pre code {
+  display: block;
+  padding: 0;
+  background: transparent;
+  color: var(--code-copy);
+  font-size: 0.95rem;
+  line-height: 1.8;
+  white-space: pre;
+}
+
+.article-body .rouge-table {
+  width: 100%;
+  margin: 0;
+  border-collapse: collapse;
+}
+
+.article-body .rouge-table td {
+  padding: 0;
+  vertical-align: top;
+  border: 0;
+}
+
+.article-body .rouge-gutter,
+.article-body .gutter {
+  width: 1%;
+  min-width: 3.2rem;
+  padding-right: 0.9rem;
+  border-right: 1px solid rgba(148, 163, 184, 0.12);
+  color: rgba(148, 163, 184, 0.52);
+  user-select: none;
+}
+
+.article-body .rouge-gutter pre,
+.article-body .gutter pre {
+  color: inherit;
+}
+
+.article-body .rouge-code,
+.article-body .code {
+  padding-left: 1rem;
 }
 
 .article-body code {
@@ -1165,10 +1296,70 @@ h3 {
   font-size: 0.92em;
 }
 
-.article-body pre code,
-.article-body .highlight code {
-  padding: 0;
-  background: transparent;
+.article-body .highlight .c,
+.article-body .highlight .c1,
+.article-body .highlight .cm,
+.article-body .highlight .cp,
+.article-body .highlight .cs {
+  color: #7c8aa5;
+  font-style: italic;
+}
+
+.article-body .highlight .k,
+.article-body .highlight .kc,
+.article-body .highlight .kd,
+.article-body .highlight .kn,
+.article-body .highlight .kp,
+.article-body .highlight .kr,
+.article-body .highlight .kt,
+.article-body .highlight .ow {
+  color: #c084fc;
+}
+
+.article-body .highlight .s,
+.article-body .highlight .s1,
+.article-body .highlight .s2,
+.article-body .highlight .sb,
+.article-body .highlight .sc,
+.article-body .highlight .sd,
+.article-body .highlight .se,
+.article-body .highlight .sh,
+.article-body .highlight .si,
+.article-body .highlight .sx,
+.article-body .highlight .sr {
+  color: #86efac;
+}
+
+.article-body .highlight .m,
+.article-body .highlight .mb,
+.article-body .highlight .mf,
+.article-body .highlight .mh,
+.article-body .highlight .mi,
+.article-body .highlight .il,
+.article-body .highlight .mo {
+  color: #fbbf24;
+}
+
+.article-body .highlight .na,
+.article-body .highlight .nb,
+.article-body .highlight .nc,
+.article-body .highlight .nd,
+.article-body .highlight .nf,
+.article-body .highlight .nl,
+.article-body .highlight .nn,
+.article-body .highlight .nt,
+.article-body .highlight .nv,
+.article-body .highlight .nx {
+  color: #7dd3fc;
+}
+
+.article-body .highlight .o,
+.article-body .highlight .p {
+  color: #cbd5e1;
+}
+
+.article-body .highlight .err {
+  color: #fda4af;
 }
 
 .post-row {
@@ -1963,6 +2154,11 @@ h3 {
 
 :root[data-theme="dark"] .article-page {
   --article-copy: #d6dfec;
+  --code-surface: #040b16;
+  --code-surface-alt: #0a1222;
+  --code-border: rgba(96, 165, 250, 0.22);
+  --code-label: #bfdbfe;
+  --code-copy: #dbeafe;
 }
 
 :root[data-theme="dark"] .site-nav a:hover,
@@ -2083,10 +2279,6 @@ h3 {
 
 :root[data-theme="dark"] .article-body > blockquote {
   color: #c9d5e7;
-}
-
-:root[data-theme="dark"] .article-body > :where(pre, .highlight) {
-  background: rgba(2, 6, 23, 0.42);
 }
 
 :root[data-theme="dark"] .article-body code {
