@@ -124,13 +124,15 @@ img {
 .space-planet-shell {
   position: absolute;
   will-change: transform;
-  filter: saturate(1.04);
+  opacity: 0.96;
+  filter: saturate(1.12) brightness(1.16) drop-shadow(0 0 22px rgba(191, 219, 254, 0.18));
 }
 
 .space-planet-art {
   width: 100%;
   height: auto;
   display: block;
+  opacity: 0.96;
 }
 
 .space-planet-shell::before {
@@ -139,8 +141,8 @@ img {
   inset: 10%;
   border-radius: 50%;
   background: radial-gradient(circle at center, rgba(148, 163, 184, 0.22) 0%, rgba(96, 165, 250, 0.12) 38%, transparent 72%);
-  opacity: 0.9;
-  filter: blur(30px);
+  opacity: 1;
+  filter: blur(34px);
   z-index: -1;
 }
 
@@ -2447,7 +2449,7 @@ h3 {
 }
 
 :root[data-theme="dark"] .space-planet-shell {
-  filter: saturate(1.1) brightness(1.02);
+  filter: saturate(1.16) brightness(1.22) drop-shadow(0 0 26px rgba(191, 219, 254, 0.22));
 }
 
 :root[data-theme="dark"] .space-planet-shell::before {
