@@ -1177,6 +1177,77 @@ h3 {
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
+.article-body .highlighter-rouge::before,
+.article-body figure.highlight::before,
+.article-body > pre::before {
+  content: "code";
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 24px;
+  padding: 0 10px;
+  border: 1px solid rgba(148, 163, 184, 0.16);
+  border-radius: 999px;
+  background: rgba(2, 6, 23, 0.44);
+  color: var(--code-label);
+  font-family: "IBM Plex Mono", Consolas, monospace;
+  font-size: 0.68rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  pointer-events: none;
+  backdrop-filter: blur(8px);
+}
+
+.article-body .language-bash.highlighter-rouge::before,
+.article-body .language-shell.highlighter-rouge::before,
+.article-body .language-sh.highlighter-rouge::before {
+  content: "bash";
+}
+
+.article-body .language-powershell.highlighter-rouge::before {
+  content: "powershell";
+}
+
+.article-body .language-go.highlighter-rouge::before {
+  content: "go";
+}
+
+.article-body .language-html.highlighter-rouge::before {
+  content: "html";
+}
+
+.article-body .language-javascript.highlighter-rouge::before,
+.article-body .language-js.highlighter-rouge::before {
+  content: "javascript";
+}
+
+.article-body .language-json.highlighter-rouge::before {
+  content: "json";
+}
+
+.article-body .language-yaml.highlighter-rouge::before,
+.article-body .language-yml.highlighter-rouge::before {
+  content: "yaml";
+}
+
+.article-body .language-python.highlighter-rouge::before,
+.article-body .language-py.highlighter-rouge::before {
+  content: "python";
+}
+
+.article-body .language-text.highlighter-rouge::before {
+  content: "text";
+}
+
+.article-body .language-diff.highlighter-rouge::before {
+  content: "diff";
+}
+
 .article-body .highlighter-rouge .highlight,
 .article-body figure.highlight .highlight,
 .article-body .highlighter-rouge pre,
