@@ -1161,7 +1161,7 @@ h3 {
   background: linear-gradient(90deg, transparent 0%, rgba(148, 163, 184, 0.20) 14%, rgba(148, 163, 184, 0.34) 50%, rgba(148, 163, 184, 0.20) 86%, transparent 100%);
 }
 
-.article-body .highlighter-rouge,
+.article-body div.highlighter-rouge,
 .article-body figure.highlight,
 .article-body > pre {
   position: relative;
@@ -1177,7 +1177,7 @@ h3 {
     inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.article-body .highlighter-rouge::before,
+.article-body div.highlighter-rouge::before,
 .article-body figure.highlight::before,
 .article-body > pre::before {
   content: "code";
@@ -1203,54 +1203,54 @@ h3 {
   backdrop-filter: blur(8px);
 }
 
-.article-body .language-bash.highlighter-rouge::before,
-.article-body .language-shell.highlighter-rouge::before,
-.article-body .language-sh.highlighter-rouge::before {
+.article-body div.language-bash.highlighter-rouge::before,
+.article-body div.language-shell.highlighter-rouge::before,
+.article-body div.language-sh.highlighter-rouge::before {
   content: "bash";
 }
 
-.article-body .language-powershell.highlighter-rouge::before {
+.article-body div.language-powershell.highlighter-rouge::before {
   content: "powershell";
 }
 
-.article-body .language-go.highlighter-rouge::before {
+.article-body div.language-go.highlighter-rouge::before {
   content: "go";
 }
 
-.article-body .language-html.highlighter-rouge::before {
+.article-body div.language-html.highlighter-rouge::before {
   content: "html";
 }
 
-.article-body .language-javascript.highlighter-rouge::before,
-.article-body .language-js.highlighter-rouge::before {
+.article-body div.language-javascript.highlighter-rouge::before,
+.article-body div.language-js.highlighter-rouge::before {
   content: "javascript";
 }
 
-.article-body .language-json.highlighter-rouge::before {
+.article-body div.language-json.highlighter-rouge::before {
   content: "json";
 }
 
-.article-body .language-yaml.highlighter-rouge::before,
-.article-body .language-yml.highlighter-rouge::before {
+.article-body div.language-yaml.highlighter-rouge::before,
+.article-body div.language-yml.highlighter-rouge::before {
   content: "yaml";
 }
 
-.article-body .language-python.highlighter-rouge::before,
-.article-body .language-py.highlighter-rouge::before {
+.article-body div.language-python.highlighter-rouge::before,
+.article-body div.language-py.highlighter-rouge::before {
   content: "python";
 }
 
-.article-body .language-text.highlighter-rouge::before {
+.article-body div.language-text.highlighter-rouge::before {
   content: "text";
 }
 
-.article-body .language-diff.highlighter-rouge::before {
+.article-body div.language-diff.highlighter-rouge::before {
   content: "diff";
 }
 
-.article-body .highlighter-rouge .highlight,
+.article-body div.highlighter-rouge .highlight,
 .article-body figure.highlight .highlight,
-.article-body .highlighter-rouge pre,
+.article-body div.highlighter-rouge pre,
 .article-body figure.highlight pre,
 .article-body > pre {
   margin: 0;
@@ -1262,7 +1262,7 @@ h3 {
   box-shadow: none;
 }
 
-.article-body .highlighter-rouge code,
+.article-body div.highlighter-rouge code,
 .article-body figure.highlight code,
 .article-body > pre code {
   display: block;
