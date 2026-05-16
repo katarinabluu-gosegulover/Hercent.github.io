@@ -227,12 +227,12 @@ img {
 }
 
 .space-planet-venus {
-  left: 84px;
-  top: 172px;
-  width: 94px;
+  left: 12px;
+  top: 182px;
+  width: 108px;
   animation: planet-float-fast 18s ease-in-out infinite;
   opacity: 1;
-  filter: saturate(1.2) brightness(1.64) drop-shadow(0 0 44px rgba(255, 244, 214, 0.40));
+  filter: saturate(1.24) brightness(1.72) drop-shadow(0 0 48px rgba(255, 244, 214, 0.46));
   box-shadow: 0 0 0 1px rgba(255, 248, 220, 0.18);
   border-radius: 50%;
 }
