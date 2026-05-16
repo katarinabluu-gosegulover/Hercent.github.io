@@ -227,11 +227,12 @@ img {
 }
 
 .space-planet-venus {
-  left: 42px;
-  top: 18%;
-  width: 68px;
+  left: 30px;
+  top: 22%;
+  width: 78px;
   animation: planet-float-fast 18s ease-in-out infinite;
-  filter: saturate(1.12) brightness(1.42) drop-shadow(0 0 30px rgba(255, 244, 214, 0.26));
+  opacity: 1;
+  filter: saturate(1.16) brightness(1.54) drop-shadow(0 0 36px rgba(255, 244, 214, 0.32));
   box-shadow: 0 0 0 1px rgba(255, 248, 220, 0.18);
   border-radius: 50%;
 }
@@ -2583,7 +2584,7 @@ h3 {
 }
 
 :root[data-theme="dark"] .space-planet-venus {
-  filter: saturate(1.18) brightness(1.5) drop-shadow(0 0 34px rgba(255, 244, 214, 0.28));
+  filter: saturate(1.2) brightness(1.58) drop-shadow(0 0 40px rgba(255, 244, 214, 0.34));
 }
 
 :root[data-theme="dark"] .space-planet-mercury::before {
@@ -2874,9 +2875,9 @@ h3 {
   }
 
   .space-planet-venus {
-    left: 24px;
-    top: 22%;
-    width: 48px;
+    left: 18px;
+    top: 24%;
+    width: 56px;
   }
 
   .space-planet-mercury {
@@ -3003,9 +3004,9 @@ h3 {
   }
 
   .space-planet-venus {
-    left: 18px;
-    top: 24%;
-    width: 38px;
+    left: 12px;
+    top: 26%;
+    width: 44px;
   }
 
   .space-planet-mercury {
