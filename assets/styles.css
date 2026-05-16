@@ -256,8 +256,8 @@ img {
 
 .space-planet-sun {
   left: 50%;
-  top: 72%;
-  width: 240px;
+  top: 66%;
+  width: 280px;
   opacity: 0.58;
   transform: translateX(-50%);
   filter: saturate(1.24) brightness(1.28) drop-shadow(0 0 42px rgba(251, 146, 60, 0.32));
@@ -2886,8 +2886,8 @@ h3 {
   }
 
   .space-planet-sun {
-    top: 76%;
-    width: 196px;
+    top: 70%;
+    width: 220px;
   }
 
   .space-planet-moon {
@@ -3015,8 +3015,8 @@ h3 {
   }
 
   .space-planet-sun {
-    top: 78%;
-    width: 148px;
+    top: 72%;
+    width: 168px;
   }
 
   .space-planet-moon {
