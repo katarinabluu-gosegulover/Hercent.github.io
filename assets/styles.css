@@ -254,6 +254,37 @@ img {
   background: radial-gradient(circle at center, rgba(226, 232, 240, 0.20) 0%, rgba(148, 163, 184, 0.12) 40%, transparent 72%);
 }
 
+.space-planet-sun {
+  left: 50%;
+  top: 72%;
+  width: 240px;
+  opacity: 0.58;
+  transform: translateX(-50%);
+  filter: saturate(1.24) brightness(1.28) drop-shadow(0 0 42px rgba(251, 146, 60, 0.32));
+  animation: sun-breathe 12s ease-in-out infinite;
+}
+
+.space-planet-sun::before {
+  inset: 4%;
+  background: radial-gradient(circle at center, rgba(254, 215, 170, 0.24) 0%, rgba(251, 146, 60, 0.22) 26%, rgba(239, 68, 68, 0.12) 48%, transparent 74%);
+  filter: blur(42px);
+}
+
+.space-planet-moon {
+  right: 162px;
+  top: 48%;
+  width: 72px;
+  opacity: 0.84;
+  filter: saturate(1.02) brightness(1.18) drop-shadow(0 0 20px rgba(226, 232, 240, 0.20));
+  animation: planet-float-medium 18s ease-in-out infinite;
+}
+
+.space-planet-moon::before {
+  inset: 8%;
+  background: radial-gradient(circle at center, rgba(226, 232, 240, 0.20) 0%, rgba(148, 163, 184, 0.10) 42%, transparent 72%);
+  filter: blur(24px);
+}
+
 .space-blackhole-shell {
   position: fixed;
   top: -44px;
@@ -2464,6 +2495,17 @@ h3 {
   }
 }
 
+@keyframes sun-breathe {
+  0%,
+  100% {
+    transform: translateX(-50%) scale(1);
+  }
+
+  50% {
+    transform: translateX(-50%) scale(1.04);
+  }
+}
+
 :root[data-theme="dark"] .site-header {
   border-bottom-color: rgba(148, 163, 184, 0.12);
 }
@@ -2546,6 +2588,19 @@ h3 {
 
 :root[data-theme="dark"] .space-planet-mercury::before {
   background: radial-gradient(circle at center, rgba(226, 232, 240, 0.24) 0%, rgba(148, 163, 184, 0.16) 40%, transparent 72%);
+}
+
+:root[data-theme="dark"] .space-planet-sun {
+  opacity: 0.66;
+  filter: saturate(1.3) brightness(1.34) drop-shadow(0 0 50px rgba(251, 146, 60, 0.36));
+}
+
+:root[data-theme="dark"] .space-planet-sun::before {
+  background: radial-gradient(circle at center, rgba(254, 215, 170, 0.28) 0%, rgba(251, 146, 60, 0.24) 26%, rgba(239, 68, 68, 0.14) 48%, transparent 74%);
+}
+
+:root[data-theme="dark"] .space-planet-moon {
+  opacity: 0.9;
 }
 
 :root[data-theme="dark"] .space-singularity {
@@ -2830,6 +2885,17 @@ h3 {
     width: 28px;
   }
 
+  .space-planet-sun {
+    top: 76%;
+    width: 196px;
+  }
+
+  .space-planet-moon {
+    right: 126px;
+    top: 50%;
+    width: 56px;
+  }
+
   .hero::before {
     left: -118px;
     top: -164px;
@@ -2946,6 +3012,17 @@ h3 {
     left: 12px;
     top: 80%;
     width: 22px;
+  }
+
+  .space-planet-sun {
+    top: 78%;
+    width: 148px;
+  }
+
+  .space-planet-moon {
+    right: 98px;
+    top: 52%;
+    width: 44px;
   }
 
   .site-header::after {

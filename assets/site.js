@@ -327,6 +327,16 @@ const initPlanetBackdrop = () => {
       name: "mercury",
       file: "images/space/mercury.webp",
       foreground: true
+    },
+    {
+      name: "sun",
+      file: "images/space/sun.webp",
+      foreground: true
+    },
+    {
+      name: "moon",
+      file: "images/space/moon.webp",
+      foreground: true
     }
   ];
 
