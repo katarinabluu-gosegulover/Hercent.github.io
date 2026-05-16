@@ -123,7 +123,7 @@ img {
 
 .space-planets-front {
   z-index: 1;
-  opacity: 0.78;
+  opacity: 0.92;
 }
 
 .space-planet-shell {
@@ -2540,7 +2540,7 @@ h3 {
 }
 
 :root[data-theme="dark"] .space-planets-front {
-  opacity: 0.82;
+  opacity: 0.96;
 }
 
 :root[data-theme="dark"] .space-planet-shell {
