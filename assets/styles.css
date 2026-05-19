@@ -1273,7 +1273,8 @@ h3 {
 
 .account-chip {
   display: grid;
-  gap: 6px;
+  gap: 12px;
+  align-content: start;
   min-height: 112px;
   padding: 18px;
   border-radius: 18px;
@@ -1315,6 +1316,28 @@ h3 {
 
 .account-chip[aria-disabled="true"] {
   cursor: default;
+}
+
+.account-chip-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: rgba(37, 99, 235, 0.08);
+  color: var(--teal);
+  box-shadow: inset 0 0 0 1px rgba(37, 99, 235, 0.10);
+}
+
+.account-chip-icon svg {
+  width: 20px;
+  height: 20px;
+  display: block;
+}
+
+.account-chip-meta {
+  display: grid;
+  gap: 6px;
 }
 
 .account-chip-label {
@@ -2781,6 +2804,11 @@ h3 {
 :root[data-theme="dark"] .account-chip {
   background: linear-gradient(180deg, rgba(30, 41, 59, 0.96), rgba(15, 23, 42, 0.96));
   box-shadow: 0 16px 30px rgba(2, 6, 23, 0.28);
+}
+
+:root[data-theme="dark"] .account-chip-icon {
+  background: rgba(96, 165, 250, 0.10);
+  box-shadow: inset 0 0 0 1px rgba(96, 165, 250, 0.16);
 }
 
 :root[data-theme="dark"] .account-chip:hover {
