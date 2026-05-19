@@ -1,15 +1,17 @@
 ---
 layout: default
 title: Posts
-page_description: Hercent Archive 글 목록
+page_description: Hercent Archive posts index
 nav: posts
 permalink: /posts/
 ---
+{% assign standalone_post_pages = site.pages | where_exp: "item", "item.url != page.url and item.url contains '/posts/' and item.title and item.date" %}
+{% assign all_entries = site.posts | concat: standalone_post_pages | sort: "date" | reverse %}
 <main class="subpage-layout">
   <section class="panel article-hero" data-reveal>
     <p class="eyebrow">Post Index</p>
-    <h1>글 목록</h1>
-    <p>모든 글을 한 곳에 모아두되, 아래에서 8개 카테고리 기준으로 다시 정리했습니다.</p>
+    <h1>All Posts</h1>
+    <p>Every post is listed here in reverse chronological order.</p>
     <div class="category-links">
       {% for category in site.data.categories %}
         <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
@@ -17,50 +19,28 @@ permalink: /posts/
     </div>
   </section>
 
-  <section class="section-stack" data-reveal>
-    {% for category in site.data.categories %}
-      {% assign posts_in_category = site.posts | where: "category_key", category.key %}
-      {% assign standalone_pages_in_category = site.data.standalone_pages | where: "category_key", category.key %}
-      <section class="category-section panel">
-        <div class="section-heading">
-          <p class="eyebrow">Category {{ forloop.index | prepend: '0' | slice: -2, 2 }}</p>
-          <h2>{{ category.title }}</h2>
-        </div>
-        {% if posts_in_category.size > 0 or standalone_pages_in_category.size > 0 %}
-          <div class="post-list">
-            {% for post in posts_in_category %}
-              <article class="panel post-row compact-row">
-                <div>
-                  <div class="kicker-row">
-                    <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
-                    <p class="post-meta">{{ post.date | date: "%Y.%m.%d" }}</p>
-                  </div>
-                  <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
-                  <p>{{ post.summary }}</p>
-                </div>
-                <a class="view-link" href="{{ post.url | relative_url }}">view</a>
-              </article>
-            {% endfor %}
-            {% for entry in standalone_pages_in_category %}
-              <article class="panel post-row compact-row">
-                <div>
-                  <div class="kicker-row">
-                    <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
-                    <p class="post-meta">{{ entry.date }}</p>
-                  </div>
-                  <h2><a href="{{ entry.url | relative_url }}">{{ entry.title }}</a></h2>
-                  <p>{{ entry.summary }}</p>
-                </div>
-                <a class="view-link" href="{{ entry.url | relative_url }}">view</a>
-              </article>
-            {% endfor %}
+  {% if all_entries.size > 0 %}
+    <section class="post-list" data-reveal>
+      {% for entry in all_entries %}
+        {% assign category = site.data.categories | where: "key", entry.category_key | first %}
+        <article class="panel post-row compact-row">
+          <div>
+            <div class="kicker-row">
+              {% if category %}
+                <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
+              {% endif %}
+              <p class="post-meta">{{ entry.date | date: "%Y.%m.%d" }}</p>
+            </div>
+            <h2><a href="{{ entry.url | relative_url }}">{{ entry.title }}</a></h2>
+            <p>{{ entry.summary | default: entry.excerpt | default: entry.page_description }}</p>
           </div>
-        {% else %}
-          <div class="empty-state">
-            <p>{{ category.empty_text }}</p>
-          </div>
-        {% endif %}
-      </section>
-    {% endfor %}
-  </section>
+          <a class="view-link" href="{{ entry.url | relative_url }}">view</a>
+        </article>
+      {% endfor %}
+    </section>
+  {% else %}
+    <div class="empty-state" data-reveal>
+      <p>No posts have been published yet.</p>
+    </div>
+  {% endif %}
 </main>
