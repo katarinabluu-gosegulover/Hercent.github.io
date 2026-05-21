@@ -25,7 +25,7 @@ feature_order: 0
 최종 플래그:
 
 ```text
-INCOGNITO{clte_d35ync_4step_ch41n_2026}
+INCOGNITO{...}
 ```
 
 ## 1. 공개 자료 분석
