@@ -257,7 +257,7 @@ X-Proof: <proof>
 응답:
 
 ```json
-{"ok":true,"flag":"INCOGNITO{clte_d35ync_4step_ch41n_2026}"}
+{"ok":true,"flag":"INCOGNITO{...}"}
 ```
 
 ## 6. 재현 방법
@@ -460,7 +460,7 @@ if __name__ == "__main__":
 [1] /internal/s1 -> d7b5c0fd867561b64562cdb6b308993b3fd4
 [2] handoff -> c8ba9d1aec0eaeafd4090b90b9ca1576e882
 [3] /internal/s3 -> 5f15af1ba20d45bc9676df7a20307064a7bb
-[4] flag = INCOGNITO{clte_d35ync_4step_ch41n_2026}
+[4] flag = INCOGNITO{...}
 ```
 
 ## 7. 취약점 원리 정리
