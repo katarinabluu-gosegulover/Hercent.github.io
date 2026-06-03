@@ -1,10 +1,10 @@
 ---
 layout: post
 title: Webassembly
-page_description: Webassembly
+page_description: Webassembly 알아보기
 category_key: development
-summary: Webassembly
-lead: Webassembly
+summary: Webassembly 알아보기
+lead: Webassembly 알아보기
 featured: false
 feature_order: 0
 ---
@@ -96,7 +96,7 @@ WAT는 **WebAssembly Text format**의 줄임말로, `.wasm` 바이너리를 사�
 
 ### calculator.wat
 
-```wat
+```
 (module
   (import "env" "log" (func $log (param i32)))
 
@@ -166,6 +166,7 @@ wat2wasm calculator.wat -o calculator.wasm
 npx serve .
 # 또는
 python -m http.server 8080
+# 필자는 VSCode에서 LiveServer로 실행하여 진행함.
 ```
 
 ### index.html
@@ -336,7 +337,7 @@ Code[5]:
 
 ### 5-5. WAT 역변환 (`wasm2wat`)
 
-```wat
+```
 (module
   (type (;0;) (func (param i32)))
   (type (;1;) (func (param i32 i32) (result i32)))
