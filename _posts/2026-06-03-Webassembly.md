@@ -420,6 +420,32 @@ little-endian 2A 00 00 00   ← 낮은 바이트 먼저 (Wasm)
 
 ---
 
+## 7. 실험
+
+이번 구현은 단순한 웹 계산기 였다. 문득 JS와 Wasm의 속도 차이가 궁금해져서 직접 실험해보았다.
+다음과 같은 코드를 웹 계산기 페이지에서 개발자 도구의 `console` 에 입력했다.
+
+```javascript
+const N = 10_000_000; // 1000만 번 반복
+
+// JS 측정
+console.time('JS');
+let js = 0;
+for (let i = 0; i < N; i++) js = i + (i + 1);
+console.timeEnd('JS');
+
+// Wasm 측정
+const { add } = wasmExports;
+console.time('Wasm');
+let wasm = 0;
+for (let i = 0; i < N; i++) wasm = add(i, i + 1);
+console.timeEnd('Wasm');
+```
+
+실험 결과는 예측한대로 Wasm을 이용한 웹 계산기의 속도가 약 30ms 정도 더 느렸다.
+이는 JS와 Wasm의 연동과정에서의 오버헤드가 호출하는 만큼 많이 발생하기 때문이다.
+Wasm이 JS의 속도를 넘기 위해서는 호출을 적게하고 Wasm 내부에서의 연산을 늘리는 로직을 구현하면 된다고 한다.
+
 ## 참고 링크
 
 - [WebAssembly 공식 문서](https://developer.mozilla.org/en-US/docs/WebAssembly/Guides)
