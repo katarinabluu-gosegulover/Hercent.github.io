@@ -446,6 +446,8 @@ console.timeEnd('Wasm');
 이는 JS와 Wasm의 연동과정에서의 오버헤드가 호출하는 만큼 많이 발생하기 때문이다.
 Wasm이 JS의 속도를 넘기 위해서는 호출을 적게하고 Wasm 내부에서의 연산을 늘리는 로직을 구현하면 된다고 한다.
 
+---
+
 ## 참고 링크
 
 - [WebAssembly 공식 문서](https://developer.mozilla.org/en-US/docs/WebAssembly/Guides)
