@@ -1,6 +1,10 @@
 <header class="site-header">
   <a class="brand" href="{{ '/' | relative_url }}">
-    <img class="brand-avatar" src="{{ '/assets/profile.png' | relative_url }}" alt="Hercent profile image">
+    {% assign github_avatar = site.github.owner_gravatar_url %}
+    <img
+      class="brand-avatar"
+      src="{% if github_avatar %}{{ github_avatar }}{% else %}{{ '/assets/profile.png' | relative_url }}{% endif %}"
+      alt="{{ site.github.owner_name | default: 'Hercent' }} profile image">
     <span>Hercent</span>
   </a>
   <nav class="site-nav" aria-label="주요 메뉴">
