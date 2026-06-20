@@ -2029,6 +2029,37 @@ h3 {
   font-family: "IBM Plex Mono", Consolas, monospace;
 }
 
+/* 본문 마크다운 표 스타일 */
+.article-body > table,
+.article-body table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1.5em 0;
+  overflow-x: auto;
+  display: block;
+}
+
+.article-body table th,
+.article-body table td {
+  padding: 10px 14px;
+  border: 1px solid var(--border);
+  text-align: left;
+  vertical-align: top;
+}
+
+.article-body table th {
+  font-size: 0.78rem;
+  color: var(--accent-deep);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-family: "IBM Plex Mono", Consolas, monospace;
+  background: rgba(0, 0, 0, 0.03);
+}
+
+.article-body table tbody tr:nth-child(even) {
+  background: rgba(0, 0, 0, 0.015);
+}
+
 .paper-review-table tbody tr:last-child td {
   border-bottom: 0;
 }
