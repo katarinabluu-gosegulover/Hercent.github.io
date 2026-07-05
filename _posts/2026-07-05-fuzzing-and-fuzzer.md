@@ -64,6 +64,10 @@ session.connect(s_get("HTTP GET"))
 session.fuzz()
 ```
 
+위 코드는 HTTP GET 요청을 퍼징하는 예시다. `s_string("/fuzz_target")`처럼
+`fuzzable=True`인 필드를 자동으로 변이시켜 서버에 전송하고,
+응답이 없거나 연결이 끊기면 크래시로 판단한다.
+
 ---
 
 ### 2.2 White-box Fuzzing (= Concolic Testing / DSE)
@@ -93,6 +97,11 @@ int main() {
     return 0;
 }
 ```
+
+`klee_make_symbolic()`으로 buf를 심볼릭 변수로 선언하면,
+KLEE가 `buf[0] == 'A' && buf[1] == 'B'` 조건을 SMT 솔버로 풀어
+해당 분기에 도달하는 입력을 자동으로 생성한다.
+랜덤 퍼징으로는 거의 통과 못 하는 조건도 뚫을 수 있다는 게 핵심이다.
 
 ---
 
