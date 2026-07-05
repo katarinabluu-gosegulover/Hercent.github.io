@@ -21,7 +21,6 @@ feature_order: 0
 |---|---|
 | 메모리 오류 | Buffer Overflow, Use-After-Free, Heap Corruption |
 | 정수 오류 | Integer Overflow, Off-by-one |
-| 형식 오류 | Format String Bug |
 | 논리 오류 | Null Dereference, Assertion Failure |
 | 파싱 버그 | XML/JSON/PDF 파서의 크래시 |
 
@@ -200,7 +199,7 @@ CC=hfuzz-clang ./configure && make
 honggfuzz -i seeds/ -- ./target ___FILE___
 ```
 
-소스코드 없는 바이너리 퍼징에서 AFL QEMU보다 빠른 경우가 많고, 네트워크 서비스 퍼징에 유리하다.
+소스코드 없는 바이너리 퍼징에서 AFL QEMU보다 빠른 경우가 많고, 네트워크 서비스 퍼징에 유리하다고 알려져 있다.
 
 ---
 
