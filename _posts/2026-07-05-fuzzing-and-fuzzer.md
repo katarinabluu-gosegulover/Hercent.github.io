@@ -183,7 +183,7 @@ clang++ -fsanitize=fuzzer,address -o fuzz_target fuzz_target.cpp
 | 사용 난이도 | 쉬움 | 하네스 코드 작성 필요 |
 
 - libFuzzer: LLVMFuzzerTestOneInput 이라는 특정 형태의 하네스가 구조적으로 강제됨
-- AFL++: 하네스 없이도 돌아가지만, 퍼징 효율을 위해 persistent mode 하네스를 쓰는 게 일반적
+- AFL++: 하네스 없이도 돌아가지만, 퍼징 효율을 위해 persistent mode 하네스를 쓰는 게 일반적이다.
 
 ---
 
