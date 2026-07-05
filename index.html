@@ -46,6 +46,7 @@ nav: home
     <div class="card-grid-three">
       {% for post in featured_posts limit: 3 %}
         {% assign category = site.data.categories | where: "key", post.category_key | first %}
+        {% assign post_preview = post.summary | default: post.page_description | default: post.excerpt | strip_html | strip_newlines | replace: '  ', ' ' | strip %}
         <article class="post-card panel">
           <div class="card-body">
             <div class="kicker-row">
@@ -53,7 +54,7 @@ nav: home
               <p class="post-meta">{{ post.date | date: "%Y.%m.%d" }}</p>
             </div>
             <h3><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h3>
-            <p>{{ post.summary }}</p>
+            <p>{{ post_preview | default: "Read this post." | truncate: 160 }}</p>
           </div>
           <a class="view-link" href="{{ post.url | relative_url }}">view</a>
         </article>

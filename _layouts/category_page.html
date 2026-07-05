@@ -16,6 +16,7 @@ layout: default
   {% if posts_in_category.size > 0 or standalone_pages_in_category.size > 0 %}
     <section class="post-list" data-reveal>
       {% for post in posts_in_category %}
+        {% assign post_preview = post.summary | default: post.page_description | default: post.excerpt | strip_html | strip_newlines | replace: '  ', ' ' | strip %}
         <article class="panel post-row">
           <div>
             <div class="kicker-row">
@@ -23,7 +24,7 @@ layout: default
               <p class="post-meta">{{ post.date | date: "%Y.%m.%d" }}</p>
             </div>
             <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
-            <p>{{ post.summary }}</p>
+            <p>{{ post_preview | default: "Read this post." | truncate: 180 }}</p>
           </div>
           <a class="view-link" href="{{ post.url | relative_url }}">view</a>
         </article>

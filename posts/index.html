@@ -23,6 +23,7 @@ permalink: /posts/
     <section class="post-list" data-reveal>
       {% for post in site.posts %}
         {% assign post_date_key = post.date | date: "%Y.%m.%d" %}
+        {% assign post_preview = post.summary | default: post.page_description | default: post.excerpt | strip_html | strip_newlines | replace: '  ', ' ' | strip %}
         {% unless standalone_inserted %}
           {% if standalone_entry and post_date_key < standalone_entry.date %}
             {% assign category = site.data.categories | where: "key", standalone_entry.category_key | first %}
@@ -53,7 +54,7 @@ permalink: /posts/
               <p class="post-meta">{{ post.date | date: "%Y.%m.%d" }}</p>
             </div>
             <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
-            <p>{{ post.summary | default: post.excerpt | default: post.page_description }}</p>
+            <p>{{ post_preview | default: "Read this post." | truncate: 180 }}</p>
           </div>
           <a class="view-link" href="{{ post.url | relative_url }}">view</a>
         </article>
