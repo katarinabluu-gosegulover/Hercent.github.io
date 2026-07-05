@@ -1,7 +1,7 @@
 # Hercent Archive
 
 GitHub Pages + Jekyll 기반의 카테고리형 개인 블로그입니다.  
-이제 글은 HTML을 직접 복붙하지 않고 Markdown으로 작성하면 됩니다.
+글은 HTML을 직접 복붙하지 않고 Markdown으로 작성하면 됩니다.
 
 ## 주소
 
@@ -58,20 +58,6 @@ feature_order: 0
 - `papers-conferences`
 - `contests-certifications`
 - `achievements`
-
-## 자동 반영되는 것
-
-새 Markdown 글을 추가하면 아래 페이지에 자동으로 반영됩니다.
-
-- 홈 `대표 글`
-  `featured: true` 인 글만 표시
-  필요하면 `feature_order` 로 순서 고정
-- `posts/index.html`
-  카테고리별 전체 글 목록
-- `categories/index.html`
-  카테고리별 글 수
-- `categories/*.html`
-  각 카테고리 상세 페이지
 
 ## 문서/PDF 올리기
 
