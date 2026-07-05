@@ -252,7 +252,7 @@ num :=
 
 ---
 
-## 5. 추가 궁금증
+## 5. 추가 궁금증 ( Fuzzing 과 Brute force의 차이 )
 
 ### Fuzzing vs 브루트포스
 
