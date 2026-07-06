@@ -145,7 +145,8 @@ Seed corpus를 기반으로 mutation 하여 새 입력을 만든다. Seed corpus
 비정상 동작인지 판단하는 기준이다. 기본은 segfault 같은 크래시이고, ASan/UBSan 같은 새니타이저를 붙이면 자연적으로 segfault가 나지 않는 오류(heap overflow, UAF 등)도 탐지해 크래시로 만들어준다. 단, ASan은 레드존 침범이나 해제된 메모리 접근을 기준으로 탐지하기 때문에 그 범위를 벗어난 오류는 잡지 못한다.
 
 **5. 크래시 분류 (Crash Triage)**  
-크래시 발생 시 중복 제거(deduplication)와 최소화(minimization)를 거쳐 저장한다. AFL++는 크래시 입력을 `crashes/` 디렉터리에 자동 저장한다.
+크래시 발생 시 AFL++는 `crashes/` 디렉터리에 자동 저장한다.
+중복 제거는 `afl-cmin`, 최소화는 `afl-tmin`으로 수동 실행해야 한다고 한다.
 
 ---
 
