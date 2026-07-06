@@ -133,16 +133,16 @@ Seed Corpus → Mutate → Run → Coverage Feedback → 새 경로? → Corpus 
 ```
 
 **1. 입력 생성 (Input Generation)**  
-Seed corpus를 기반으로 변이(mutation)해 새 입력을 만든다. Seed corpus란 퍼저가 변이의 기반으로 사용하는 입력 파일들의 집합이다. 예를 들어 PDF 파서를 퍼징한다면 정상적인 PDF 파일 몇 개를 corpus로 넣고 시작한다.
+Seed corpus를 기반으로 mutation 하여 새 입력을 만든다. Seed corpus란 퍼저가 mutation을 기반으로 사용하는 입력 파일들의 집합이다. 예를 들어 PDF 파서를 퍼징한다면 정상적인 PDF 파일 몇 개를 corpus로 넣고 시작한다.
 
 **2. 실행 (Execution)**  
 생성된 입력으로 타겟을 실행한다. AFL++는 매 입력마다 fork해서 실행하고, libFuzzer는 in-process 방식으로 함수를 직접 호출한다.
 
 **3. 커버리지 확인 (Feedback Collection)**  
-실행 후 계측 정보를 통해 새로운 edge(분기 전이)가 열렸는지 확인한다. 새 경로를 열었으면 해당 입력을 corpus에 추가해 이후 변이의 기반으로 삼는다. 이 피드백 루프 덕분에 랜덤 퍼징보다 훨씬 효율적으로 깊은 코드 경로에 도달할 수 있다.
+실행 후 계측 정보를 통해 새로운 edge(분기 전이)가 열렸는지 확인한다. 새 경로를 열었으면 해당 입력을 corpus에 추가해 이후 변이의 기반으로 삼는다. 이 피드백 루프 덕분에 랜덤 퍼징보다 효율적으로 깊은 코드 경로에 도달할 수 있다.
 
 **4. 오라클 판단 (Oracle)**  
-비정상 동작인지 판단하는 기준이다. 기본은 segfault 같은 크래시이고, ASan/UBSan 같은 새니타이저를 붙이면 크래시 없이도 메모리 오류를 탐지할 수 있어 탐지 범위가 넓어진다.
+비정상 동작인지 판단하는 기준이다. 기본은 segfault 같은 크래시이고, ASan/UBSan 같은 새니타이저를 붙이면 자연적으로 segfault가 나지 않는 오류(heap overflow, UAF 등)도 탐지해 크래시로 만들어준다. 단, ASan은 레드존 침범이나 해제된 메모리 접근을 기준으로 탐지하기 때문에 그 범위를 벗어난 오류는 잡지 못한다.
 
 **5. 크래시 분류 (Crash Triage)**  
 크래시 발생 시 중복 제거(deduplication)와 최소화(minimization)를 거쳐 저장한다. AFL++는 크래시 입력을 `crashes/` 디렉터리에 자동 저장한다.
