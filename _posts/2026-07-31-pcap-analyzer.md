@@ -132,7 +132,7 @@ def tcp_flag_str(flags):
     return '|'.join(name for bit, name in TCP_FLAGS if flags & bit) or '-'
 ```
 
-### 손으로 헥스 덤프 직접 까보기
+### 헥스 덤프 직접 까보기
 
 dpkt가 대신 해주는 파싱이 실제로 뭘 하는 건지 확인하려고, `sample.pcap`을 HxD로 열어 첫 패킷을 바이트 단위로 직접 읽어봤다.
 
