@@ -25,11 +25,11 @@ pcap(libpcap 포맷) 파일은 크게 두 부분으로 되어 있다.
 ┌──────────────────────────┐
 │  Global Header (24 bytes) │  파일 전체에 대한 메타정보
 ├──────────────────────────┤
-│  Packet Header (16 bytes)                          │    ┐
-│  Packet Data (가변)                                │  ├─ 패킷 1
+│  Packet Header (16 bytes)                          │   ┐
+│  Packet Data (가변)                                │   ├─ 패킷 1
 ├──────────────────────────┤   ┘
-│  Packet Header (16 bytes)                          │    ┐
-│  Packet Data (가변)                                │  ├─ 패킷 2
+│  Packet Header (16 bytes)                          │   ┐
+│  Packet Data (가변)                                │   ├─ 패킷 2
 ├──────────────────────────┤   ┘
 │           ...            │
 └──────────────────────────┘
