@@ -2886,12 +2886,17 @@ h3 {
 }
 
 [data-reveal] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.reveal-ready [data-reveal] {
   opacity: 0;
   transform: translateY(24px);
   transition: opacity 500ms ease, transform 500ms ease;
 }
 
-[data-reveal].is-visible {
+.reveal-ready [data-reveal].is-visible {
   opacity: 1;
   transform: translateY(0);
 }
@@ -3234,7 +3239,7 @@ h3 {
     animation: none !important;
   }
 
-  [data-reveal] {
+  .reveal-ready [data-reveal] {
     opacity: 1;
     transform: none;
   }

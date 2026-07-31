@@ -547,11 +547,11 @@ if ("IntersectionObserver" in window) {
       });
     },
     {
-      threshold: 0.15
+      threshold: 0,
+      rootMargin: "0px 0px -32px 0px"
     }
   );
 
   revealItems.forEach((item) => observer.observe(item));
-} else {
-  revealItems.forEach((item) => item.classList.add("is-visible"));
+  root.classList.add("reveal-ready");
 }
