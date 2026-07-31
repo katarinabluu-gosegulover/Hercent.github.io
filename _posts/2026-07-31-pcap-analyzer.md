@@ -112,7 +112,7 @@ if isinstance(eth.data, dpkt.ip.IP):        # L3
         ...
 ```
 
-### 왜 `isinstance`로 분기하나?
+### `isinstance`로 분기하는 이유
 
 dpkt는 IP 헤더의 `protocol` 필드(TCP=6, UDP=17, ICMP=1)를 보고 `ipp.data`를 알맞은 객체로 자동 변환해준다. 그래서 프로토콜 번호를 직접 `if p == 6` 식으로 비교하는 대신, 파싱된 객체의 타입으로 분기하는 게 깔끔하다. **단, 상수는 절대 임의로 넣지 않고 `dpkt.ip.IP_PROTO_TCP` 같은 라이브러리 상수를 쓰는 것이 안전하다.**
 
