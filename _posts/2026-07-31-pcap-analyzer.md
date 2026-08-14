@@ -345,6 +345,6 @@ TLS로 암호화된 트래픽은 페이로드 내용을 볼 수 없다. 우리�
 
 가장 크게 배운 건, **"통계"와 "해석"은 다른 층위**라는 점이다. 프로토콜 카운트는 기계적으로 나오지만, "이게 비콘인가?"를 판단하려면 도메인 지식(정상 트래픽은 이렇게 규칙적이지 않다는 것)이 있어야 한다. IDS/IPS가 하는 일이 정확히 이 두 층위를 자동화하는 것임을 몸으로 이해하게 됐다.
 
-[pcap_analyzer code](https://github.com/katarinabluu-gosegulover/pcap_analyzer)
+[<u>pcap_analyzer code github link</u>](https://github.com/katarinabluu-gosegulover/pcap_analyzer)
 
 ---
