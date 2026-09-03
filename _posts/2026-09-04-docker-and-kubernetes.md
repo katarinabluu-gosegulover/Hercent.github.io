@@ -135,7 +135,7 @@ YAML은 들여쓰기와 자료 구조가 의미를 가지므로 공백 오류가
 
 **원인과 대응:** 와일드카드 리소스와 넓은 `get/watch/list` 권한이 문제다. 필요한 리소스·동사만 허용하고, 가능하면 `resourceNames`로 특정 Secret 이름만 제한한다. 배포 전 `kubectl auth can-i` 또는 정책 검사를 수행한다.
 
-![RBAC 권한 검증 — 공개용 마스킹](assets/images/02-rbac-secret-access-redacted.png)
+![RBAC 권한 검증 — 공개용 마스킹](/assets/images/02-rbac-secret-access-redacted.png)
 
 참고: [Kubernetes RBAC Authorization](https://kubernetes.io/docs/reference/access-authn-authz/rbac/)
 
@@ -152,7 +152,7 @@ YAML은 들여쓰기와 자료 구조가 의미를 가지므로 공백 오류가
 
 **원인과 대응:** 필요하지 않은 NodePort 공개가 원인이다. 내부 서비스는 기본적으로 `ClusterIP`를 사용하고, 외부 공개가 필요하면 Ingress/Gateway, 인증, 네트워크 ACL, 방화벽을 적용한다.
 
-![NodePort 구성 — 공개용 마스킹](assets/images/03-nodeport-exposure-redacted.png)
+![NodePort 구성 — 공개용 마스킹](/assets/images/03-nodeport-exposure-redacted.png)
 
 참고: [Kubernetes Service: NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport)
 
@@ -173,7 +173,7 @@ YAML은 들여쓰기와 자료 구조가 의미를 가지므로 공백 오류가
 
 **원인과 대응:** default-deny NetworkPolicy가 없고, 서비스 간 허용 규칙도 제한되지 않은 것이 원인이다. Namespace별 ingress/egress default-deny를 먼저 적용한 뒤, 필요한 Pod selector·포트·DNS 통신만 명시적으로 허용한다.
 
-![Namespace 간 Redis 접근 — 공개용 마스킹](assets/images/04-namespace-network-bypass-redacted.png)
+![Namespace 간 Redis 접근 — 공개용 마스킹](/assets/images/04-namespace-network-bypass-redacted.png)
 
 참고: [Kubernetes Network Policies](https://kubernetes.io/docs/concepts/services-networking/network-policies/)
 
@@ -194,7 +194,7 @@ YAML은 들여쓰기와 자료 구조가 의미를 가지므로 공백 오류가
 
 **원인과 대응:** `privileged: true`, `hostPID: true`, HostPath `/`의 읽기·쓰기 마운트를 함께 준 것이 원인이다. privileged와 hostPID는 기본적으로 금지하고, HostPath는 제거하거나 필요한 단일 경로를 읽기 전용으로 제한한다. Pod Security Admission과 정책 엔진으로 이런 Pod를 배포 단계에서 차단한다.
 
-![컨테이너 탈출 위험 구성 검증](assets/images/05-container-escape-hostpath-sanitized.png)
+![컨테이너 탈출 위험 구성 검증](/assets/images/05-container-escape-hostpath-sanitized.png)
 
 참고: [Kubernetes Security Context](https://kubernetes.io/docs/tasks/configure-pod-container/security-context/), [hostPath Volumes](https://kubernetes.io/docs/concepts/storage/volumes/#hostpath)
 
