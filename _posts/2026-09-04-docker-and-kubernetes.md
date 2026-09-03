@@ -11,11 +11,8 @@ feature_order: 0
 
 # Docker·Kubernetes 기초 및 Kubernetes Goat 보안 실습 보고서
 
-작성일: 2026-09-03
 실습 환경: Docker Desktop + kind `kubernetes-goat-lab` + Kubernetes Goat  
 범위: Docker/Kubernetes 기초 학습 및 격리된 교육용 클러스터의 보안 구성 분석
-
-> 이 문서는 실습에서 확인한 flag, 접근 키, 내부 IP를 본문과 캡처에서 공개하지 않는다. 캡처는 모두 공개용 마스킹 사본을 사용한다.
 
 ## 1. 학습 목표와 범위
 
@@ -181,7 +178,7 @@ YAML은 들여쓰기와 자료 구조가 의미를 가지므로 공백 오류가
 
 **목적:** privileged 컨테이너와 호스트 루트 HostPath 마운트가 결합될 때 노드 접근으로 이어지는 위험을 확인한다.
 
-| 명령 | 이 명령을 실행한 이유 |
+| 명령어 | 각 명령어를 실행한 이유 |
 |---|---|
 | `kubectl get pods -n default -l app=system-monitor ...` | 라벨로 system-monitor Pod를 찾는다. |
 | `kubectl exec -it -n default POD -- sh` | 교육용 Pod 안에서 보안 컨텍스트와 마운트를 검사한다. |
@@ -208,19 +205,7 @@ YAML은 들여쓰기와 자료 구조가 의미를 가지므로 공백 오류가
 | Namespace 간 통신 | default-deny NetworkPolicy 후 필요한 흐름만 허용 |
 | privileged/HostPath | privileged·hostPID 금지, HostPath 최소화·읽기 전용, Pod 보안 정책 적용 |
 
-## 7. 캡처 공개 전 보안 점검
-
-| 원본 캡처 | 검사 결과 | 조치 |
-|---|---|---|
-| `224759` | AWS 접근 키, AWS 비밀 키, Goat flag 노출 | 세 값 전체를 초록색으로 마스킹 |
-| `225236` | Goat flag와 로컬 Windows 계정명 노출 | flag와 계정명만 마스킹 |
-| `225518` | 로컬 계정명, Service/Node 내부 IP 노출 | 계정명·두 내부 IP만 마스킹; NodePort는 학습 증거로 유지 |
-| `225816` | Goat flag와 로컬 Windows 계정명 노출 | flag와 계정명만 마스킹 |
-| `230626` | 설정 파일명만 표시, 키·토큰·파일 내용은 없음 | 별도 마스킹 없이 사용 가능. 단, `admin.conf` 등의 **내용**이 보이는 캡처는 공개하지 않는다. |
-
-원본 스크린샷은 외부 공개하지 않고, 이 보고서의 `screenshots/redacted/` 사본만 사용한다.
-
-## 8. 결론
+## 7. 결론
 
 Docker의 Image·Container 경계와 Kubernetes의 Pod·Service·RBAC·Namespace 개념을 학습한 뒤, 실제 구성 오류가 어떻게 비밀정보 노출, 과권한, 내부 서비스 노출, 네트워크 경계 우회, 노드 접근 위험으로 연결되는지 교육용 클러스터에서 확인했다. 
 핵심 교훈은 단일 설정이 아니라 **비밀관리, 최소 권한, 네트워크 정책, 워크로드 보안 컨텍스트**를 함께 적용해야 한다는 점이다.
