@@ -115,7 +115,7 @@ YAML은 들여쓰기와 자료 구조가 의미를 가지므로 공백 오류가
 
 **원인과 대응:** 비밀값을 코드에 커밋했고, `.git` 이력까지 컨테이너/웹 경로에 노출한 것이 원인이다. 키를 즉시 폐기·순환하고, Git 이력에서 제거하며, CI에 secret scanning을 적용한다. 런타임 비밀값은 전용 Secret/외부 비밀관리 서비스에서 최소 권한으로 주입한다.
 
-![민감 키 노출 — 공개용 마스킹](assets/images/01-sensitive-keys-redacted.png)
+![민감 키 노출 — 공개용 마스킹](/assets/images/01-sensitive-keys-redacted.png)
 
 공식 실습 절차: [Kubernetes Goat Scenario 1](https://github.com/madhuakula/kubernetes-goat/blob/master/guide/docs/scenarios/scenario-1/scenario-1.md)
 
