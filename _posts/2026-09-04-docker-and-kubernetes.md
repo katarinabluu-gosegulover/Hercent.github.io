@@ -26,6 +26,9 @@ Docker Crash Course를 통해 이미지·컨테이너·볼륨·네트워크의 �
 
 ## 2. Docker 기초 정리
 
+### Docker 란?
+-> 애플리케이션과 필요한 실행 환경을 Image로 패키징하고, 이를 격리된 Container로 실행·배포·관리할 수 있게 하는 플랫폼이다.
+
 ### 2.1 핵심 개념
 
 | 개념 | 설명 |
@@ -54,6 +57,9 @@ Image와 컨테이너의 구분, Volume·네트워크의 사용 목적은 [Docke
 
 ## 3. Kubernetes 기초 정리
 
+### Kubernetes 란?
+->여러 컨테이너화된 애플리케이션을 여러 Node에 걸쳐 배포, 확장, 복구, 네트워킹, 업데이트하도록 조정(orchestraion)하는 오픈소스 플랫폼이다.
+
 ### 3.1 핵심 구성 요소
 
 | 구성 요소 | 설명 |
@@ -71,6 +77,9 @@ Image와 컨테이너의 구분, Volume·네트워크의 사용 목적은 [Docke
 Pod·Deployment·Service의 역할은 [Kubernetes Concepts](https://kubernetes.io/docs/concepts/), Secret의 저장 형식은 [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/)를 참고했다.
 
 ### 3.2 `kubectl`과 YAML
+
+### YAML 이란?
+-> 사람이 읽기 쉬운 들여쓰기 기반 데이터 직렬화 형식이다. 키-값 구조와 목록을 표현하며, Kubernetes에서는 원하는 리소스 상태를 선언하는 manifest 파일에 주로 사용한다.
 
 | 명령/필드 | 의미 |
 |---|---|
