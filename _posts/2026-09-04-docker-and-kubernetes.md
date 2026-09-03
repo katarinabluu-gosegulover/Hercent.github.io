@@ -24,21 +24,19 @@ Docker Crash Course를 통해 이미지·컨테이너·볼륨·네트워크의 �
 4. Namespace 간 네트워크 경계 우회
 5. privileged Pod·HostPath에 의한 컨테이너 탈출 위험
 
-Kubernetes Goat는 의도적으로 취약하게 만든 교육 환경이므로 운영 클러스터에서 같은 명령을 실행하면 안 된다. [Kubernetes Goat README](https://github.com/madhuakula/kubernetes-goat)
-
 ## 2. Docker 기초 정리
 
 ### 2.1 핵심 개념
 
 | 개념 | 설명 |
 |---|---|
-| Image | 애플리케이션과 실행 환경을 읽기 전용 계층으로 묶은 템플릿이다. |
-| Container | Image를 실행한 격리 프로세스 인스턴스다. 같은 Image로 여러 컨테이너를 만들 수 있다. |
-| Volume | 컨테이너 삭제와 별개로 데이터를 보존하기 위한 Docker 관리 저장소다. |
-| Network | 컨테이너 간 통신과 외부 포트 연결을 제공하는 가상 네트워크다. |
-| Registry | Image를 저장·배포하는 서비스다. 로컬에 Image가 없으면 Docker는 설정된 Registry(일반적으로 Docker Hub)에서 pull을 시도한다. |
+| Image | 애플리케이션과 실행 환경을 읽기 전용 계층으로 묶은 템플릿 |
+| Container | Image를 실행한 격리 프로세스 인스턴스. 같은 Image로 여러 컨테이너를 만들 수 있다. |
+| Volume | 컨테이너 삭제와 별개로 데이터를 보존하기 위한 Docker 관리 저장소 |
+| Network | 컨테이너 간 통신과 외부 포트 연결을 제공하는 가상 네트워크 |
+| Registry | Image를 저장·배포하는 서비스. 로컬에 Image가 없으면 Docker는 설정된 Registry(일반적으로 Docker Hub)에서 pull을 시도한다. |
 
-Image와 컨테이너의 구분, Volume·네트워크의 사용 목적은 [Docker Get Started](https://docs.docker.com/get-started/)와 [Docker storage volumes](https://docs.docker.com/engine/storage/volumes/)를 기준으로 정리했다.
+Image와 컨테이너의 구분, Volume·네트워크의 사용 목적은 [Docker Get Started](https://docs.docker.com/get-started/)와 [Docker storage volumes](https://docs.docker.com/engine/storage/volumes/)를 기준으로 정리함.
 
 ### 2.2 자주 사용한 Docker 명령과 이유
 
@@ -52,7 +50,7 @@ Image와 컨테이너의 구분, Volume·네트워크의 사용 목적은 [Docke
 | `docker rmi IMAGE` | 더 이상 사용하지 않는 Image를 제거한다. | 해당 Image를 참조하는 컨테이너가 있으면 먼저 처리한다. |
 | `docker pull IMAGE` | 컨테이너를 실행하지 않고 Image만 내려받는다. | 태그를 명시해 재현성을 높인다. |
 | `docker exec -it CONTAINER sh` | 실행 중인 컨테이너 안에서 진단 명령을 실행한다. | 운영 환경에서는 최소 권한과 감사 로그를 고려한다. |
-| `docker logs CONTAINER` | 컨테이너 표준 출력·오류 로그를 확인한다. | 로그에 비밀값이 남지 않도록 주의한다. |
+| `docker logs CONTAINER` | 컨테이너 표준 출력·오류 로그를 확인한다. | 로그에 비밀값이 남지 않도록 주의하기. |
 
 ## 3. Kubernetes 기초 정리
 
@@ -60,15 +58,15 @@ Image와 컨테이너의 구분, Volume·네트워크의 사용 목적은 [Docke
 
 | 구성 요소 | 설명 |
 |---|---|
-| Cluster | 여러 Node와 Control Plane으로 이루어진 Kubernetes 관리 단위다. |
-| Node | Pod가 배치되어 실행되는 물리·가상 머신 또는 그에 준하는 실행 노드다. |
-| Control Plane | 원하는 상태를 관리하고 스케줄링·조정하는 구성 요소다. 예전의 `master`라는 용어보다 현재 문서에서는 Control Plane을 사용한다. |
-| Pod | 하나 이상의 컨테이너를 함께 배치하는 Kubernetes의 최소 배포 단위다. |
-| Deployment | Pod의 선언적 배포, Replica 관리, 롤링 업데이트를 담당한다. |
+| Cluster | 여러 Node와 Control Plane으로 이루어진 Kubernetes 관리 단위 |
+| Node | Pod가 배치되어 실행되는 물리·가상 머신 또는 그에 준하는 실행 노드 |
+| Control Plane | 원하는 상태를 관리하고 스케줄링·조정하는 구성 요소. 예전의 `master`라는 용어보다 현재 문서에서는 Control Plane을 사용한다고 함. |
+| Pod | 하나 이상의 컨테이너를 함께 배치하는 Kubernetes의 최소 배포 단위 |
+| Deployment | Pod의 선언적 배포, Replica 관리, 롤링 업데이트를 담당 |
 | Service | 변하는 Pod IP 대신 안정적인 접근 지점과 서비스 발견을 제공한다. |
 | Namespace | 리소스 이름을 논리적으로 구분하는 범위다. 기본적으로 네트워크 격리를 제공하지는 않는다. |
-| ConfigMap | 비민감 설정 데이터를 컨테이너에 전달한다. |
-| Secret | 비밀 데이터를 저장·전달하는 리소스다. `data` 필드는 Base64 인코딩일 뿐 암호화 자체를 뜻하지 않는다. |
+| ConfigMap | 비민감 설정 데이터를 컨테이너에 전달 |
+| Secret | 비밀 데이터를 저장·전달하는 리소스다. `data` 필드는 Base64 인코딩일 뿐 암호화 자체를 뜻하지 않음. |
 
 Pod·Deployment·Service의 역할은 [Kubernetes Concepts](https://kubernetes.io/docs/concepts/), Secret의 저장 형식은 [Kubernetes Secrets](https://kubernetes.io/docs/concepts/configuration/secret/)를 참고했다.
 
@@ -81,16 +79,16 @@ Pod·Deployment·Service의 역할은 [Kubernetes Concepts](https://kubernetes.i
 | `kubectl get pods -A` | 모든 Namespace의 Pod 상태를 확인한다. |
 | `kubectl describe pod POD` | 이벤트, 이미지, 볼륨, 상태 등 Pod의 상세 진단 정보를 확인한다. |
 | `kubectl apply -f FILE.yaml` | YAML 선언을 클러스터의 원하는 상태로 적용한다. |
-| `apiVersion`, `kind`, `metadata` | 대부분의 Kubernetes 객체에 필요한 API 버전, 객체 유형, 이름·라벨 등의 메타데이터다. |
-| `spec` | Deployment·Pod·Service 등에서 원하는 상태를 기술한다. ConfigMap처럼 `spec` 대신 `data`를 사용하는 객체도 있으므로 모든 객체에 일률적으로 필수는 아니다. |
+| `apiVersion`, `kind`, `metadata` | 대부분의 Kubernetes 객체에 필요한 API 버전, 객체 유형, 이름·라벨 등의 메타데이터 |
+| `spec` | Deployment·Pod·Service 등에서 원하는 상태를 기술한다. ConfigMap처럼 `spec` 대신 `data`를 사용하는 객체도 있으므로 모든 객체에 일률적으로 필수는 아니라고 함. |
 
-YAML은 들여쓰기와 자료 구조가 의미를 가지므로 공백 오류가 곧 구성 오류로 이어질 수 있다. 객체별 필수 필드는 Kubernetes API 스키마를 따라야 한다. [Kubernetes API Overview](https://kubernetes.io/docs/reference/using-api/)
+YAML은 들여쓰기와 자료 구조가 의미를 가지므로 공백 오류가 곧 구성 오류로 이어질 수 있다. 객체별 필수 필드는 Kubernetes API schema를 따라야 한다. [Kubernetes API Overview](https://kubernetes.io/docs/reference/using-api/)
 
 ## 4. 실습 환경
 
-- Docker Desktop Linux Engine 위에 kind 클러스터 `kubernetes-goat-lab`을 구성했다.
-- kubeconfig는 프로젝트 내부의 `work/kubernetes-goat-lab.kubeconfig`을 사용했다.
-- Goat 서비스 접근은 필요한 경우 `127.0.0.1` 포트 포워딩으로 제한했다.
+- Docker Desktop Linux Engine 위에 kind 클러스터 `kubernetes-goat-lab`을 구성함.
+- kubeconfig는 프로젝트 내부의 `work/kubernetes-goat-lab.kubeconfig`을 사용
+- Goat 서비스 접근은 필요한 경우 `127.0.0.1` 포트 포워딩으로 제한
 - 실습은 교육용 kind 클러스터에서만 수행했으며, 운영 자산·외부 IP·실제 계정에는 접근하지 않았다.
 
 ## 5. Kubernetes Goat 실습 결과
@@ -101,12 +99,12 @@ YAML은 들여쓰기와 자료 구조가 의미를 가지므로 공백 오류가
 
 | 명령 | 이 명령을 실행한 이유 |
 |---|---|
-| `kubectl get pods -n default -l app=build-code ...` | `app=build-code` 라벨로 대상 Pod 이름을 동적으로 찾는다. Pod 이름은 재배포마다 달라질 수 있기 때문이다. |
+| `kubectl get pods -n default -l app=build-code ...` | `app=build-code` 라벨로 대상 Pod 이름을 동적으로 찾는다. Pod 이름은 재배포마다 달라질 수 있기 때문 |
 | `kubectl exec -it -n default POD -- sh` | 교육용 build-code 컨테이너 안에서 파일시스템과 Git 이력을 분석한다. |
 | `cd /app; ls -la` | 애플리케이션 경로와 숨김 `.git` 디렉터리 존재를 확인한다. |
 | `git log --oneline` | 저장소 커밋 이력을 간단한 형식으로 나열해 의심스러운 변경을 찾는다. |
 | `git show --name-status COMMIT` | 특정 커밋에서 어떤 파일이 추가·수정됐는지 확인한다. |
-| `git show COMMIT:.env` | 과거 커밋의 `.env` 내용을 확인한다. 실습에서는 노출을 확인했으며 실제 값은 보고서에 기록하지 않았다. |
+| `git show COMMIT:.env` | 과거 커밋의 `.env` 내용을 확인한다. 실습에서는 노출을 확인했으며 실제 값은 보고서 기록에서 제외함. |
 
 **관찰 결과:** `.env` 파일을 추가한 과거 커밋과 AWS 접근 키·비밀 키·실습 flag 항목을 확인했다. 즉, 현재 소스에서 삭제하더라도 Git 이력을 정리하지 않으면 과거 비밀값이 복구될 수 있다.
 
@@ -207,5 +205,5 @@ YAML은 들여쓰기와 자료 구조가 의미를 가지므로 공백 오류가
 
 ## 7. 결론
 
-Docker의 Image·Container 경계와 Kubernetes의 Pod·Service·RBAC·Namespace 개념을 학습한 뒤, 실제 구성 오류가 어떻게 비밀정보 노출, 과권한, 내부 서비스 노출, 네트워크 경계 우회, 노드 접근 위험으로 연결되는지 교육용 클러스터에서 확인했다. 
-핵심 교훈은 단일 설정이 아니라 **비밀관리, 최소 권한, 네트워크 정책, 워크로드 보안 컨텍스트**를 함께 적용해야 한다는 점이다.
+Docker의 Image·Container 경계와 Kubernetes의 Pod·Service·RBAC·Namespace 개념을 학습한 뒤, 실제 구성 오류가 어떻게 비밀정보 노출, 과권한, 내부 서비스 노출, 네트워크 경계 우회, 노드 접근 위험으로 연결되는지 학습용 클러스터에서 확인했다. 
+핵심은 단일 설정이 아니라 **비밀관리, 최소 권한, 네트워크 정책, 워크로드 보안 컨텍스트**를 함께 적용해야 한다는 점이다.
