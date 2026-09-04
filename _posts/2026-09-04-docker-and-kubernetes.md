@@ -21,7 +21,7 @@ Docker Crash Course를 통해 이미지·컨테이너·볼륨·네트워크의 �
 1. 코드 저장소의 민감정보 노출
 2. RBAC 최소 권한 위반
 3. NodePort 노출
-4. Namespace 간 네트워크 경계 우회
+4. NetworkPolicy 미구성에 따른 Namespace 간 네트워크 접근
 5. privileged Pod·HostPath에 의한 컨테이너 탈출 위험
 
 ## 2. Docker 기초 정리
@@ -160,7 +160,7 @@ YAML은 들여쓰기와 자료 구조가 의미를 가지므로 공백 오류가
 
 참고: [Kubernetes Service: NodePort](https://kubernetes.io/docs/concepts/services-networking/service/#type-nodeport)
 
-### 5.4 시나리오 4 — Kubernetes namespaces bypass
+### 5.4 시나리오 4 — NetworkPolicy 미구성에 따른 Namespace 간 네트워크 접근
 
 **목적:** Namespace가 네트워크 격리를 자동으로 제공하지 않는다는 점을 검증한다.
 
