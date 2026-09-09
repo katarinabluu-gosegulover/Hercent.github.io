@@ -3903,6 +3903,6 @@ Bug bounty에서 중요한 것은 “취약해 보이는 코드”가 아니라 
 
 ## 완료 증적
 
-![HexTree Android Track 14 of 14 완료 화면](assets/hextree-android-track-14-of-14.png)
+![HexTree Android Track 14 of 14 완료 화면](/Hercent.github.io/assets/images/hextree-android-track-14-of-14.png)
 
 > 그림 3. HexTree Android Map에서 확인한 14/14 과정 완료 화면
