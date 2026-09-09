@@ -1,0 +1,17 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="620" viewBox="0 0 1440 620" role="img" aria-labelledby="title desc">
+  <title id="title">Redacted HexTree lab evidence: Network Interception and JNI analysis</title>
+  <desc id="desc">A terminal-style evidence card showing redacted flags from the ZIP path traversal and JNI API-key labs.</desc>
+  <rect width="1440" height="620" fill="#111318"/>
+  <rect x="0" y="0" width="1440" height="70" fill="#20242c"/>
+  <circle cx="42" cy="35" r="11" fill="#ff5f57"/><circle cx="76" cy="35" r="11" fill="#febc2e"/><circle cx="110" cy="35" r="11" fill="#28c840"/>
+  <text x="150" y="44" fill="#f1f5f9" font-family="Consolas, monospace" font-size="24">Sanitized lab evidence — local emulator output</text>
+  <text x="55" y="128" fill="#70d6bd" font-family="Consolas, monospace" font-size="26">[Network Interception] ZIP path traversal validation</text>
+  <text x="55" y="178" fill="#cbd5e1" font-family="Consolas, monospace" font-size="24">$ adb shell cat …/pocketmaps/downloads/hax</text>
+  <text x="55" y="220" fill="#cbd5e1" font-family="Consolas, monospace" font-size="24">pwned by MITM zip path traversal</text>
+  <text x="55" y="266" fill="#f7d774" font-family="Consolas, monospace" font-size="26">HXT{zip-path-traversal-█████}</text>
+  <line x1="55" y1="308" x2="1385" y2="308" stroke="#3b4352" stroke-width="2"/>
+  <text x="55" y="370" fill="#70d6bd" font-family="Consolas, monospace" font-size="26">[Reverse Engineering] JNI return-value validation</text>
+  <text x="55" y="420" fill="#cbd5e1" font-family="Consolas, monospace" font-size="24">$ adb logcat -d -s HXT-NATIVE-KEY:E</text>
+  <text x="55" y="466" fill="#f7d774" font-family="Consolas, monospace" font-size="26">E HXT-NATIVE-KEY: HXT{obfuscated-api-key-████████}</text>
+  <text x="55" y="548" fill="#94a3b8" font-family="Consolas, monospace" font-size="20">Flag suffixes are intentionally redacted for the published write-up.</text>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1440" height="540" viewBox="0 0 1440 540" role="img" aria-labelledby="title desc">
+  <title id="title">Redacted HexTree Frida lab evidence</title>
+  <desc id="desc">A terminal-style evidence card showing Frida Java.perform calls and redacted flag results.</desc>
+  <rect width="1440" height="540" fill="#111318"/>
+  <rect x="0" y="0" width="1440" height="70" fill="#20242c"/>
+  <circle cx="42" cy="35" r="11" fill="#ff5f57"/><circle cx="76" cy="35" r="11" fill="#febc2e"/><circle cx="110" cy="35" r="11" fill="#28c840"/>
+  <text x="150" y="44" fill="#f1f5f9" font-family="Consolas, monospace" font-size="24">Sanitized lab evidence — Frida Java.perform</text>
+  <text x="55" y="135" fill="#70d6bd" font-family="Consolas, monospace" font-size="25">Java.use('io.hextree.fridatarget.FlagClass')</text>
+  <text x="55" y="188" fill="#cbd5e1" font-family="Consolas, monospace" font-size="23">flagFromStaticMethod()              → HXT{a-static-calling-with-█████}</text>
+  <text x="55" y="236" fill="#cbd5e1" font-family="Consolas, monospace" font-size="23">instance.flagFromInstanceMethod()   → HXT{dynamic-█████}</text>
+  <text x="55" y="284" fill="#cbd5e1" font-family="Consolas, monospace" font-size="23">flagIfYouCallMeWithSesame('sesame') → HXT{the-droid-youre-looking-███}</text>
+  <line x1="55" y1="340" x2="1385" y2="340" stroke="#3b4352" stroke-width="2"/>
+  <text x="55" y="402" fill="#94a3b8" font-family="Consolas, monospace" font-size="21">Static analysis identified the method signatures and required input;</text>
+  <text x="55" y="438" fill="#94a3b8" font-family="Consolas, monospace" font-size="21">runtime instrumentation invoked the same app code path. Flag suffixes are redacted.</text>
+</svg>
