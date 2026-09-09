@@ -9,75 +9,74 @@ featured: false
 feature_order: 0
 ---
 
-# HexTree Android Track Write-up
+# HexTree Android Track Write Ups
 
-> 주의: 이 문서는 HexTree 교육용 랩, 개인 에뮬레이터, 분석이 허가된 APK만 대상으로 했다. 제3자 앱·서비스를 시험할 때는 소유자의 명시적 승인이 필요하다. 점검 분류와 방어 권고는 [OWASP MASTG](https://mas.owasp.org/MASTG/) 및 Android 공식 문서를 참고했다.
+> 주의: 이 문서는 HexTree 교육용 랩, 개인 에뮬레이터, 분석이 허가된 APK만 대상으로 하였음.
 
-## 1. Your First Android App
+## 1. 첫 Android 앱 만들기
 
 첫 과정에서는 Android Studio에서 Java 기반 Empty Views Activity를 만들고, 에뮬레이터에서 빌드·실행했다. XML layout의 view ID가 `R.id.*`로 코드에 연결되는 구조, `OnClickListener`의 이벤트 처리, `Intent(Intent.ACTION_VIEW, Uri.parse(...))`가 시스템의 intent resolver를 통해 외부 앱 또는 컴포넌트로 전달되는 구조를 확인했다. 이 기초는 이후 Manifest의 intent filter, `getIntent()` 입력, 역컴파일된 resource ID와 클릭 처리 경로를 읽는 기반이 됐다. [Android Developers: Activities and intents](https://developer.android.com/guide/components/activities/intro-activities)
 
-## 2. Track-by-track detailed records
-
+## 2. 트랙별 상세 Write Ups
 
 ---
 
-## Research Device & Emulator Setup — Managing Apps
+## 연구용 기기 및 에뮬레이터 설정 — 앱 관리
 
-**Lab:** [Managing Apps](https://app.hextree.io/courses/research-device-setup/the-android-debug-bridge-adb/managing-apps)  
-**Target:** HexTree-provided `adb_test_application.apk`  
-**Device:** `emulator-5554`
+**Lab:** [앱 관리 (Managing Apps)](https://app.hextree.io/courses/research-device-setup/the-android-debug-bridge-adb/managing-apps)  
+**대상:** HexTree 제공 `adb_test_application.apk`  
+**기기:** `emulator-5554`
 
-### Goal
+### 목표
 
-1. Install and launch the supplied APK.
-2. Locate an Activity that is not reachable from the launcher, then launch it with ADB.
+1. 제공된 APK를 설치하고 실행한다.
+2. 런처 화면에서는 열 수 없는 Activity를 찾아 ADB로 직접 실행한다.
 
-### Procedure
+### 절차
 
-The APK was installed to the emulator and its launcher Activity was resolved as follows:
+APK를 에뮬레이터에 설치한 뒤 package manager로 launcher Activity를 확인했다.
 
 ```powershell
 adb -s emulator-5554 install -r .\adb_test_application.apk
 adb -s emulator-5554 shell cmd package resolve-activity --brief io.hextree.adbtestapplication
-## io.hextree.adbtestapplication/.MainActivity
+# 결과: io.hextree.adbtestapplication/.MainActivity
 adb -s emulator-5554 shell am start -n io.hextree.adbtestapplication/.MainActivity
 ```
 
-The first Activity rendered the following flag:
+첫 번째 Activity에서 다음 플래그가 표시됐다.
 
 ```text
 HXT{Ready-to-Android}
 ```
 
-For the second task, `dumpsys package` exposed an additional intent-filter entry:
+두 번째 과제에서는 `dumpsys package` 출력에서 추가 Activity 항목을 확인했다.
 
 ```powershell
 adb -s emulator-5554 shell dumpsys package io.hextree.adbtestapplication
-## io.hextree.adbtestapplication/.HiddenActivity
+# 결과: io.hextree.adbtestapplication/.HiddenActivity
 ```
 
-Although it is absent from the launcher UI, the component can be directly addressed with its explicit component name:
+런처 UI에는 보이지 않지만, 명시적 component name으로 직접 지정해 실행할 수 있다.
 
 ```powershell
 adb -s emulator-5554 shell am start -n io.hextree.adbtestapplication/.HiddenActivity
 ```
 
-This displayed the second flag:
+이후 두 번째 플래그가 표시됐다.
 
 ```text
 HXT{not-so-hidden-activity}
 ```
 
-### Takeaway
+### 배운 점
 
-The launcher only shows components that advertise the `MAIN` action and `LAUNCHER` category; it is not a complete inventory of an application's Activities. `dumpsys package` reads the package manager's registered component data, while `am start -n package/.Activity` starts a named component explicitly. This is why manifest/component inspection matters during Android application assessment.
+런처는 `MAIN` action과 `LAUNCHER` category를 선언한 component만 보여 주므로, 앱의 모든 Activity 목록이 아니다. `dumpsys package`는 package manager에 등록된 component 정보를 보여 주며, `am start -n package/.Activity`는 지정한 component를 명시적으로 시작한다. 따라서 Android 앱을 점검할 때는 화면에 보이는 메뉴만 보지 말고 Manifest와 등록 component를 함께 확인해야 한다.
 
-### Exploring Logs with logcat
+### logcat으로 로그 확인
 
-**Lab:** [Exploring Logs with logcat](https://app.hextree.io/courses/research-device-setup/the-android-debug-bridge-adb/exploring-logs-with-logcat)
+**Lab:** [logcat으로 로그 확인 (Exploring Logs with logcat)](https://app.hextree.io/courses/research-device-setup/the-android-debug-bridge-adb/exploring-logs-with-logcat)
 
-The lab asks for the value written by `MainActivity`. To avoid confusing older log entries with a fresh execution, the buffer was cleared, the app was stopped, and the launcher Activity was started again. The final filter retains verbose-and-higher messages for `MainActivity` and silences other tags.
+이 랩의 목표는 `MainActivity`가 로그에 남긴 값을 찾는 것이다. 이전 실행의 로그와 섞이지 않도록 buffer를 비우고 앱을 강제 종료한 뒤 launcher Activity를 다시 시작했다. 마지막 filter는 `MainActivity`의 verbose 이상 메시지만 남기고 다른 tag는 숨긴다.
 
 ```powershell
 adb -s emulator-5554 logcat -c
@@ -86,27 +85,25 @@ adb -s emulator-5554 shell am start -n io.hextree.adbtestapplication/.MainActivi
 adb -s emulator-5554 logcat -d "MainActivity:V *:S"
 ```
 
-Observed output:
+확인된 출력:
 
 ```text
 V MainActivity: Congratulations, you found the log! Your flag is: HXT{log-all-the-cats}
 ```
 
-**Flag:** `HXT{log-all-the-cats}`
+**플래그:** `HXT{log-all-the-cats}`
 
-### References
+### 참고 자료
 
-- [HexTree lab: Managing Apps](https://app.hextree.io/courses/research-device-setup/the-android-debug-bridge-adb/managing-apps)
-- [HexTree lab: Exploring Logs with logcat](https://app.hextree.io/courses/research-device-setup/the-android-debug-bridge-adb/exploring-logs-with-logcat)
-- [Android Developers: adb `pm` and package management](https://developer.android.com/tools/adb#pm)
-- [Android Developers: logcat command-line tool](https://developer.android.com/tools/logcat)
+- [HexTree 랩: 앱 관리](https://app.hextree.io/courses/research-device-setup/the-android-debug-bridge-adb/managing-apps)
+- [HexTree 랩: logcat으로 로그 확인](https://app.hextree.io/courses/research-device-setup/the-android-debug-bridge-adb/exploring-logs-with-logcat)
+- [Android Developers: adb `pm` 및 패키지 관리](https://developer.android.com/tools/adb#pm)
+- [Android Developers: logcat 명령줄 도구](https://developer.android.com/tools/logcat)
 
 
 ---
 
 ## HexTree Intent Attack Surface: exported Activity와 Intent 입력 검증
-
-> 범위와 윤리: HexTree 교육용 APK `io.hextree.attacksurface.apk` 및 개인 AVD에서만 재현했다. 제3자 앱이나 승인받지 않은 대상에는 적용하지 않는다.
 
 ### 1. 과정과 이번 실습의 목표
 
@@ -126,7 +123,7 @@ Activity는 사용자가 수행하는 하나의 집중된 작업을 담당하며
 
 Android Binder는 앱 프로세스와 시스템 서비스 사이의 IPC(프로세스 간 통신)를 담당하는 Linux kernel driver 기반 메커니즘이다. 서로 다른 앱은 보통 같은 메모리를 공유하지 않으므로, 한 앱의 `startActivity()` 요청은 Android framework를 거쳐 Binder IPC로 시스템 서비스에 전달되고, 시스템이 대상 Activity의 실행을 조정한다. [Linux kernel documentation: Binder](https://docs.kernel.org/admin-guide/binderfs.html)
 
-앱 보안 분석에서 Binder 드라이버의 내부 구현까지 파고들 필요는 없는 경우가 많다. 다만 다음 관계를 이해하면 좋다.
+앱 보안 분석에서 Binder 드라이버의 내부 구현까지 파고들 필요는 없는 경우가 많다고 하지만 다음 관계를 이해하면 도움이 될 것 같았다.
 
 ```text
 호출 앱 / adb shell
@@ -222,8 +219,6 @@ Logcat에서 `Flag3: success() called!`를 확인했고 HexTree 제출도 성공
 
 **원인:** URI가 정확하다는 사실은 호출자가 신뢰할 수 있다는 근거가 아니다. 공개된 APK에서 조건을 분석한 외부 앱도 동일한 Intent를 만들 수 있다.
 
-> Flag 원문은 HexTree 답안이므로 공개 블로그에는 기록하지 않는다. 개인 Logcat과 HexTree 성공 화면에서만 보관했다.
-
 ### 5. Implementing Intent Debug Features
 
 [`Implementing Intent Debug Features`](https://app.hextree.io/courses/intent-threat-surface/intents-and-activities/implementing-intent-debug-features) 페이지에서는 Flag 4·5·7을 추가로 재현했다. 세 항목 모두 개인 AVD의 Logcat에서 `success() called!`를 확인하고 HexTree에 제출해 성공 처리됐다.
@@ -243,7 +238,7 @@ Logcat은 `INIT → PREPARE → BUILD → GET_FLAG` 전이와 마지막 `success
 
 #### Flag 5 — Intent 안의 Intent
 
-Flag 5는 ADB의 문자열 extra만으로 만들기 어려운 `Intent` 객체 중첩 구조를 요구했다. 그래서 교육용 최소 PoC를 새로 만들었다. [PoC 소스](intent-attack-surface-flag5-poc/app/src/main/java/io/hextree/intentpoc/MainActivity.java)는 다음 구조를 구성한다.
+Flag 5는 ADB의 문자열 extra만으로 만들기 어려운 `Intent` 객체 중첩 구조를 요구했다. 그래서 학습용 최소 PoC를 새로 제작함. [PoC 소스](intent-attack-surface-flag5-poc/app/src/main/java/io/hextree/intentpoc/MainActivity.java)는 다음 구조를 구성한다.
 
 ```text
 Flag5Activity를 여는 outer Intent
@@ -450,8 +445,6 @@ Logcat에서 `Flag13: success() called!`를 확인했고 flag 출력도 확인�
 
 **방어:** deep link는 공개 입력으로 취급한다. 민감 기능은 링크만으로 실행하지 말고 인증 상태, CSRF성 nonce/state, 서버 검증 등 별도 조건을 확인한다. 웹 도메인 기반 링크라면 Android App Links처럼 도메인 소유권 검증을 사용하는 편이 더 안전하다. Android 문서도 자체 웹 도메인에는 App Links 사용을 권장한다. [Android Developers: App Links recommendation](https://developer.android.com/training/app-links/create-deeplinks)
 
-> Flag 원문은 공개 블로그에 기록하지 않고, 개인 Logcat과 HexTree 성공 화면에만 보관했다.
-
 ### 11. Hijacking Deep Link Intents — 로그인 callback 가로채기
 
 [`Hijacking Deep Link Intents`](https://app.hextree.io/courses/intent-threat-surface/android-deep-links/hijacking-deep-link-intents)는 deep link가 결국 implicit Intent resolution을 거친다는 점을 이용한다. Android 문서는 같은 URI를 처리할 수 있는 앱이 여러 개면 사용자의 기본 선택 또는 disambiguation dialog에 따라 라우팅된다고 설명한다. [Android Developers: Deep link routing](https://developer.android.com/training/app-links/create-deeplinks)
@@ -487,8 +480,6 @@ Logcat에서 PoC가 수신한 callback과 전달한 callback을 확인했고, �
 **취약 원인:** custom scheme deep link callback을 앱의 신뢰 경계로 사용했다. `hex://token`은 대상 앱만 받을 수 있는 주소가 아니므로, 다른 앱이 같은 scheme/host를 등록하면 callback을 가로채거나 변조할 수 있다.
 
 **방어:** 로그인 callback에는 custom scheme만 의존하지 않는다. 웹 도메인을 소유하고 있다면 verified Android App Links를 사용하고, callback의 `state`/nonce를 서버에서 검증한다. 클라이언트 query parameter의 `type=admin` 같은 역할 값은 신뢰하지 말고 서버가 발급한 서명된 토큰이나 서버 조회 결과로 권한을 판단한다.
-
-> Flag 원문은 공개 블로그에 기록하지 않고, 개인 Logcat과 HexTree 성공 화면에만 보관했다.
 
 ### 12. Generic Chrome Intent — `intent:` URI로 브라우저에서 일반 Intent 만들기
 
@@ -537,8 +528,6 @@ end
 **취약 원인:** `BROWSABLE` Activity가 웹 페이지에서 만들어진 `intent:` URI의 action과 extra를 그대로 신뢰했다. custom scheme deep link보다 더 넓게, 웹 페이지가 일반 Intent 필드와 extra까지 구성할 수 있었기 때문에 외부 입력만으로 내부 성공 조건을 만족시킬 수 있었다.
 
 **방어:** 브라우저에서 들어오는 Intent는 모두 공격자 제어 입력으로 본다. `BROWSABLE` Activity는 최소한의 기능만 노출하고, 민감 기능은 서버 검증·사용자 인증·권한 확인 뒤에 실행한다. 또한 외부로 열어야 하는 deep link라면 scheme/host/path를 명확히 제한하고, extra 값만으로 권한이나 상태를 결정하지 않는다.
-
-> Flag 원문은 공개 블로그에 기록하지 않고, 개인 Logcat과 HexTree 성공 화면에만 보관했다.
 
 ### 13. 공격 흐름
 
@@ -596,7 +585,7 @@ success() 호출
 - Chrome의 `intent:` URI는 웹 페이지가 Android Intent의 여러 필드를 한 번에 구성할 수 있게 해 준다. 편리한 연동 기능이지만, 앱 쪽에서는 신뢰할 수 없는 외부 입력이라는 점이 변하지 않는다.
 - ADB의 `am start`는 교육용 환경에서 Intent 조건을 빠르게 재현하는 데 유용하지만, 실제 앱 보안은 Manifest와 수신 코드·인증/인가 로직을 함께 평가해야 한다.
 
-### References
+### 참고 자료
 
 1. [HexTree: Intent Attack Surface](https://app.hextree.io/courses/intent-threat-surface)
 2. [HexTree: Practice startActivity()](https://app.hextree.io/courses/intent-threat-surface/intents-and-activities/practice-startactivity)
@@ -627,8 +616,6 @@ success() 호출
 ---
 
 ## HexTree Android Track — Broadcast Receivers Write-up
-
-> 작성 기준: 공개 블로그용. 실제 flag 원문은 본문에 기록하지 않고, 개인 제출용 로그와 HexTree 성공 화면에만 보관한다.
 
 ### 1. 트랙 목표
 
@@ -753,7 +740,7 @@ public class FreeFlagBroadcastReceiver extends BroadcastReceiver {
 
 Android 8+ 환경에서는 manifest receiver만으로 implicit broadcast를 안정적으로 받지 못했기 때문에, PoC 앱 실행 시 `registerReceiver()`로 runtime receiver를 등록했다. 이후 HexTree 앱에서 Flag18을 열자 PoC receiver가 먼저 `FREE_FLAG` broadcast를 받고, target 앱의 final receiver는 변경된 result code를 확인해 성공 처리했다.
 
-검증 로그는 다음과 같은 흐름이었다. flag 원문은 공개 write-up에는 기록하지 않는다.
+검증 로그는 다음과 같은 흐름이었다.
 
 ```text
 FreeFlagReceiver: action=io.hextree.broadcast.FREE_FLAG
@@ -945,7 +932,7 @@ Flag21: HXT{...}
 - notification action의 PendingIntent에 민감한 extra를 넣고 implicit broadcast로 보내면, 같은 action을 듣는 외부 receiver가 내용을 관찰할 수 있다.
 - sender 제한이 필요한 경우 `android:exported=false`, custom permission, signature permission, package 제한 등을 고려해야 한다.
 
-### References
+### 참고 자료
 
 1. [HexTree: Broadcast Receivers](https://app.hextree.io/courses/broadcast-receivers)
 2. [HexTree: Sending Broadcasts](https://app.hextree.io/courses/broadcast-receivers/broadcast-threat-surface/sending-broadcasts)
@@ -1407,7 +1394,7 @@ Flag29: HXT{...}
 - AIDL은 메서드 호출처럼 보이지만 실제로는 Binder transaction이므로, 외부에 공개된 AIDL 메서드는 그대로 remote attack surface가 된다.
 - 인증용 값이 있더라도 그 값을 발급하는 메서드와 사용하는 메서드가 모두 외부에 공개되어 있으면 보안 경계가 되지 못한다.
 
-### References
+### 참고 자료
 
 1. [HexTree: Android Services](https://app.hextree.io/courses/android-services)
 2. [HexTree: Starting a Service](https://app.hextree.io/courses/android-services/service-threat-surface/starting-a-service)
@@ -1745,7 +1732,7 @@ Flag33.1: HXT{...}
 - `projection`은 허용 가능한 column명만 allowlist로 검증한다.
 - provider 내부 DB 구조가 노출되지 않도록 table/column 접근을 명확히 분리한다.
 
-### 6. The AndroidX FileProvider
+### 6. AndroidX FileProvider
 
 대상 페이지: [HexTree: How to Access FileProvider](https://app.hextree.io/courses/content-provider/the-androidx-fileprovider/how-to-access-fileprovider)
 
@@ -2051,7 +2038,7 @@ Flag36: HXT{...}
 - FileProvider의 root-path 설정은 파일 공유 범위를 과도하게 넓히므로, 경로 이동 취약점과 결합되면 앱 private root 파일까지 노출될 수 있다.
 - FileProvider URI에 write grant까지 붙으면 내부 파일 읽기를 넘어 SharedPreferences 같은 상태 파일 변조로 이어질 수 있다.
 
-### References
+### 참고 자료
 
 1. [HexTree: Content Provider](https://app.hextree.io/courses/content-provider)
 2. [HexTree: Reverse Engineering SQLite ContentProvider](https://app.hextree.io/courses/content-provider/introduction-to-provider/reverse-engineering-sqlite-contentprovid)
@@ -2592,7 +2579,7 @@ Flag41: HXT{...}
 - Custom Tabs는 WebView보다 격리된 구조지만, `CustomTabsSession`과 `postMessage`를 사용하면 웹 페이지가 앱 로직과 다시 연결된다.
 - `postMessage` 수신부에서는 메시지 포맷뿐 아니라 보낸 origin과 세션 상태를 검증해야 한다.
 
-### References
+### 참고 자료
 
 1. [HexTree: Android WebViews](https://app.hextree.io/courses/android-webviews)
 2. [HexTree: JavascriptInterface](https://app.hextree.io/courses/android-webviews/webview-misconfigurations/javascriptinterface)
@@ -2742,18 +2729,7 @@ Logcat 확인:
 adb logcat -d | findstr /i "token password secret auth session"
 ```
 
-### 5. 실습 결과 기록
-
-사용자가 HexTree에서 다음 과정 완료를 확인했다.
-
-```text
-I just completed "Android (Insecure) Storage" on hextree.io!
-https://app.hextree.io/courses/insecure-storage
-```
-
-이 과정은 별도 플래그 제출형 실습이라기보다 Android 저장소 보안 개념을 정리하는 트랙으로 기록한다. 따라서 이 파일에는 임의 flag 값을 넣지 않고, 저장소 점검 방법과 취약 원인 중심으로 정리했다.
-
-### 6. 취약 원인 정리
+### 5. 취약 원인 정리
 
 Insecure Storage 취약점의 공통 원인은 민감 데이터가 저장 위치의 신뢰 수준보다 더 높은 보호를 요구하는데도 평문으로 남는 것이다.
 
@@ -2767,7 +2743,7 @@ Insecure Storage 취약점의 공통 원인은 민감 데이터가 저장 위치
 - backup 대상에서 민감 파일을 제외하지 않음
 - debug log에 token, secret, session 값을 출력
 
-### 7. 방어 방안
+### 6. 방어 방안
 
 - 민감 데이터는 가능한 한 로컬에 저장하지 않는다.
 - 꼭 저장해야 하면 internal app-specific storage를 사용하고, 평문 저장을 피한다.
@@ -2778,7 +2754,7 @@ Insecure Storage 취약점의 공통 원인은 민감 데이터가 저장 위치
 - external/shared storage는 사용자 공유 목적의 비민감 파일에만 사용한다.
 - `adb backup`, Android Auto Backup, debug build, logcat 출력까지 포함해 데이터 잔존 여부를 확인한다.
 
-### 8. 배운 점
+### 7. 배운 점
 
 - 저장소 취약점은 “어디에 저장했는가”와 “누가 읽을 수 있는가”를 같이 봐야 한다.
 - internal storage는 기본적으로 앱 sandbox로 보호되지만, 다른 취약점과 결합되면 노출될 수 있다.
@@ -2786,7 +2762,7 @@ Insecure Storage 취약점의 공통 원인은 민감 데이터가 저장 위치
 - cache와 logcat은 개발자가 놓치기 쉬운 데이터 잔존 지점이다.
 - 앱 보안 분석에서는 화면/IPC 공격 표면뿐 아니라 로컬에 남는 흔적까지 확인해야 한다.
 
-### References
+### 참고 자료
 
 1. [HexTree: Android (Insecure) Storage](https://app.hextree.io/courses/insecure-storage)
 2. [Android Developers: Data and file storage overview](https://developer.android.com/training/data-storage)
@@ -2973,18 +2949,9 @@ writePermission
 grantUriPermissions
 ```
 
-### 6. 실습 결과 기록
-
-사용자가 HexTree에서 다음 과정 완료를 확인했다.
-
-```text
-I just completed "Android Permissions" on hextree.io!
-https://app.hextree.io/courses/android-permissions
-```
-
 이 파일에는 임의 flag 값을 넣지 않는다. Android Permissions 트랙은 이후 컴포넌트별 공격 표면 분석에서 “외부 호출 가능 여부”와 “권한으로 접근이 제한되는지”를 판단하는 기준으로 사용한다.
 
-### 7. 방어 방안
+### 6. 방어 방안
 
 - 외부 공개가 필요 없는 컴포넌트는 `android:exported="false"`로 둔다.
 - 외부 공개가 필요한 컴포넌트에는 목적에 맞는 permission을 건다.
@@ -2995,7 +2962,7 @@ https://app.hextree.io/courses/android-permissions
 - exported component가 외부 입력을 받아 권한 있는 API를 대신 호출하는 구조인지 점검한다.
 - Provider는 `readPermission`, `writePermission`, URI grant 범위를 분리해 최소 권한으로 설계한다.
 
-### 8. 배운 점
+### 7. 배운 점
 
 - Android permission은 단순히 사용자에게 권한 팝업을 띄우는 기능이 아니라 앱 간 접근 제어 모델이다.
 - `exported=true` 컴포넌트에 권한이 없으면 외부 앱이 직접 공격 표면으로 사용할 수 있다.
@@ -3003,7 +2970,7 @@ https://app.hextree.io/courses/android-permissions
 - 런타임 권한은 한 번 승인됐다고 영구적으로 신뢰하면 안 된다.
 - 권한을 가진 앱이 외부 요청을 검증 없이 처리하면, 권한 없는 앱의 대리 실행 경로가 된다.
 
-### References
+### 참고 자료
 
 1. [HexTree: Android Permissions](https://app.hextree.io/courses/android-permissions)
 2. [Android Developers: Permissions on Android](https://developer.android.com/guide/topics/permissions/overview)
@@ -3196,18 +3163,10 @@ BLE 통신에서 자주 보는 취약 패턴은 다음이다.
 
 Android BLE 문서는 BLE pairing으로 통신한 데이터가 같은 사용자 기기의 모든 앱에서 접근 가능할 수 있으므로, 민감 데이터를 다루면 app-layer security를 구현해야 한다고 주의한다. [Android Developers: Bluetooth Low Energy](https://developer.android.com/develop/connectivity/bluetooth/ble/ble-overview)
 
-### 6. 실습 결과 기록
-
-사용자가 HexTree에서 다음 과정 완료를 확인했다.
-
-```text
-I just completed "Bluetooth Reverse Engineering Basics" on hextree.io!
-https://app.hextree.io/courses/android-bluetooth-reversing
-```
 
 이 파일에는 임의 flag 값을 넣지 않는다. 이 트랙은 BLE/GATT 분석 개념을 정리하고, 이후 실제 BLE 앱 또는 IoT companion app 분석 시 사용할 체크리스트로 남긴다.
 
-### 7. 방어 방안
+### 6. 방어 방안
 
 - BLE characteristic 접근 제어를 기기 firmware와 앱 프로토콜 양쪽에서 설계한다.
 - writable characteristic에는 app-layer 인증과 권한 검사를 둔다.
@@ -3218,7 +3177,7 @@ https://app.hextree.io/courses/android-bluetooth-reversing
 - 앱 코드에 command secret이나 고정 token을 hardcoded하지 않는다.
 - Android 12 이상 권한 모델에 맞춰 `BLUETOOTH_SCAN`, `BLUETOOTH_CONNECT`, `BLUETOOTH_ADVERTISE`를 최소 선언한다.
 
-### 8. 배운 점
+### 7. 배운 점
 
 - BLE reversing은 APK 분석과 프로토콜 분석이 같이 필요하다.
 - UUID 목록만 보는 것이 아니라, 어떤 characteristic에 어떤 byte가 read/write/notify되는지 추적해야 한다.
@@ -3226,7 +3185,7 @@ https://app.hextree.io/courses/android-bluetooth-reversing
 - Bluetooth 권한은 앱이 scan/connect할 수 있는지를 제어하지만, 기기 명령 자체의 인증을 대신하지 않는다.
 - 민감한 BLE 기능은 link-layer 보안과 별개로 app-layer 보안이 필요하다.
 
-### References
+### 참고 자료
 
 1. [HexTree: Bluetooth Reverse Engineering Basics](https://app.hextree.io/courses/android-bluetooth-reversing)
 2. [Android Developers: Bluetooth Low Energy](https://developer.android.com/develop/connectivity/bluetooth/ble/ble-overview)
@@ -3239,9 +3198,7 @@ https://app.hextree.io/courses/android-bluetooth-reversing
 
 ## HexTree Android Track — Network Interception
 
-![가림 처리한 Network Interception 및 JNI 분석 증적](assets/redacted-flag-evidence-network-jni.svg)
-
-> 그림 1. 공개 write-up에는 플래그 접미부를 가리고, 명령·분석 경로·검증 위치만 남겼다. 이 카드의 JNI 부분은 뒤의 Reverse Engineering 섹션과 연결된다.
+![Network Interception 및 JNI 분석 증적](assets/redacted-flag-evidence-network-jni.svg)
 
 ### 실습: Packet Logging with tcpdump
 
@@ -3360,7 +3317,7 @@ Host: storage.googleapis.com
 - 지도 파일 다운로드 응답은 별도 바이너리였고 flag는 포함하지 않음
 - 제출용 flag는 별도 보관하고 블로그용 write-up에는 원문 전체를 노출하지 않음
 
-### 실습: Case Study: PocketHexMap - Static vs. Dynamic Analysis
+### 실습: 사례 연구: PocketHexMap - 정적·동적 분석
 
 - 과정: Network Interception / Case Study: PocketHexMap
 - 페이지: <https://app.hextree.io/courses/network-interception/case-study-pockethexmap/static-vs-dynamic-analysis>
@@ -3438,7 +3395,7 @@ HXT{zip-path-traversal-1sg17}
 
 핵심 원인은 실제 압축 해제 경로가 `ZipEntry.getName()`을 base directory 문자열에 그대로 연결하고, `getCanonicalPath()` 기반의 경로 경계 검증을 하지 않은 점이다. GraphHopper의 안전한 `Unzipper` 구현이 APK에 함께 있더라도, 실제 다운로드 처리에는 이 검증 없는 코드 경로가 사용됐다.
 
-### References
+### 참고 자료
 
 1. [HexTree: Packet Logging with tcpdump](https://app.hextree.io/courses/network-interception/android-networking-basics/packet-logging-with-tcpdump)
 2. [Android Developers: Network Security Configuration](https://developer.android.com/privacy-and-security/security-config)
@@ -3449,81 +3406,81 @@ HXT{zip-path-traversal-1sg17}
 
 ---
 
-## Reverse Engineering Android Apps — Extracting APKs with apktool
+## Android 앱 리버스 엔지니어링 — apktool로 APK 추출
 
-**Lab:** [Extracting APKs with apktool](https://app.hextree.io/courses/reverse-android-apps/working-with-apks-and-apktool/extracting-apks-with-apktool)  
+**Lab:** [apktool로 APK 추출 (Extracting APKs with apktool)](https://app.hextree.io/courses/reverse-android-apps/working-with-apks-and-apktool/extracting-apks-with-apktool)  
 **APK:** `io.hextree.reversingexample.apk`  
-**Package:** `io.hextree.reversingexample`
+**패키지:** `io.hextree.reversingexample`
 
-### Objective
+### 목표
 
-Find an Activity not available through the launcher and execute it directly.
+런처에서 접근할 수 없는 Activity를 찾아 직접 실행한다.
 
-### Static analysis
+### 정적 분석
 
-The intended extraction command is:
+원래 의도된 추출 명령은 다음과 같다.
 
 ```powershell
 apktool d io.hextree.reversingexample.apk -o reversingexample-decoded
 ```
 
-APKTool was not installed in the local environment, so the Android SDK's `aapt` was used to inspect the compiled Manifest directly. It is sufficient for the component-discovery step:
+로컬 환경에는 APKTool이 설치되지 않아 Android SDK의 `aapt`로 컴파일된 Manifest를 직접 확인했다. component 탐색 단계에는 이것만으로 충분하다.
 
 ```powershell
 aapt dump xmltree io.hextree.reversingexample.apk AndroidManifest.xml
 ```
 
-The manifest contained this non-launcher component:
+Manifest에는 다음과 같은 비-런처 component가 있었다.
 
 ```text
 io.hextree.reversingexample.SecretActivity
 android:exported=true
 ```
 
-`MainActivity` is the launcher entry point; `SecretActivity` has no `MAIN`/`LAUNCHER` filter, so it does not appear in the normal app launcher.
+`MainActivity`는 launcher 진입점이고, `SecretActivity`에는 `MAIN`/`LAUNCHER` filter가 없으므로 일반 앱 런처에 표시되지 않는다.
 
-### Dynamic verification
+### 동적 검증
 
-After installing the lab APK, the explicit component was launched with ADB:
+랩 APK를 설치한 뒤 ADB로 명시적 component를 실행했다.
 
 ```powershell
 adb -s emulator-5554 install -r .\io.hextree.reversingexample.apk
 adb -s emulator-5554 shell am start -n io.hextree.reversingexample/.SecretActivity
 ```
 
-The Activity rendered:
+Activity에 표시된 값은 다음과 같다.
 
 ```text
 HXT{A-not-so-secret-activity}
 ```
 
-### Takeaway
+### 배운 점
 
-A component absent from an application's UI is not necessarily inaccessible. The manifest is a more complete component inventory than the launcher, and an exported Activity can be addressed with an explicit intent. APKTool normally provides a decoded Manifest plus smali code; `aapt dump xmltree` is a useful read-only fallback when only Manifest metadata is needed.
+앱 UI에 보이지 않는 component가 반드시 접근 불가능한 것은 아니다. Manifest는 launcher보다 더 완전한 component 목록을 제공하며, exported Activity는 explicit intent로 지정할 수 있다. APKTool은 보통 디코드된 Manifest와 smali 코드를 제공하고, Manifest metadata만 필요할 때는 `aapt dump xmltree`가 읽기 전용 대안이 된다.
 
-### Patching and re-packing APKs with apktool
+### apktool로 APK 수정 및 재패키징
 
-**Lab:** [Patching and re-packing APKs with apktool](https://app.hextree.io/courses/reverse-android-apps/working-with-apks-and-apktool/patching-and-re-packing-apks-with-apktoo)
+**Lab:** [apktool로 APK 수정 및 재패키징 (Patching and re-packing APKs with apktool)](https://app.hextree.io/courses/reverse-android-apps/working-with-apks-and-apktool/patching-and-re-packing-apks-with-apktoo)
 
-#### Patch
+#### 수정
 
-The decoded Manifest contains an Activity named `UnreachableActivity`, initially marked `android:exported="false"`:
+디코드한 Manifest에는 처음에 `android:exported="false"`로 지정된 `UnreachableActivity`가 있다.
 
 ```xml
 <activity android:exported="false"
     android:name="io.hextree.reversingexample.UnreachableActivity" />
 ```
 
-Only that attribute was changed:
+이 속성만 다음과 같이 변경했다.
 
 ```xml
 <activity android:exported="true"
     android:name="io.hextree.reversingexample.UnreachableActivity" />
 ```
 
-#### Build, align, and sign
+#### 빌드, align 및 서명
 
-APKTool 3.0.3 decoded and rebuilt the APK. The rebuilt APK was aligned and signed using Android Build Tools before installation:
+APKTool 3.0.3으로 APK를 디코드하고 다시 빌드했다. 설치 전에 Android Build Tools로 결과 APK를 align하고 서명했다.
 
 ```powershell
 java -jar apktool_3.0.3.jar d io.hextree.reversingexample.apk -o reversingexample-decoded
@@ -3534,7 +3491,7 @@ apksigner sign --ks research-lab.keystore --ks-key-alias research_key `
 apksigner verify --verbose reversingexample-patched.apk
 ```
 
-The signature verification reported a valid v3 signature. Because the patched APK used a different training keystore than the original package, the original lab app was removed from the emulator before the patched version was installed.
+서명 검증 결과는 유효한 v3 서명을 보고했다. 수정 APK는 원본 package와 다른 교육용 keystore를 사용했으므로, 수정본 설치 전에 에뮬레이터에서 원본 랩 앱을 제거했다.
 
 ```powershell
 adb -s emulator-5554 uninstall io.hextree.reversingexample
@@ -3542,25 +3499,25 @@ adb -s emulator-5554 install reversingexample-patched.apk
 adb -s emulator-5554 shell am start -n io.hextree.reversingexample/.UnreachableActivity
 ```
 
-The Activity opened and displayed:
+Activity가 열리며 다음 값이 표시됐다.
 
 ```text
 HXT{I-thought-I-am-unreachable}
 ```
 
-**Flag:** `HXT{I-thought-I-am-unreachable}`
+**플래그:** `HXT{I-thought-I-am-unreachable}`
 
-#### Takeaway
+#### 배운 점
 
-`android:exported` controls whether another application (including the shell caller used by ADB) may address a component. Repackaging changes the signing identity, so Android will reject an in-place update signed with a different key; the existing installation must be removed or the rebuild must use its original signing key.
+`android:exported`는 다른 애플리케이션(ADB가 사용하는 shell 호출자 포함)이 component를 지정할 수 있는지 제어한다. 재패키징하면 서명 identity가 바뀌므로 Android는 다른 key로 서명한 in-place update를 거부한다. 따라서 기존 설치본을 제거하거나, 원래 서명 key로 다시 빌드해야 한다.
 
-### Getting started with jadx
+### jadx 시작하기
 
-**Lab:** [Getting started with jadx](https://app.hextree.io/courses/reverse-android-apps/decompiling-android-applications/getting-started-with-jadx)
+**Lab:** [jadx 시작하기 (Getting started with jadx)](https://app.hextree.io/courses/reverse-android-apps/decompiling-android-applications/getting-started-with-jadx)
 
-#### Code path
+#### 코드 경로
 
-The launcher `MainActivity` obtains the typed value and compares it to `SecretKeeper.getSecretPassword()`. The recovered method has a direct string return:
+launcher `MainActivity`는 입력값을 가져와 `SecretKeeper.getSecretPassword()`의 반환값과 비교한다. 복원된 메서드는 문자열을 직접 반환한다.
 
 ```java
 public static String getSecretPassword() {
@@ -3568,30 +3525,30 @@ public static String getSecretPassword() {
 }
 ```
 
-The source APK's smali was used as a CLI fallback in this environment; in JADX GUI, the same path is reached by opening `AndroidManifest.xml`, following `MainActivity`, then following the call to `SecretKeeper.getSecretPassword()`.
+이 환경에서는 CLI 대안으로 원본 APK의 smali를 사용했다. JADX GUI에서는 `AndroidManifest.xml`을 열고 `MainActivity`, 이어서 `SecretKeeper.getSecretPassword()` 호출을 따라가면 동일한 경로에 도달한다.
 
-#### Dynamic verification
+#### 동적 검증
 
-Entering `iAmHardcoded` on the launcher password screen navigated to the next page. The app displayed the following submission flag:
+launcher 비밀번호 화면에 `iAmHardcoded`를 입력하면 다음 페이지로 이동하고, 앱은 다음 제출 플래그를 표시한다.
 
 ```text
 HXT{hardcoded-secrets-are-bad}
 ```
 
-**Password:** `iAmHardcoded`  
-**Flag:** `HXT{hardcoded-secrets-are-bad}`
+**비밀번호:** `iAmHardcoded`  
+**플래그:** `HXT{hardcoded-secrets-are-bad}`
 
-#### Takeaway
+#### 배운 점
 
-An authentication secret embedded in client code can be recovered through static analysis. Moving the comparison into a local helper class does not protect it: the value still ships with the APK and can be recovered through source decompilation or bytecode inspection.
+클라이언트 코드에 포함한 인증 비밀값은 정적 분석으로 복구할 수 있다. 비교 로직을 로컬 helper class로 옮겨도 보호되지 않는다. 값은 여전히 APK에 포함되며, source decompilation 또는 bytecode inspection으로 복구할 수 있다.
 
-### Resolving string Resources
+### 문자열 Resource 해석
 
-**Lab:** [Resolving string Resources](https://app.hextree.io/courses/reverse-android-apps/decompiling-android-applications/resolving-string-resources)
+**Lab:** [문자열 Resource 해석 (Resolving string Resources)](https://app.hextree.io/courses/reverse-android-apps/decompiling-android-applications/resolving-string-resources)
 
-#### Resource resolution
+#### 리소스 값 해석
 
-The password check in `LoggedInActivity` does not contain a literal value. Instead, its click handler loads `R.string.secret2` through `getString()` and compares the result to the text supplied by the user:
+`LoggedInActivity`의 비밀번호 검사는 리터럴 값을 직접 포함하지 않는다. 대신 click handler가 `getString()`으로 `R.string.secret2`를 읽고, 그 결과를 사용자가 입력한 text와 비교한다.
 
 ```java
 String expected = getString(R.string.secret2);
@@ -3600,34 +3557,34 @@ if (passwordText.equals(expected)) {
 }
 ```
 
-Following that resource symbol to the decoded `res/values/strings.xml` file resolved the value:
+해당 resource symbol을 디코드된 `res/values/strings.xml` 파일까지 따라가 값의 정체를 확인했다.
 
 ```xml
 <string name="secret2">VeryResourcefulSecret</string>
 ```
 
-#### Dynamic verification
+#### 동적 검증
 
-Entering `VeryResourcefulSecret` in the second password field opened the next screen, which displayed:
+두 번째 비밀번호 입력란에 `VeryResourcefulSecret`를 넣으면 다음 화면이 열리고 다음 값이 표시된다.
 
 ```text
 HXT{resources-are-no-match-for-me}
 ```
 
-**Password:** `VeryResourcefulSecret`  
-**Flag:** `HXT{resources-are-no-match-for-me}`
+**비밀번호:** `VeryResourcefulSecret`  
+**플래그:** `HXT{resources-are-no-match-for-me}`
 
-#### Takeaway
+#### 배운 점
 
-Putting a client-side secret in Android string resources improves code organisation, not secrecy. Resource identifiers such as `R.string.secret2` can be followed to the compiled resources or to decoded XML, so they should not be used as a trust boundary for authentication or authorization.
+클라이언트 측 비밀값을 Android string resource에 넣는 것은 코드 정리에는 도움이 되지만 비밀성을 만들지는 않는다. `R.string.secret2` 같은 resource identifier는 컴파일된 resource 또는 디코드된 XML까지 따라갈 수 있으므로, 인증이나 인가의 신뢰 경계로 사용하면 안 된다.
 
-### JNI - Java Native Interface
+### JNI(Java Native Interface)
 
 **Lab:** [JNI - Java Native Interface](https://app.hextree.io/courses/reverse-android-apps/decompiling-android-applications/jni-java-native-interface)
 
-#### Native call path
+#### 네이티브 호출 경로
 
-`SecondPasswordActivity` creates `NativeLib` and compares the supplied text with `secretFromJNI()`. The Java declaration is marked `native`, while the class initializer loads the `example_nativelib` shared library:
+`SecondPasswordActivity`는 `NativeLib`를 생성하고 사용자가 입력한 text를 `secretFromJNI()`의 반환값과 비교한다. Java 선언에는 `native`가 붙어 있고, class initializer는 `example_nativelib` shared library를 불러온다.
 
 ```java
 static {
@@ -3637,87 +3594,87 @@ static {
 public native String secretFromJNI();
 ```
 
-The corresponding native object is `lib/x86_64/libexample_nativelib.so`. Extracting its printable strings found both the JNI export name and the secret:
+대응하는 native object는 `lib/x86_64/libexample_nativelib.so`다. printable string을 추출하면 JNI export name과 비밀값을 모두 찾을 수 있다.
 
 ```text
 Java_io_hextree_example_1nativelib_NativeLib_secretFromJNI
 nativeSecretsCanBeFoundToo
 ```
 
-#### Dynamic verification
+#### 동적 검증
 
-Entering `nativeSecretsCanBeFoundToo` in the third password field opened the final screen, which displayed:
+세 번째 비밀번호 입력란에 `nativeSecretsCanBeFoundToo`를 넣으면 마지막 화면이 열리고 다음 값이 표시된다.
 
 ```text
 HXT{from-java-to-native}
 ```
 
-**Password:** `nativeSecretsCanBeFoundToo`  
-**Flag:** `HXT{from-java-to-native}`
+**비밀번호:** `nativeSecretsCanBeFoundToo`  
+**플래그:** `HXT{from-java-to-native}`
 
-#### Takeaway
+#### 배운 점
 
-JNI moves logic into a native `.so` file, but it does not automatically protect hard-coded values. When the secret remains a printable string in the packaged native library, basic string extraction is enough to recover it; a native implementation is therefore not an authentication boundary.
+JNI는 로직을 native `.so` 파일로 옮기지만, hard-coded 값을 자동으로 보호하지는 않는다. 비밀값이 패키징된 native library에 printable string으로 남아 있으면 기본적인 string extraction만으로도 복구된다. 따라서 native 구현 자체가 인증 경계가 될 수는 없다.
 
-### Case Study: The Hextree Weather App
+### 사례 연구: Hextree Weather App
 
-**Lab:** [The Hextree Weather App](https://app.hextree.io/courses/reverse-android-apps/case-study-a-weather-app/the-hextree-weather-app)
+**Lab:** [Hextree Weather App](https://app.hextree.io/courses/reverse-android-apps/case-study-a-weather-app/the-hextree-weather-app)
 
-#### Authentication value
+#### 인증값
 
-The supplied APK is a separate package, `io.hextree.weatherusa`. After decoding it, the application resource file `res/values/strings.xml` contains a value named `ApiKey`:
+제공된 APK는 별도 package인 `io.hextree.weatherusa`다. 이를 디코드하면 application resource 파일 `res/values/strings.xml`에 `ApiKey`라는 값이 들어 있다.
 
 ```xml
 <string name="ApiKey">HXT{android-api-key-b1872g}</string>
 ```
 
-The lab asks for the value the application uses to authenticate to its weather API, so this resource is the requested submission value.
+랩은 application이 weather API 인증에 사용하는 값을 요구하므로, 이 resource가 제출값이다.
 
-**Flag:** `HXT{android-api-key-b1872g}`
+**플래그:** `HXT{android-api-key-b1872g}`
 
-#### Takeaway
+#### 배운 점
 
-Bundling an API credential in the APK makes it recoverable by anyone who obtains the app. A resource identifier is useful for organising code but is not secret storage; API authorization should be designed so a recovered client value cannot act as a broadly reusable credential.
+API credential를 APK에 넣으면 앱을 입수한 누구나 복구할 수 있다. resource identifier는 코드를 정리하는 데는 유용하지만 secret storage가 아니다. 복구된 client value가 광범위하게 재사용 가능한 credential로 작동하지 않도록 API authorization을 설계해야 한다.
 
-### Case Study: Reverse Engineering the API Request
+### 사례 연구: API 요청 리버스 엔지니어링
 
-**Lab:** [Reverse Engineering the API Request](https://app.hextree.io/courses/reverse-android-apps/case-study-a-weather-app/reverse-engineering-the-api-request)
+**Lab:** [API 요청 리버스 엔지니어링 (Reverse Engineering the API Request)](https://app.hextree.io/courses/reverse-android-apps/case-study-a-weather-app/reverse-engineering-the-api-request)
 
-#### Request reconstruction
+#### 요청 재구성
 
-The weather worker builds a `GET` request to the following endpoint:
+weather worker는 다음 endpoint로 `GET` 요청을 구성한다.
 
 ```text
 https://ht-api-mocks-lcfc4kr5oa-uc.a.run.app/xml/SOAP_server/ndfdXMLclient.php
 ```
 
-It supplies `whichClient=NDFDgen`, a `zipCodeList` parameter, forecast options, the `User-Agent: HextreeForecastUSA/v4.x` header, and an `X-API-KEY` header whose value comes from the `ApiKey` resource found in the preceding lab.
+요청에는 `whichClient=NDFDgen`, `zipCodeList` parameter, forecast option, `User-Agent: HextreeForecastUSA/v4.x` header, 그리고 앞선 랩에서 찾은 `ApiKey` resource 값을 사용하는 `X-API-KEY` header가 포함된다.
 
-The update gate in `MainActivity` accepts two values: `13337` and `42`. The location Activity, however, enables its Done button only after five characters are entered. Thus the shorter `42` value cannot be used through the ordinary ZIP-code UI even though the update gate accepts it.
+`MainActivity`의 update gate는 `13337`과 `42` 두 값을 수용한다. 하지만 location Activity는 다섯 글자가 입력되어야만 Done button을 활성화한다. 따라서 update gate가 수용하는 더 짧은 값 `42`는 일반 ZIP-code UI로는 사용할 수 없다.
 
-#### Manual API request
+#### 수동 API 요청
 
-I reproduced the app's request with `zipCodeList=42`, the same User-Agent, and the recovered API key. The returned weather XML contained this condition text:
+`zipCodeList=42`, 같은 User-Agent, 복구한 API key로 앱의 요청을 재현했다. 반환된 weather XML에는 다음 condition text가 들어 있었다.
 
 ```text
 HXT{android-api-h192gsa0}
 ```
 
-**Flag:** `HXT{android-api-h192gsa0}`
+**플래그:** `HXT{android-api-h192gsa0}`
 
-#### Takeaway
+#### 배운 점
 
-Client-side UI validation is not an access control boundary. A manual request can use a parameter value that the app's later logic accepts but its visible input control blocks. Sensitive server behaviour must enforce the intended validation independently of the Android client.
+클라이언트 측 UI validation은 access control boundary가 아니다. 수동 요청은 앱의 이후 로직은 수용하지만 보이는 input control은 막는 parameter 값을 사용할 수 있다. 민감한 server 동작은 Android client와 독립적으로 의도한 validation을 강제해야 한다.
 
-### Case Study: Diffing Application Updates
+### 사례 연구: 앱 업데이트 diff 분석
 
-**Lab:** [Diffing Application Updates](https://app.hextree.io/courses/reverse-android-apps/case-study-a-weather-app/diffing-application-updates)
+**Lab:** [앱 업데이트 diff 분석 (Diffing Application Updates)](https://app.hextree.io/courses/reverse-android-apps/case-study-a-weather-app/diffing-application-updates)
 
-#### Comparing the two APKs
+#### 두 APK 비교
 
-I decoded the original Weather APK and the supplied `update1` APK into separate directories, then compared their decoded contents. The update adds `InternetUtil` and the ABI-specific `libnative-lib.so` libraries. This is a much more useful signal than reviewing every unchanged smali file.
+원본 Weather APK와 제공된 `update1` APK를 각각 다른 directory에 디코드한 뒤 내용을 비교했다. update는 `InternetUtil`과 ABI별 `libnative-lib.so` library를 추가한다. 이는 바뀌지 않은 모든 smali 파일을 검토하는 것보다 훨씬 유용한 신호다.
 
-`InternetUtil` installs an `X-API-KEY` header, but it does not embed the final value as a normal Java string. Instead, it passes the following seed to a private native method:
+`InternetUtil`은 `X-API-KEY` header를 설정하지만 최종값을 일반 Java string으로 포함하지는 않는다. 대신 다음 seed를 private native method에 전달한다.
 
 ```text
 moiba1cybar8smart4sheriff4securi
@@ -3727,52 +3684,52 @@ moiba1cybar8smart4sheriff4securi
 private static native String getKey(String seed);
 ```
 
-#### Local JNI verification
+#### 로컬 JNI 검증
 
-The readable strings in `libnative-lib.so` reveal the JNI export name but not the returned key. To observe the result without sending a weather request, I built a separate, locally signed analysis copy with a distinct package name. Its `onCreate()` invokes `getKey()` once, logs only the return value, and then returns before the original activity initialization and networking code runs.
+`libnative-lib.so`의 readable string은 JNI export name은 보여 주지만 반환 key는 보여 주지 않는다. weather request를 보내지 않고 결과를 관찰하기 위해, 별도 package name으로 로컬 서명한 분석용 copy를 만들었다. 이 copy의 `onCreate()`는 `getKey()`를 한 번 호출해 반환값만 log에 남기고, 원래 activity 초기화와 networking code가 실행되기 전에 반환한다.
 
-The filtered local Logcat entry was:
+filtering한 로컬 Logcat 항목은 다음과 같다.
 
 ```text
 E HXT-NATIVE-KEY: HXT{obfuscated-api-key-asb126us}
 ```
 
-**Flag:** `HXT{obfuscated-api-key-asb126us}`
+**플래그:** `HXT{obfuscated-api-key-asb126us}`
 
-#### Takeaway
+#### 배운 점
 
-Moving a credential transformation to JNI can prevent simple resource or string searches from revealing the final value, but it does not make a client-held secret inaccessible. An analyst can compare releases to narrow the new code path, then observe the native method's output in a controlled local build. Secrets that grant server access should therefore not depend solely on client-side obfuscation.
+credential 변환을 JNI로 옮기면 단순 resource 또는 string search로 최종값을 찾는 일은 어려워지지만, client가 보유한 secret이 접근 불가능해지는 것은 아니다. 분석가는 release를 비교해 새 code path를 좁힌 뒤, 통제된 로컬 build에서 native method의 output을 관찰할 수 있다. server access를 부여하는 secret은 client-side obfuscation에만 의존해서는 안 된다.
 
-### References
+### 참고 자료
 
-- [HexTree lab: Extracting APKs with apktool](https://app.hextree.io/courses/reverse-android-apps/working-with-apks-and-apktool/extracting-apks-with-apktool)
-- [HexTree lab: Patching and re-packing APKs with apktool](https://app.hextree.io/courses/reverse-android-apps/working-with-apks-and-apktool/patching-and-re-packing-apks-with-apktoo)
-- [HexTree lab: Getting started with jadx](https://app.hextree.io/courses/reverse-android-apps/decompiling-android-applications/getting-started-with-jadx)
-- [HexTree lab: Resolving string Resources](https://app.hextree.io/courses/reverse-android-apps/decompiling-android-applications/resolving-string-resources)
-- [HexTree lab: JNI - Java Native Interface](https://app.hextree.io/courses/reverse-android-apps/decompiling-android-applications/jni-java-native-interface)
-- [HexTree lab: The Hextree Weather App](https://app.hextree.io/courses/reverse-android-apps/case-study-a-weather-app/the-hextree-weather-app)
-- [HexTree lab: Reverse Engineering the API Request](https://app.hextree.io/courses/reverse-android-apps/case-study-a-weather-app/reverse-engineering-the-api-request)
-- [HexTree lab: Diffing Application Updates](https://app.hextree.io/courses/reverse-android-apps/case-study-a-weather-app/diffing-application-updates)
-- [Apktool documentation](https://apktool.org/docs/)
-- [Android Developers: `aapt2` and APK resource inspection](https://developer.android.com/tools/aapt2)
+- [HexTree 랩: apktool로 APK 추출](https://app.hextree.io/courses/reverse-android-apps/working-with-apks-and-apktool/extracting-apks-with-apktool)
+- [HexTree 랩: apktool로 APK 수정 및 재패키징](https://app.hextree.io/courses/reverse-android-apps/working-with-apks-and-apktool/patching-and-re-packing-apks-with-apktoo)
+- [HexTree 랩: jadx 시작하기](https://app.hextree.io/courses/reverse-android-apps/decompiling-android-applications/getting-started-with-jadx)
+- [HexTree 랩: 문자열 Resource 해석](https://app.hextree.io/courses/reverse-android-apps/decompiling-android-applications/resolving-string-resources)
+- [HexTree 랩: JNI - Java Native Interface](https://app.hextree.io/courses/reverse-android-apps/decompiling-android-applications/jni-java-native-interface)
+- [HexTree 랩: Hextree Weather App](https://app.hextree.io/courses/reverse-android-apps/case-study-a-weather-app/the-hextree-weather-app)
+- [HexTree 랩: API 요청 리버스 엔지니어링](https://app.hextree.io/courses/reverse-android-apps/case-study-a-weather-app/reverse-engineering-the-api-request)
+- [HexTree 랩: 앱 업데이트 diff 분석](https://app.hextree.io/courses/reverse-android-apps/case-study-a-weather-app/diffing-application-updates)
+- [Apktool 문서](https://apktool.org/docs/)
+- [Android Developers: `aapt2` 및 APK resource inspection](https://developer.android.com/tools/aapt2)
 - [Android Developers: `apksigner`](https://developer.android.com/tools/apksigner)
 
 
 ---
 
-## HexTree Android Dynamic Instrumentation Write-up
+## HexTree Android 동적 계측 보고서
 
 ![가림 처리한 Frida Java.perform 분석 증적](assets/redacted-flag-evidence-frida.svg)
 
 > 그림 2. `FlagClass`의 static/instance 메서드를 대상으로 한 가림 처리된 Frida 증적이다. 공개 글에서는 플래그의 전체값 대신 호출 방식과 필요한 입력값을 남겼다.
 
-### Frida Basics: Mixing Static and Dynamic Analysis & `Java.perform`
+### Frida 기초: 정적·동적 분석 결합과 `Java.perform`
 
-**Lab:** [Mixing Static and Dynamic Analysis & Java.perform](https://app.hextree.io/courses/android-dynamic-instrumentation/frida-basics-q9/mixing-static-and-dynamic-analysis-javap)
+**Lab:** [정적·동적 분석 결합과 Java.perform (Mixing Static and Dynamic Analysis & Java.perform)](https://app.hextree.io/courses/android-dynamic-instrumentation/frida-basics-q9/mixing-static-and-dynamic-analysis-javap)
 
-#### Target and static triage
+#### 대상 및 정적 분석
 
-The lab's setup material provides `FridaTarget.apk`. Its manifest identifies the package as `io.hextree.fridatarget`. In the decoded APK, `FlagClass` exposes the three relevant methods:
+랩의 setup material은 `FridaTarget.apk`를 제공한다. Manifest에서 확인한 package는 `io.hextree.fridatarget`다. 디코드된 APK의 `FlagClass`는 다음 세 메서드를 제공한다.
 
 ```java
 static String flagFromStaticMethod()
@@ -3780,11 +3737,11 @@ String flagFromInstanceMethod()
 String flagIfYouCallMeWithSesame(String password)
 ```
 
-Each method gives an encoded string to `FlagCryptor.decodeFlag`. Inspecting that helper shows the exact transformation: Base64 decode followed by ROT13. The last method additionally compares its argument to `sesame`, case-insensitively. This static pass identifies both the methods to call and the argument required for the guarded method.
+각 메서드는 encoded string을 `FlagCryptor.decodeFlag`에 넘긴다. helper를 분석하면 변환 방식은 Base64 decode 후 ROT13임을 알 수 있다. 마지막 메서드는 argument를 대소문자 구분 없이 `sesame`과 비교한다. 이 정적 분석으로 호출할 메서드와 보호된 메서드에 필요한 argument를 모두 확인했다.
 
-#### Frida invocation
+#### Frida 호출
 
-The equivalent runtime check can be performed after the Java VM is ready. `Java.perform` is necessary so the Java bridge only accesses classes after the runtime has been attached.
+동일한 runtime 검증은 Java VM이 준비된 뒤 수행할 수 있다. `Java.perform`은 runtime attach 이후에만 Java bridge가 class에 접근하도록 하므로 필요하다.
 
 ```javascript
 Java.perform(function () {
@@ -3798,24 +3755,24 @@ Java.perform(function () {
 });
 ```
 
-#### Results
+#### 결과
 
-| Method | Required input | Flag |
+| 메서드 | 필요한 입력 | 플래그 |
 | --- | --- | --- |
-| `flagFromStaticMethod()` | none | `HXT{a-static-calling-with-frida}` |
-| `flagFromInstanceMethod()` | none | `HXT{dynamic-droid}` |
+| `flagFromStaticMethod()` | 없음 | `HXT{a-static-calling-with-frida}` |
+| `flagFromInstanceMethod()` | 없음 | `HXT{dynamic-droid}` |
 | `flagIfYouCallMeWithSesame()` | `sesame` | `HXT{the-droid-youre-looking-for}` |
 
-The values above were independently reproduced from the APK's `FlagCryptor` Base64-and-ROT13 implementation. The Frida snippet invokes the same method paths at runtime.
+위 값은 APK의 `FlagCryptor` Base64·ROT13 구현을 통해 독립적으로 재현했다. Frida snippet은 runtime에서 같은 메서드 경로를 호출한다.
 
-#### Takeaway
+#### 배운 점
 
-Static analysis answers two important questions before instrumentation: which class/method matters and what types or arguments it expects. Frida then avoids reimplementing complicated business logic by calling the discovered methods inside the app's own runtime. Neither approach replaces the other; the static pass makes the dynamic script focused and reliable.
+정적 분석은 instrumentation 전에 중요한 두 질문, 즉 어떤 class/method가 중요한지와 어떤 type 또는 argument를 요구하는지를 답해 준다. Frida는 발견한 메서드를 앱의 runtime 안에서 호출하므로 복잡한 business logic을 재구현하지 않아도 된다. 두 방식은 서로 대체 관계가 아니며, 정적 분석이 동적 script를 집중적이고 신뢰성 있게 만든다.
 
-### References
+### 참고 자료
 
-- [HexTree lab: Mixing Static and Dynamic Analysis & Java.perform](https://app.hextree.io/courses/android-dynamic-instrumentation/frida-basics-q9/mixing-static-and-dynamic-analysis-javap)
-- [HexTree setup: Patching APKs with Frida](https://app.hextree.io/courses/android-dynamic-instrumentation/setup/patching-apks-with-frida)
+- [HexTree 랩: 정적·동적 분석 결합과 Java.perform](https://app.hextree.io/courses/android-dynamic-instrumentation/frida-basics-q9/mixing-static-and-dynamic-analysis-javap)
+- [HexTree setup: Frida를 이용한 APK 수정](https://app.hextree.io/courses/android-dynamic-instrumentation/setup/patching-apks-with-frida)
 - [Frida JavaScript API: `Java.perform`](https://frida.re/docs/javascript-api/#javaperformfn)
 
 
@@ -3829,18 +3786,7 @@ Static analysis answers two important questions before instrumentation: which cl
 
 OWASP MASTG는 모바일 앱 보안 테스트와 리버스 엔지니어링을 위한 포괄적인 가이드이며, MASVS 통제를 검증하기 위한 기술 절차를 설명한다. 이 과정의 write-up은 MASTG식 분류를 기준으로 Android 앱의 취약점 제보 흐름을 정리한다. [OWASP MASTG](https://mas.owasp.org/MASTG/)
 
-### 완료 증적
-
-- 대상 과정: HexTree Android Bug Bounty
-- 과정 링크: <https://app.hextree.io/courses/android-bugbounty>
-- 완료 메시지:
-
-```text
-I just completed "Android Bug Bounty" on hextree.io!
-https://app.hextree.io/courses/android-bugbounty
-```
-
-### Bug bounty 관점의 핵심 흐름
+### 버그 바운티 관점의 핵심 흐름
 
 Android 앱 취약점 제보는 보통 아래 순서로 정리하는 것이 깔끔하다.
 
@@ -3883,32 +3829,32 @@ Android 앱 취약점 제보는 보통 아래 순서로 정리하는 것이 깔�
 실제 bug bounty 제출용 보고서는 아래 구조로 정리한다.
 
 ```markdown
-### Title
+### 제목
 외부 앱에서 exported Activity를 통해 인증 없이 내부 기능 실행 가능
 
-### Summary
+### 요약
 대상 앱의 exported Activity가 intent extra를 신뢰하여 내부 기능을 실행한다.
 공격자는 별도 권한 없이 crafted intent를 보내 민감 동작에 도달할 수 있다.
 
-### Affected Component
+### 영향받는 컴포넌트
 - Package:
 - Component:
 - App version:
 - Android version:
 
-### Steps to Reproduce
+### 재현 절차
 1. 대상 앱 설치
 2. 공격용 앱 또는 ADB에서 아래 intent 전송
 3. 내부 Activity/민감 동작 실행 확인
 
-### Proof of Concept
+### 재현 코드(PoC)
 adb shell am start ...
 
-### Impact
+### 영향
 인증 또는 권한 검사를 거치지 않고 내부 기능이 실행된다.
 해당 기능이 토큰, 파일, 결제, 계정 설정과 연결되면 영향도가 상승한다.
 
-### Remediation
+### 수정 방안
 - 외부 진입이 필요 없으면 `android:exported="false"` 적용
 - 외부 진입이 필요하면 signature permission 또는 호출자 검증 적용
 - intent extra를 신뢰하지 말고 서버/앱 내부 상태 기준으로 재검증
@@ -3948,15 +3894,15 @@ Bug bounty에서 중요한 것은 “취약해 보이는 코드”가 아니라 
 - 취약점은 “원인 → 재현 → 영향 → 수정” 순서로 설명한다.
 - 블로그 write-up에서는 flag 자체보다 분석 경로와 재현 근거를 중심으로 작성한다.
 
-### References
+### 참고 자료
 
 1. [HexTree: Android Bug Bounty](https://app.hextree.io/courses/android-bugbounty)
 2. [OWASP MASTG](https://mas.owasp.org/MASTG/)
 3. [OWASP MASTG Tests](https://mas.owasp.org/MASTG/tests/)
 4. [Android Developers: Network Security Configuration](https://developer.android.com/privacy-and-security/security-config)
 
-## Completion Evidence
+## 완료 증적
 
 ![HexTree Android Track 14 of 14 완료 화면](assets/hextree-android-track-14-of-14.png)
 
-> 그림 3. HexTree Android Map에서 확인한 14/14 과정 완료 화면. 제출용 플래그 값은 포함하지 않으며, 우측 상단의 표시 계정명은 공개 전 필요하면 별도로 가릴 수 있다.
+> 그림 3. HexTree Android Map에서 확인한 14/14 과정 완료 화면
