@@ -166,7 +166,7 @@ for v in 후위 순서:
 
 ### 제출 결과 캡처
 
-![JUNGOL 4808 제출 결과 — 정답 100점, 419ms, 52.0MB, C++20](jungol_4808_accepted_419ms.png)
+![JUNGOL 4808 제출 결과 — 정답 100점, 419ms, 52.0MB, C++20](/Hercent.github.io/assets/images/KOI_matjip.png)
 
 캡처 기준으로 제출 번호는 `13651924`이며, 결과는 **정답 100점**, 실행 시간은 **419ms**, 메모리는 **52.0MB**, 소스 길이는 **8,342B**다.
 
