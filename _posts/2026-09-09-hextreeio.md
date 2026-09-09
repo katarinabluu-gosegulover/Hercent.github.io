@@ -3198,7 +3198,7 @@ Android BLE 문서는 BLE pairing으로 통신한 데이터가 같은 사용자 
 
 ## HexTree Android Track — Network Interception
 
-![Network Interception 및 JNI 분석 증적](assets/redacted-flag-evidence-network-jni.svg)
+![Network Interception 및 JNI 분석 증적](/Hercent.github.io/assets/images/redacted-flag-evidence-network-jni.svg)
 
 ### 실습: Packet Logging with tcpdump
 
@@ -3719,7 +3719,7 @@ credential 변환을 JNI로 옮기면 단순 resource 또는 string search로 �
 
 ## HexTree Android 동적 계측 보고서
 
-![가림 처리한 Frida Java.perform 분석 증적](assets/redacted-flag-evidence-frida.svg)
+![가림 처리한 Frida Java.perform 분석 증적](/Hercent.github.io/assets/images/redacted-flag-evidence-frida.svg)
 
 > 그림 2. `FlagClass`의 static/instance 메서드를 대상으로 한 가림 처리된 Frida 증적이다. 공개 글에서는 플래그의 전체값 대신 호출 방식과 필요한 입력값을 남겼다.
 
