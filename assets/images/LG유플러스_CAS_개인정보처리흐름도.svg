@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="980" viewBox="0 0 1600 980" role="img" aria-labelledby="title desc">
+  <title id="title">LG유플러스 CAS 개인정보 처리 흐름 및 통제 이탈 지점</title>
+  <desc id="desc">정보주체의 인증 요청이 대외 서비스와 고객인증시스템 운영환경으로 전달되고, 운영 데이터가 개발 검수 환경으로 이동하는 흐름에 접근통제, 로그, 보안장비, 테스트데이터 파기 통제의 이탈 지점을 표시한 다이어그램</desc>
+  <defs>
+    <marker id="arrowBlue" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#2563eb"/></marker>
+    <marker id="arrowRed" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto"><path d="M0,0 L12,6 L0,12 z" fill="#dc2626"/></marker>
+    <style>
+      .bg{fill:#f8fafc}.title{font:700 30px 'Noto Sans KR','Malgun Gothic',sans-serif;fill:#0f172a}.subtitle{font:400 17px 'Noto Sans KR','Malgun Gothic',sans-serif;fill:#475569}.boxTitle{font:700 22px 'Noto Sans KR','Malgun Gothic',sans-serif;fill:#0f172a}.text{font:400 17px 'Noto Sans KR','Malgun Gothic',sans-serif;fill:#334155}.small{font:400 15px 'Noto Sans KR','Malgun Gothic',sans-serif;fill:#475569}.control{font:600 16px 'Noto Sans KR','Malgun Gothic',sans-serif;fill:#166534}.riskTitle{font:700 18px 'Noto Sans KR','Malgun Gothic',sans-serif;fill:#991b1b}.risk{font:400 15px 'Noto Sans KR','Malgun Gothic',sans-serif;fill:#7f1d1d}.legend{font:600 15px 'Noto Sans KR','Malgun Gothic',sans-serif;fill:#334155}
+    </style>
+  </defs>
+  <rect class="bg" width="1600" height="980" rx="16"/>
+  <text x="70" y="70" class="title">CAS 개인정보 처리 흐름과 통제 이탈 지점</text>
+  <text x="70" y="104" class="subtitle">공개 처분사례의 사실관계를 바탕으로 재구성한 분석 모델 — 구체적 침투 경로를 단정하지 않음</text>
+
+  <!-- Main flow -->
+  <rect x="80" y="260" width="250" height="150" rx="14" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+  <text x="205" y="315" text-anchor="middle" class="boxTitle">정보주체</text>
+  <text x="205" y="350" text-anchor="middle" class="text">가입 · 인증 · 고객서비스</text>
+  <text x="205" y="378" text-anchor="middle" class="text">요청</text>
+
+  <line x1="330" y1="335" x2="465" y2="335" stroke="#2563eb" stroke-width="5" marker-end="url(#arrowBlue)"/>
+  <text x="397" y="310" text-anchor="middle" class="small">인증/조회 요청</text>
+
+  <rect x="475" y="260" width="300" height="150" rx="14" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
+  <text x="625" y="315" text-anchor="middle" class="boxTitle">대외 웹 · 응용 계층</text>
+  <text x="625" y="350" text-anchor="middle" class="text">웹서버 · WAS · API</text>
+  <text x="625" y="378" text-anchor="middle" class="text">인가된 경로만 연결</text>
+
+  <line x1="775" y1="335" x2="910" y2="335" stroke="#2563eb" stroke-width="5" marker-end="url(#arrowBlue)"/>
+  <text x="842" y="310" text-anchor="middle" class="small">인증·조회·저장</text>
+
+  <rect x="920" y="220" width="340" height="230" rx="14" fill="#dbeafe" stroke="#2563eb" stroke-width="3"/>
+  <text x="1090" y="280" text-anchor="middle" class="boxTitle">CAS 운영환경</text>
+  <text x="1090" y="315" text-anchor="middle" class="text">고객인증 시스템 · 개인정보 DB</text>
+  <line x1="955" y1="338" x2="1225" y2="338" stroke="#93c5fd" stroke-width="2"/>
+  <text x="1090" y="372" text-anchor="middle" class="text">운영 데이터 · 관리자 기능 · 접속기록</text>
+  <text x="1090" y="405" text-anchor="middle" class="control">필수: 최소권한 · DB감사 · 대량반출 탐지</text>
+
+  <!-- Logs -->
+  <line x1="1090" y1="450" x2="1090" y2="550" stroke="#16a34a" stroke-width="4" marker-end="url(#arrowBlue)"/>
+  <rect x="885" y="565" width="410" height="135" rx="14" fill="#dcfce7" stroke="#16a34a" stroke-width="2"/>
+  <text x="1090" y="615" text-anchor="middle" class="boxTitle">로그 · 관제 · 사고대응</text>
+  <text x="1090" y="648" text-anchor="middle" class="text">접속·조회·다운로드·전송 기록 수집</text>
+  <text x="1090" y="678" text-anchor="middle" class="control">SIEM 분석 → 경보 → 조사 → 개선</text>
+
+  <!-- Dev flow -->
+  <line x1="1090" y1="450" x2="1090" y2="770" stroke="#dc2626" stroke-width="5" stroke-dasharray="12 10" marker-end="url(#arrowRed)"/>
+  <rect x="850" y="785" width="480" height="125" rx="14" fill="#fff7ed" stroke="#ea580c" stroke-width="3"/>
+  <text x="1090" y="833" text-anchor="middle" class="boxTitle">개발 · 검수 환경</text>
+  <text x="1090" y="865" text-anchor="middle" class="text">원칙: 합성 데이터 / 예외: 최소화·마스킹·기간제 접근</text>
+  <text x="1090" y="894" text-anchor="middle" class="control">테스트 종료 시 자동파기 및 검증</text>
+  <rect x="1140" y="720" width="315" height="48" rx="8" fill="#fee2e2" stroke="#dc2626" stroke-width="1.5"/>
+  <text x="1298" y="751" text-anchor="middle" class="riskTitle">위험 이동: 운영 데이터 복제</text>
+
+  <!-- risk callouts -->
+  <rect x="70" y="515" width="585" height="310" rx="16" fill="#fff1f2" stroke="#f43f5e" stroke-width="2"/>
+  <text x="105" y="560" class="riskTitle">처분사례에서 확인된 통제 이탈</text>
+  <circle cx="107" cy="600" r="5" fill="#dc2626"/><text x="125" y="606" class="risk">노후·지원종료 소프트웨어와 미흡한 보안장비/정책</text>
+  <circle cx="107" cy="645" r="5" fill="#dc2626"/><text x="125" y="651" class="risk">웹셸 점검 및 IPS 탐지·차단 정책 미적용</text>
+  <circle cx="107" cy="690" r="5" fill="#dc2626"/><text x="125" y="696" class="risk">접근권한·접속기록 관리 미흡, 대량 반출 이상행위 미점검</text>
+  <circle cx="107" cy="735" r="5" fill="#dc2626"/><text x="125" y="741" class="risk">운영 데이터를 개발·검수기로 옮긴 뒤 장기 잔존</text>
+  <circle cx="107" cy="780" r="5" fill="#dc2626"/><text x="125" y="786" class="risk">해지 이용자에 대한 개별 유출통지 지연</text>
+
+  <!-- legend -->
+  <rect x="80" y="875" width="565" height="60" rx="12" fill="#ffffff" stroke="#cbd5e1"/>
+  <line x1="115" y1="905" x2="175" y2="905" stroke="#2563eb" stroke-width="5" marker-end="url(#arrowBlue)"/><text x="195" y="911" class="legend">정상 처리 흐름</text>
+  <line x1="350" y1="905" x2="410" y2="905" stroke="#dc2626" stroke-width="5" stroke-dasharray="10 8" marker-end="url(#arrowRed)"/><text x="430" y="911" class="legend">고위험 데이터 이동</text>
+</svg>
