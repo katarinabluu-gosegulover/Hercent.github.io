@@ -1,10 +1,10 @@
 ---
 layout: post
 title: 처분사례 기반 ISMS-P 보고서 작성
-page_description: LG유플러스 고객인증시스템(CAS) 개인정보 유출 처분사례: ISMS-P 통제 미흡 및 재발방지 보고서 작성해보기
+page_description: LG유플러스 고객인증시스템(CAS) 개인정보 유출 처분사례 - ISMS-P 통제 미흡 및 재발방지 보고서 작성해보기
 category_key: blog-docs
-summary: LG유플러스 고객인증시스템(CAS) 개인정보 유출 처분사례: ISMS-P 통제 미흡 및 재발방지 보고서 작성해보기
-lead: LG유플러스 고객인증시스템(CAS) 개인정보 유출 처분사례: ISMS-P 통제 미흡 및 재발방지 보고서 작성해보기
+summary: LG유플러스 고객인증시스템(CAS) 개인정보 유출 처분사례 - ISMS-P 통제 미흡 및 재발방지 보고서 작성해보기
+lead: LG유플러스 고객인증시스템(CAS) 개인정보 유출 처분사례 - ISMS-P 통제 미흡 및 재발방지 보고서 작성해보기
 featured: false
 feature_order: 0
 ---
