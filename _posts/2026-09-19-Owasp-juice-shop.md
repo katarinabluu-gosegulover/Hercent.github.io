@@ -85,7 +85,7 @@ Juice Shop에는 수많은 의도적 취약점이 있다. 하지만 소스에서
 
 임시 계정 A/B를 만들고 A가 공개 상품 하나를 장바구니에 넣었다. B의 유효한 일반 사용자 인증 문맥으로 A의 Basket ID를 조회했을 때, 기대한 `403` 또는 `404` 대신 HTTP `200`과 A의 상품 정보가 반환됐다. 관리자 권한 없이도 가능한 수평 권한 상승이다.
 
-![BOLA/IDOR 동적 증적. 토큰·계정 식별값은 녹색 마스킹](C:/Users/jinse/Documents/Codex/2026-09-16/new-chat/outputs/bola-idor-evidence-green-redacted.png)
+![BOLA/IDOR 동적 증적. 토큰·계정 식별값은 녹색 마스킹](/Hercent.github.io/assets/images/bola-idor-evidence-green-redacted.png)
 
 *그림 1. B의 정상 인증 문맥에서 A의 Basket ID를 조회했을 때 HTTP `200 OK`와 A의 상품 정보가 반환됐다.*
 
