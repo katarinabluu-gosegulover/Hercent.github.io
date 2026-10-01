@@ -11,7 +11,7 @@ feature_order: 0
 
 # `sys.settrace()`로 나만의 Python 디버거 만들기
 
-> [Python Debugger URL]()
+> [Python Debugger URL](https://github.com/katarinabluu-gosegulover/python-mini-debugger)
 
 디버거는 단순히 프로그램을 멈추는 도구가 아니다. Python 인터프리터가 보내는 실행
 이벤트를 받고, 현재 실행 프레임을 관찰한 다음, 사용자의 명령이 올 때까지 실행을 보류하는
