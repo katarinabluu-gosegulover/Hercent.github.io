@@ -15,12 +15,6 @@ feature_order: 0
 
 첫 빌드는 Android Studio에 포함된 Java 25와 Gradle 8.11.1의 비호환으로 실패했다. Gradle 호환표상 Java 25로 Gradle을 실행하려면 Gradle 9.1 이상이 필요하고, 이 레포의 AGP 8.9는 Gradle 8.11.1/JDK 17 조합을 기준으로 한다고 한다. 레포의 `jvmToolchain(18)`을 존중해 공식 Temurin 18 아카이브를 사용했고, 다운로드 SHA-256도 Adoptium 메타데이터와 대조했다. [Gradle Java 호환표](https://docs.gradle.org/current/userguide/compatibility.html), [AGP 8.9 호환성](https://developer.android.com/build/releases/agp-8-9-0-release-notes)
 
-### 1.1 동적 재현과 스크린샷 조건
-
-원본 앱은 `MainActivity`에서 `FLAG_SECURE`를 설정하므로 ADB 화면 캡처에서 앱 영역이 검게 나온다. 이는 [MainActivity.kt 21~22행](https://github.com/t0thkr1s/allsafe-android/blob/c7329155cbbd0a2079a48bbfcaa23a6666899ee9/app/src/main/java/infosecadventures/allsafe/MainActivity.kt#L21-L22)과 실제 원본 실행에서 모두 확인했다. 따라서 아래 화면은 이미 검증한 Smali 패치 APK에서 `setFlags(FLAG_SECURE, FLAG_SECURE)`의 인수만 `0`으로 바꾼 **캡처 전용 랩 빌드**로 촬영했다. 챌린지 로직은 바꾸지 않았으며, Smali 과제의 `INACTIVE → ACTIVE` 패치는 별도로 유지했다.
-
-캡처 빌드는 Apktool 3.0.3으로 재빌드하고 Android Debug 키로 서명했으며, `apksigner verify --verbose`에서 v1/v2/v3 검증을 통과했다. SHA-256은 `809D8A7B6A35B43B1D4C5C4978CC8932B82F4900D2D557C6F0D4FDE5E9AD5513`이다. `FLAG_SECURE`가 스크린샷을 차단하는 동작과 한계는 [Android 공식 가이드](https://developer.android.com/security/fraud-prevention/activities#flag-secure)에 설명되어 있다.
-
 ![Allsafe 메인 화면]({{ '/assets/images/android-vul/01-main.png' | relative_url }})
 
 ## 2. README 챌린지 1~12
@@ -34,9 +28,9 @@ adb shell pidof infosecadventures.allsafe
 adb shell logcat --pid <PID> | grep "User entered secret"
 ```
 
-예상 결과는 입력한 비밀이 로그에 평문으로 노출되는 것이다. 최신 Android에서는 일반 앱의 전체 logcat 접근이 제한되지만, ADB·루팅·권한 있는 시스템 앱·수집된 진단 로그 같은 경로는 여전히 남는다. 따라서 “최신 Android니까 안전하다”가 아니라 “비밀을 애초에 로그에 기록하지 않는다”가 올바른 결론이다. [Android Log Info Disclosure](https://developer.android.com/privacy-and-security/risks/log-info-disclosure)
+예상 결과는 입력한 비밀이 로그에 평문으로 노출되는 것이다. 최신 Android에서는 일반 앱의 전체 logcat 접근이 제한되지만, ADB·루팅·권한 있는 시스템 앱·수집된 진단 로그 같은 경로는 여전히 남는다. 따라서 “최신 Android니까 안전하다”가 아니라 “비밀을 애초에 로그에 기록하지 않는다”가 올바른 방법이다. [Android Log Info Disclosure](https://developer.android.com/privacy-and-security/risks/log-info-disclosure)
 
-개선책은 민감값 로깅 제거, 릴리스 빌드에서 디버그 로그 제거, 구조화 로그의 필드 단위 마스킹이다.
+개선해야 할 점은 민감값 로깅 제거, 릴리스 빌드에서 디버그 로그 제거, 구조화 로그의 필드 단위 마스킹이다.
 
 ### 2.2 Hardcoded Credentials
 
@@ -69,9 +63,9 @@ frida -U -f infosecadventures.allsafe -l root-bypass.js
 
 ### 2.4 Arbitrary Code Execution
 
-가장 심각한 과제다. Application 클래스는 설치된 패키지 이름이 `infosecadventures.allsafe`로 시작하기만 하면 `CONTEXT_INCLUDE_CODE | CONTEXT_IGNORE_SECURITY`로 그 패키지의 코드를 불러와 고정 클래스의 정적 메서드를 호출한다. [ArbitraryCodeExecution.kt 19~33행](https://github.com/t0thkr1s/allsafe-android/blob/c7329155cbbd0a2079a48bbfcaa23a6666899ee9/app/src/main/java/infosecadventures/allsafe/ArbitraryCodeExecution.kt#L19-L33)
+가장 심각한 문제다. Application 클래스는 설치된 패키지 이름이 `infosecadventures.allsafe`로 시작하기만 하면 `CONTEXT_INCLUDE_CODE | CONTEXT_IGNORE_SECURITY`로 그 패키지의 코드를 불러와 고정 클래스의 정적 메서드를 호출한다. [ArbitraryCodeExecution.kt 19~33행](https://github.com/t0thkr1s/allsafe-android/blob/c7329155cbbd0a2079a48bbfcaa23a6666899ee9/app/src/main/java/infosecadventures/allsafe/ArbitraryCodeExecution.kt#L19-L33)
 
-교육용 무해 PoC의 핵심 클래스는 다음과 같다.
+PoC의 핵심 클래스는 다음과 같다.
 
 ```java
 package infosecadventures.allsafe.plugin;
@@ -89,7 +83,7 @@ PoC 앱의 applicationId를 `infosecadventures.allsafe.poc`처럼 접두사에 �
 
 두 번째 경로는 `/sdcard/Download/allsafe_updater.apk`를 `DexClassLoader`로 열어 `VersionCheck.getLatestVersion()`을 호출한다. [ArbitraryCodeExecution.kt 37~49행](https://github.com/t0thkr1s/allsafe-android/blob/c7329155cbbd0a2079a48bbfcaa23a6666899ee9/app/src/main/java/infosecadventures/allsafe/ArbitraryCodeExecution.kt#L37-L49) Android 문서는 외부 저장소가 코드 주입을 막는 접근통제를 제공하지 않으므로 그곳에서 코드를 로드하지 말라고 명시한다. [DexClassLoader](https://developer.android.com/reference/dalvik/system/DexClassLoader), [Android Security Tips](https://developer.android.com/privacy-and-security/security-tips)
 
-개선책은 동적 로딩 제거가 최선이다. 불가피하면 앱 내부 저장소만 사용하고, 허용한 서명자의 인증서와 아티팩트 해시를 실행 전에 검증하며, 패키지 이름 접두사가 아니라 서명 신뢰를 확인해야 한다.
+개선해야 할 점은 동적 로딩 제거가 최선이다. 불가피하면 앱 내부 저장소만 사용하고, 허용한 서명자의 인증서와 아티팩트 해시를 실행 전에 검증하며, 패키지 이름 접두사가 아니라 서명 신뢰를 확인해야 한다.
 
 ### 2.5 Secure Flag Bypass
 
@@ -247,7 +241,7 @@ Interceptor.attach(addr, {
 });
 ```
 
-네이티브 코드는 비밀 저장소가 아니다. 역공학 비용만 달라질 뿐, 최종 승인 판단과 장기 비밀은 서버에 둬야 한다.
+네이티브 코드는 비밀 저장소가 아니다. 역공학 비용만 달라질 뿐, 최종 승인 판단과 장기적인 비밀값은 서버에 둬야 한다.
 
 ## 3. 결론
 
