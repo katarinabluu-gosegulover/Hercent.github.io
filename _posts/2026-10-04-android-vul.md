@@ -232,7 +232,7 @@ WebView는 JavaScript와 파일 접근을 켜고, 사용자가 입력한 URL을 
 
 Apktool 3.0.3으로 빌드 APK를 디코드하니 다음 Smali가 생성됐다.
 
-```smali
+```code
 # before
 sget-object v1, Linfosecadventures/allsafe/challenges/SmaliPatch$Firewall;->INACTIVE:Linfosecadventures/allsafe/challenges/SmaliPatch$Firewall;
 
