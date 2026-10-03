@@ -11,15 +11,7 @@ feature_order: 0
 
 # Allsafe Android 취약점 분석: README 12개 챌린지와 최신 소스의 7개 추가 과제
 
-> 작성일: 2026-10-01 / 동적 검증 갱신: 2026-10-03 (KST)  
-> 범주: CTF / Wargame / Android Security  
-> 대상: `t0thkr1s/allsafe-android` commit `c7329155cbbd0a2079a48bbfcaa23a6666899ee9`  
-> 분석 범위: 공개 교육용 소스, 로컬 빌드 APK, 정적 분석, 로컬 재패키징, Android 37.1 에뮬레이터 동적 재현  
-> 제외 범위: 운영 시스템·제3자 앱 공격, 공개 Firebase 백엔드 직접 조회, Frida·Burp가 필요한 우회 실습
-
-Allsafe는 의도적으로 취약하게 만든 Android 학습 앱이다. 공식 README에는 12개 챌린지가 소개되어 있지만, 현재 `master`의 내비게이션에는 19개가 있다. 이 글은 요청대로 README의 1번부터 12번까지 먼저 풀고, README에 아직 반영되지 않은 7개 과제를 이어서 분석한다. 마지막에는 메뉴 밖에서 발견한 `ProxyActivity` 인텐트 리다이렉션도 별도 이슈로 다룬다.
-
-원본 레포와 교육 목적은 [공식 README](https://github.com/t0thkr1s/allsafe-android)에서 확인할 수 있다. Android 공식 문서도 동적 로딩 코드가 앱과 같은 권한으로 실행되므로 외부 저장소 같은 신뢰할 수 없는 위치에서 코드를 로드하지 말라고 권고한다. 이 분석은 해당 교육용 앱과 로컬 산출물에만 한정했다. [Android Security Tips](https://developer.android.com/privacy-and-security/security-tips)
+Allsafe는 의도적으로 취약하게 만든 Android 학습 앱이다. 공식 README에는 12개 챌린지가 소개되어 있지만, 현재 `master`의 내비게이션에는 19개가 있다. README의 1번부터 12번까지 먼저 풀고, README에 아직 반영되지 않은 7개 과제까지 이어서 분석했다. 마지막에는 메뉴 밖에서 발견한 `ProxyActivity` 인텐트 리다이렉션도 별도로 다루었다.
 
 ## 1. 분석 환경과 검증 수준
 
@@ -36,16 +28,7 @@ Allsafe는 의도적으로 취약하게 만든 Android 학습 앱이다. 공식 
 | ABI | arm64-v8a, armeabi-v7a, x86, x86_64 |
 | 동적 실행 | Pixel 10 AVD, Android 37.1 x86_64, ADB 재현 성공 |
 
-첫 빌드는 Android Studio에 포함된 Java 25와 Gradle 8.11.1의 비호환으로 실패했다. Gradle 호환표상 Java 25로 Gradle을 실행하려면 Gradle 9.1 이상이 필요하고, 이 레포의 AGP 8.9는 Gradle 8.11.1/JDK 17 조합을 기준으로 한다. 레포의 `jvmToolchain(18)`을 존중해 공식 Temurin 18 아카이브를 사용했고, 다운로드 SHA-256도 Adoptium 메타데이터와 대조했다. [Gradle Java 호환표](https://docs.gradle.org/current/userguide/compatibility.html), [AGP 8.9 호환성](https://developer.android.com/build/releases/agp-8-9-0-release-notes)
-
-이 글의 상태 표기는 다음과 같다.
-
-- **빌드 검증**: 소스가 실제 APK로 컴파일됨.
-- **정적 검증**: 소스와 APK/Smali/네이티브 바이너리에서 확인됨.
-- **재패키징 검증**: 수정 APK 재빌드·정렬·서명·재디코드까지 확인됨.
-- **동적 검증**: Android 에뮬레이터에서 입력·Intent·결과 UI를 직접 확인하고 화면과 UI 계층을 보존함.
-- **동적 미검증**: 명령과 예상 결과는 코드에서 도출했지만 기기에서 실행하지 않음.
-- **추정**: 서버 설정이나 Android 버전에 따라 달라질 수 있으며 근거를 함께 제시함.
+첫 빌드는 Android Studio에 포함된 Java 25와 Gradle 8.11.1의 비호환으로 실패했다. Gradle 호환표상 Java 25로 Gradle을 실행하려면 Gradle 9.1 이상이 필요하고, 이 레포의 AGP 8.9는 Gradle 8.11.1/JDK 17 조합을 기준으로 한다고 한다. 레포의 `jvmToolchain(18)`을 존중해 공식 Temurin 18 아카이브를 사용했고, 다운로드 SHA-256도 Adoptium 메타데이터와 대조했다. [Gradle Java 호환표](https://docs.gradle.org/current/userguide/compatibility.html), [AGP 8.9 호환성](https://developer.android.com/build/releases/agp-8-9-0-release-notes)
 
 ### 1.1 동적 재현과 스크린샷 조건
 
