@@ -11,6 +11,44 @@ feature_order: 0
 
 # Indexed Hollow 상세 Writeup
 
+## 0. 취약점 원리
+
+### 1. 값을 반환하지 않아도 실행 결과는 관찰 가능
+
+Indexed Hollow는 사용자가 보낸 `index.expr`를 PostgreSQL 표현식으로 평가한다. 일부 API는 계산값을 응답 본문에 직접 넣지 않지만, **계산값이 바꾼 결과**는 관찰할 수 있었다.
+
+검색 API에서는 비밀 값에 따라 공개 행 네 개의 정렬 점수를 다르게 계산했다. 응답에 비밀 문자열은 없지만, `IH-001`~`IH-004`의 순서를 보면 그 값에 대응하는 순열을 알 수 있다. 수식 검사 API에서는 조건이 참일 때만 `pg_sleep`을 실행해 응답 시간 차이로 한 비트를 판별했다. 감사 API에서는 문자열을 정수로 변환할 때 발생한 오류가 원래 문자열을 `engine_error`에 포함했다.
+
+내보내기 API는 수식을 바꿔도 같은 CSV를 반환했다. 그러나 수식이 테이블을 읽은 전후 `pg_stat_all_tables.seq_scan` 값이 증가했다. 비밀 숫자 `N`만큼 스캔을 반복하고, 감사 API에서 **요청 전후 스캔 횟수의 차이**를 읽으면 CSV가 고정되어 있어도 `N`을 알아낼 수 있다. `seq_scan`은 해당 테이블에서 시작된 순차 스캔 횟수다. [PostgreSQL 통계 문서](https://www.postgresql.org/docs/current/monitoring-stats.html)
+
+따라서 이 문제의 첫 번째 원리는 **응답의 출력값을 가리는 것과 수식 실행 효과를 가리는 것은 다르다**는 점이다. 원본 대나무 테이블의 행 보안은 공개 행만 보여줬지만, 별도 테이블과 함수에서 발생한 정렬·시간·오류·통계 변화가 정보 전달 경로가 됐다. 행 보안의 적용 범위는 [PostgreSQL RLS 문서](https://www.postgresql.org/docs/current/ddl-rowsecurity.html)를 참고할 수 있다.
+
+### 2. `NULL`이 증명 검사의 거절 조건을 지나간다
+
+보고서 함수 `worker_shadow.unseal_index(i,proof)`는 증명이 올바르지 않으면 `NULL`을 반환하도록 작성됐다. 복구한 함수의 핵심 검사는 다음과 같았다.
+
+```plpgsql
+IF proof !~ '^[0-9a-f]{64}$'
+THEN RETURN NULL; END IF;
+
+supplied := decode(proof, 'hex');
+IF octet_length(supplied) <> 32
+THEN RETURN NULL; END IF;
+
+IF different <> 0
+THEN RETURN NULL; END IF;
+```
+
+문제는 **`proof IS NULL`을 먼저 검사하지 않는 것**이다. `proof=NULL`이면 정규식 비교, 디코딩 결과의 길이 검사, 바이트 비교 결과가 차례로 `NULL`이 된다. PL/pgSQL의 `IF`는 조건이 `TRUE`일 때만 본문을 실행한다. 따라서 조건이 `NULL`인 위 거절 분기들은 `RETURN NULL`을 실행하지 않는다. [PostgreSQL PL/pgSQL 제어문 문서](https://www.postgresql.org/docs/current/plpgsql-control-structures.html)
+
+실제 저장 보고서에서 `worker_shadow.unseal_index(0,NULL)`을 평가하자 암호문이 반환됐다.
+
+```json
+{"grove_code":"IH-001","sealed_index":"6a5c2d7c1cbc06c0"}
+```
+
+이 함수는 소유자 권한으로 실행되는 `SECURITY DEFINER` 함수였다. PostgreSQL 함수는 기본적으로 NULL 인자가 있어도 실행되며, `STRICT`로 선언하면 NULL 인자에 대해 본문을 실행하지 않는다. 이 문제에서는 함수가 실행된 뒤 검증 분기가 `NULL`을 거절하지 못해 비밀 암호문 반환 경로에 도달했다. [PostgreSQL `CREATE FUNCTION` 문서](https://www.postgresql.org/docs/current/sql-createfunction.html)
+
 ## 1. 결과와 풀이 개요
 
 **플래그: `PD{...}`**
