@@ -1,21 +1,19 @@
 ---
 layout: post
-title: 안드로이드 취약점 분석
-page_description: 안드로이드 취약점에 대해 분석해보고 challenge에 도전한다.
+title: Allsafe Android README Challenge 1~12 Write-up
+page_description: Allsafe Android README의 12개 취약점 챌린지 풀이와 실행 증거
 category_key: ctf-wargame
-summary: 안드로이드 취약점에 대해 분석해보고 challenge에 도전한다.
-lead: 안드로이드 취약점에 대해 분석해보고 challenge에 도전한다.
+summary: Allsafe Android README의 12개 챌린지를 정적·동적으로 재현한 기록
+lead: Allsafe Android README 순서대로 1번부터 12번까지 풀이한다.
 featured: false
 feature_order: 0
 ---
 
-# Allsafe Android 취약점 분석
+# Allsafe Android README Challenge 1~12
 
-## 1. 분석 환경과 검증 수준
+## 1. 분석 환경
 
-첫 빌드는 Android Studio에 포함된 Java 25와 Gradle 8.11.1의 비호환으로 실패했다. Gradle 호환표상 Java 25로 Gradle을 실행하려면 Gradle 9.1 이상이 필요하고, 이 레포의 AGP 8.9는 Gradle 8.11.1/JDK 17 조합을 기준으로 한다고 한다. 레포의 `jvmToolchain(18)`을 존중해 공식 Temurin 18 아카이브를 사용했고, 다운로드 SHA-256도 Adoptium 메타데이터와 대조했다. [Gradle Java 호환표](https://docs.gradle.org/current/userguide/compatibility.html), [AGP 8.9 호환성](https://developer.android.com/build/releases/agp-8-9-0-release-notes)
-
-![Allsafe 메인 화면]({{ '/assets/images/android-vul/01-main.png' | relative_url }})
+대상은 [Allsafe Android 커밋 `c732915`](https://github.com/t0thkr1s/allsafe-android/tree/c7329155cbbd0a2079a48bbfcaa23a6666899ee9)이며 원본 APK SHA-256은 `7C08B9549FFE02C0AEBE03A2B83780D3F87211185CC4045C8F7FABF67421BC4B`다. Android 15(API 35) x86_64 에뮬레이터, Apktool 3.0.3, Frida 17.22.0을 사용했다. 루팅되지 않은 에뮬레이터에서는 Frida Gadget 실습 APK로 3·5·6·12번을 검증했다.
 
 ## 2. README 챌린지 1~12
 
@@ -28,9 +26,15 @@ adb shell pidof infosecadventures.allsafe
 adb shell logcat --pid <PID> | grep "User entered secret"
 ```
 
-예상 결과는 입력한 비밀이 로그에 평문으로 노출되는 것이다. 최신 Android에서는 일반 앱의 전체 logcat 접근이 제한되지만, ADB·루팅·권한 있는 시스템 앱·수집된 진단 로그 같은 경로는 여전히 남는다. 따라서 “최신 Android니까 안전하다”가 아니라 “비밀을 애초에 로그에 기록하지 않는다”가 올바른 방법이다. [Android Log Info Disclosure](https://developer.android.com/privacy-and-security/risks/log-info-disclosure)
+에뮬레이터에서 `README01_SECRET_2026`을 입력하자 Logcat에 다음 값이 그대로 기록됐다.
 
-개선해야 할 점은 민감값 로깅 제거, 릴리스 빌드에서 디버그 로그 제거, 구조화 로그의 필드 단위 마스킹이다.
+```text
+D ALLSAFE : User entered secret: README01_SECRET_2026
+```
+
+![입력한 비밀이 Logcat에 평문으로 남은 화면]({{ '/assets/images/android-vul/01-insecure-logging.png' | relative_url }})
+
+민감값 로깅을 제거하고 릴리스 빌드에서 디버그 로그를 제외해야 한다. [Android Log Info Disclosure](https://developer.android.com/privacy-and-security/risks/log-info-disclosure)
 
 ### 2.2 Hardcoded Credentials
 
@@ -40,6 +44,8 @@ adb shell logcat --pid <PID> | grep "User entered secret"
 2. 개발 URL userinfo: `admin / password123` — [strings.xml 3행](https://github.com/t0thkr1s/allsafe-android/blob/c7329155cbbd0a2079a48bbfcaa23a6666899ee9/app/src/main/res/values/strings.xml#L3)
 
 APK의 문자열·리소스는 사용자 기기에 배포되므로 비밀 저장소가 아니다. 난독화나 Base64는 추출 비용만 조금 늘릴 뿐 자격증명을 보호하지 못한다. 인증 비밀은 서버에 두고, 앱에는 만료가 짧고 최소 권한인 사용자별 토큰만 전달해야 한다. 암호 키가 필요하면 Android Keystore를 사용한다. [OWASP MASTG Cryptographic Key Storage](https://mas.owasp.org/MASTG/knowledge/android/MASVS-STORAGE/MASTG-KNOW-0047/)
+
+![APK에서 확인한 하드코딩 자격증명 위치—비밀번호는 공개용 이미지에서 가림]({{ '/assets/images/android-vul/02-hardcoded-credentials.png' | relative_url }})
 
 ### 2.3 Root Detection
 
@@ -55,11 +61,15 @@ Java.perform(function () {
 });
 ```
 
-```bash
-frida -U -f infosecadventures.allsafe -l root-bypass.js
+Frida Gadget이 로드된 실습 APK에서 훅을 적용한 뒤 `[CHECK ROOT]`를 눌렀다. 콘솔에 아래 로그가 남았고 앱은 `Congrats, root is not detected!`를 표시했다.
+
+```text
+[ALLSAFE-POC] README-03 RootBeer.isRooted -> false
 ```
 
-이 스크립트는 기기 미연결로 실행하지 않았다. 그러나 판단이 전적으로 앱 프로세스의 Boolean 반환값에 있으므로 런타임 계측이 가능한 공격자에게 우회 가능하다는 결론은 코드에서 직접 나온다. 개선 시에도 루트 탐지는 위험 신호 중 하나로만 사용하고, 서버 측 무결성 신호·재인증·거래별 정책과 결합해야 한다.
+![RootBeer 반환값을 변경해 루팅 탐지를 우회한 화면]({{ '/assets/images/android-vul/03-root-detection-frida.png' | relative_url }})
+
+루트 탐지는 위험 신호 중 하나로만 사용하고, 서버 측 무결성 신호·재인증·거래별 정책과 결합해야 한다.
 
 ### 2.4 Arbitrary Code Execution
 
@@ -79,7 +89,13 @@ public final class Loader {
 }
 ```
 
-PoC 앱의 applicationId를 `infosecadventures.allsafe.poc`처럼 접두사에 맞춰 설치하면 Allsafe가 이 클래스를 찾으려 한다. 이 코드는 로그만 남기며 파괴적 동작을 하지 않는다.
+PoC 앱의 applicationId를 `infosecadventures.allsafe.poc`로 두고 설치한 뒤 Allsafe를 시작했다. 별도 PoC Activity와 Logcat에서 코드 실행을 확인했다. PoC는 로그와 확인 화면만 표시한다.
+
+```text
+E ALLSAFE_POC: README-04 Loader.loadPlugin executed in pid=4436
+```
+
+![접두사가 일치하는 외부 패키지의 Loader 코드가 실행된 화면]({{ '/assets/images/android-vul/04-arbitrary-code-execution.png' | relative_url }})
 
 두 번째 경로는 `/sdcard/Download/allsafe_updater.apk`를 `DexClassLoader`로 열어 `VersionCheck.getLatestVersion()`을 호출한다. [ArbitraryCodeExecution.kt 37~49행](https://github.com/t0thkr1s/allsafe-android/blob/c7329155cbbd0a2079a48bbfcaa23a6666899ee9/app/src/main/java/infosecadventures/allsafe/ArbitraryCodeExecution.kt#L37-L49) Android 문서는 외부 저장소가 코드 주입을 막는 접근통제를 제공하지 않으므로 그곳에서 코드를 로드하지 말라고 명시한다. [DexClassLoader](https://developer.android.com/reference/dalvik/system/DexClassLoader), [Android Security Tips](https://developer.android.com/privacy-and-security/security-tips)
 
@@ -91,13 +107,24 @@ PoC 앱의 applicationId를 `infosecadventures.allsafe.poc`처럼 접두사에 �
 
 ```javascript
 Java.perform(function () {
-  const Activity = Java.use('android.app.Activity');
-  Activity.onResume.implementation = function () {
-    this.onResume();
-    this.getWindow().clearFlags(0x00002000); // FLAG_SECURE
-  };
+  Java.choose('infosecadventures.allsafe.MainActivity', {
+    onMatch(activity) {
+      activity.runOnUiThread(Java.registerClass({
+        name: 'infosecadventures.allsafe.ClearSecureFlag',
+        implements: [Java.use('java.lang.Runnable')],
+        methods: {
+          run() { activity.getWindow().clearFlags(0x00002000); }
+        }
+      }).$new());
+    },
+    onComplete() {}
+  });
 });
 ```
+
+훅 적용 전 ADB 캡처는 검은 화면이었지만, 실행 중인 `MainActivity`의 플래그를 제거한 뒤에는 화면이 캡처됐다.
+
+![실행 중 FLAG_SECURE를 제거한 뒤 캡처된 화면]({{ '/assets/images/android-vul/05-secure-flag-bypass.png' | relative_url }})
 
 README가 설명하듯 이것은 취약점 판정보다 Frida 연습에 가깝다. `FLAG_SECURE`는 일반적인 스크린샷과 비보안 디스플레이 노출을 줄이는 유효한 방어지만, 이미 앱 프로세스를 계측할 수 있는 공격자에 대한 완전한 경계는 아니다. [Android FLAG_SECURE 가이드](https://developer.android.com/security/fraud-prevention/activities)
 
@@ -115,7 +142,13 @@ Java.perform(function () {
 });
 ```
 
-메서드 이름·오버로드는 OkHttp 버전과 난독화에 따라 달라질 수 있으므로 실제 APK에서 `frida-trace` 또는 `Java.enumerateMethods`로 확인해야 한다. 위 스크립트는 코드에 선언된 OkHttp 4.9.0을 기준으로 한 재현 예시이며 동적 미검증이다.
+실제 APK의 `check$okhttp`를 훅한 뒤 과제를 실행했다. Frida 로그와 앱의 `Successful connection over HTTPS!` Snackbar를 확인했다.
+
+```text
+[ALLSAFE-POC] README-06 bypassed CertificatePinner.check$okhttp for httpbin.io
+```
+
+![CertificatePinner 검사를 우회하고 HTTPS 요청에 성공한 화면]({{ '/assets/images/android-vul/06-certificate-pinning-frida.png' | relative_url }})
 
 런타임에서 관측한 체인을 곧바로 신뢰하는 구현은 정적인 핀과 다르고, 시작 시점의 연결 상태에 신뢰가 좌우된다. Android 공식 문서는 운영 장애 위험 때문에 인증서 피닝 자체를 일반적으로 권장하지 않으며, 꼭 쓸 경우 백업 핀과 만료 전략을 요구한다. [Network Security Configuration](https://developer.android.com/privacy-and-security/security-config), [TLS 보안 가이드](https://developer.android.com/privacy-and-security/security-ssl)
 
@@ -126,13 +159,17 @@ Manifest의 `NoteReceiver`는 `android:exported="true"`이고 보호 permission�
 ```bash
 adb shell am broadcast \
   -a infosecadventures.allsafe.action.PROCESS_NOTE \
-  --es server 127.0.0.1 \
-  --es note poc \
-  --es notification_message "forged notification" \
-  -p infosecadventures.allsafe
+  -n infosecadventures.allsafe/.challenges.NoteReceiver \
+  --es server example.com \
+  --es note README07_FORGED_NOTE \
+  --es notification_message README07_FORGED_BROADCAST_SUCCESS
 ```
 
-예상 영향은 앱 권한을 이용한 임의 host 요청, 인증 토큰 노출, 알림 스푸핑이다. 네트워크 보안 설정도 `infosecadventures.io`의 cleartext를 허용한다. [network_security_config.xml](https://github.com/t0thkr1s/allsafe-android/blob/c7329155cbbd0a2079a48bbfcaa23a6666899ee9/app/src/main/res/xml/network_security_config.xml) Android는 내부용 receiver를 `exported=false`로 두거나 signature permission으로 보호하라고 권고한다. [Insecure Broadcast Receivers](https://developer.android.com/privacy-and-security/risks/insecure-broadcast-receiver), [Cleartext Communications](https://developer.android.com/privacy-and-security/risks/cleartext-communications)
+브로드캐스트 전송 후 Allsafe 이름으로 `README07_FORGED_BROADCAST_SUCCESS` 알림이 생성됐다. Android 15에서 알림을 화면으로 증명하기 위해 실습 APK manifest에 `POST_NOTIFICATIONS` 권한만 추가했으며, receiver 로직은 변경하지 않았다.
+
+![외부 브로드캐스트로 위조 알림이 생성된 화면]({{ '/assets/images/android-vul/07-insecure-broadcast.png' | relative_url }})
+
+영향은 앱 권한을 이용한 임의 host 요청, 인증 토큰 노출, 알림 스푸핑이다. 네트워크 보안 설정도 `infosecadventures.io`의 cleartext를 허용한다. [network_security_config.xml](https://github.com/t0thkr1s/allsafe-android/blob/c7329155cbbd0a2079a48bbfcaa23a6666899ee9/app/src/main/res/xml/network_security_config.xml) Android는 내부용 receiver를 `exported=false`로 두거나 signature permission으로 보호하라고 권고한다. [Insecure Broadcast Receivers](https://developer.android.com/privacy-and-security/risks/insecure-broadcast-receiver), [Cleartext Communications](https://developer.android.com/privacy-and-security/risks/cleartext-communications)
 
 ### 2.8 Deep Link Exploitation
 
@@ -147,7 +184,7 @@ adb shell am start -W \
 
 이 명령을 에뮬레이터에서 실행하자 `DeepLinkTask`가 열렸고, 화면의 `Congratulations!`와 Snackbar의 `Good job, you did it!`를 확인했다. Logcat에도 동일한 VIEW action과 URI가 기록됐다.
 
-![정적 키를 포함한 딥링크로 과제를 통과한 화면]({{ '/assets/images/android-vul/05-deeplink-success.png' | relative_url }})
+![정적 키를 포함한 딥링크로 과제를 통과한 화면]({{ '/assets/images/android-vul/08-deep-link.png' | relative_url }})
 
 클라이언트에 포함된 정적 키는 권한 검증이 될 수 없다. 서버가 소유한 상태·사용자 세션·단발성 nonce로 조건을 검증해야 한다. HTTPS App Link는 정확한 host와 path를 지정하고 `android:autoVerify="true"` 및 Digital Asset Links를 사용해야 한다. [Unsafe Use of Deep Links](https://developer.android.com/privacy-and-security/risks/unsafe-use-of-deeplinks)
 
@@ -164,7 +201,7 @@ password: anything
 
 실제 에뮬레이터에서는 username에 `admin' -- `를 입력하고 password를 비워 둔 채 로그인했다. Toast에 `User: admin`과 저장된 MD5 값 `21232f297a57a5a743894a0e4a801fc3`가 표시되어 비밀번호 조건 우회를 동적으로 확인했다.
 
-![admin 뒤의 SQL 주석 payload로 비밀번호 검증을 우회한 화면]({{ '/assets/images/android-vul/07-sqli-success.png' | relative_url }})
+![admin 뒤의 SQL 주석 payload로 비밀번호 검증을 우회한 화면]({{ '/assets/images/android-vul/09-sql-injection.png' | relative_url }})
 
 ```kotlin
 db.rawQuery(
@@ -180,10 +217,14 @@ db.rawQuery(
 WebView는 JavaScript와 파일 접근을 켜고, 사용자가 입력한 URL을 그대로 `loadUrl`하거나 임의 HTML을 `loadData`로 실행한다. [VulnerableWebView.java 31~45행](https://github.com/t0thkr1s/allsafe-android/blob/c7329155cbbd0a2079a48bbfcaa23a6666899ee9/app/src/main/java/infosecadventures/allsafe/challenges/VulnerableWebView.java#L31-L45)
 
 ```html
-<script>alert('Allsafe XSS')</script>
+<script>alert("README10_XSS_SUCCESS")</script>
 ```
 
-임의 HTML에서 JavaScript 실행과 명시적 `setAllowFileAccess(true)`는 소스에서 확인된다. 개선은 JavaScript·파일·content 접근을 기본 거부하고, 필요한 URL은 파싱 후 scheme과 정확한 host를 allowlist로 검증하는 것이다. [WebView Unsafe File Inclusion](https://developer.android.com/privacy-and-security/risks/webview-unsafe-file-inclusion), [Cross-App Scripting](https://developer.android.com/privacy-and-security/risks/cross-app-scripting)
+입력 후 WebView 경고창에 `README10_XSS_SUCCESS`가 표시됐다. URL 입력에는 `file:///etc/hosts`를 넣어 `127.0.0.1 localhost`와 `::1 ip6-localhost`가 읽히는 것도 확인했다. 로컬 시스템 파일 내용이 포함된 두 번째 화면은 공개하지 않는다.
+
+![사용자 입력 HTML의 JavaScript가 WebView에서 실행된 화면]({{ '/assets/images/android-vul/10a-webview-xss-alert.png' | relative_url }})
+
+개선은 JavaScript·파일·content 접근을 기본 거부하고, 필요한 URL은 파싱 후 scheme과 정확한 host를 allowlist로 검증하는 것이다. [WebView Unsafe File Inclusion](https://developer.android.com/privacy-and-security/risks/webview-unsafe-file-inclusion), [Cross-App Scripting](https://developer.android.com/privacy-and-security/risks/cross-app-scripting)
 
 ### 2.11 Smali Patching
 
@@ -214,7 +255,7 @@ apksigner verify --verbose --print-certs allsafe-smali-patched.apk
 
 패치 APK를 에뮬레이터에 설치하고 `[CHECK FIREWALL]`을 누르자 `Firewall is now activated, good job!`이 표시됐다. 즉, 파일 수준 변경이 실제 실행 분기까지 바꾼 것을 확인했다.
 
-![Smali 패치 후 방화벽 활성화 성공 화면]({{ '/assets/images/android-vul/06-smali-patch-success.png' | relative_url }})
+![Smali 패치 후 방화벽 활성화 성공 화면]({{ '/assets/images/android-vul/11-smali-patching.png' | relative_url }})
 
 ### 2.12 Native Library
 
@@ -232,14 +273,24 @@ Frida로 반환값을 강제하는 예시는 다음과 같다.
 
 ```javascript
 const name = 'Java_infosecadventures_allsafe_challenges_NativeLibrary_checkPassword';
-const addr = Module.findGlobalExportByName(name);
+const module = Process.getModuleByName('libnative_library.so');
+const addr = module.getExportByName(name);
 Interceptor.attach(addr, {
   onLeave(retval) {
+    console.log('[+] original=' + retval.toInt32() + ' -> 1');
     retval.replace(1);
-    console.log('[+] native password check forced true');
   }
 });
 ```
+
+비밀번호 입력란에 일부러 `definitely_wrong`을 넣었다. 원래 반환값 `0`을 `1`로 바꾸자 앱이 `That's it! Excellent work!`를 표시했다.
+
+```text
+[ALLSAFE-POC] README-12 JNI checkPassword entered
+[ALLSAFE-POC] README-12 native return original=0 -> 1
+```
+
+![JNI 반환값을 바꿔 틀린 비밀번호로 통과한 화면]({{ '/assets/images/android-vul/12-native-frida-hook.png' | relative_url }})
 
 네이티브 코드는 비밀 저장소가 아니다. 역공학 비용만 달라질 뿐, 최종 승인 판단과 장기적인 비밀값은 서버에 둬야 한다.
 
