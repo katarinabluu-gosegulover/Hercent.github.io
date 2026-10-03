@@ -1,10 +1,10 @@
 ---
 layout: post
 title: Review Desk 문제 풀이
-page_description: 2026 Incognito Finals애 출제된 Review Desk 문제의 취약점과 Write up
+page_description: 2026 Incognito Finals에 출제된 Review Desk 문제의 취약점과 Write up
 category_key: ctf-wargame
-summary: 2026 Incognito Finals애 출제된 Review Desk 문제의 취약점과 Write up
-lead: 2026 Incognito Finals애 출제된 Review Desk 문제의 취약점과 Write up
+summary: 2026 Incognito Finals에 출제된 Review Desk 문제의 취약점과 Write up
+lead: 2026 Incognito Finals에 출제된 Review Desk 문제의 취약점과 Write up
 featured: false
 feature_order: 0
 ---
