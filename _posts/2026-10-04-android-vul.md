@@ -9,24 +9,9 @@ featured: false
 feature_order: 0
 ---
 
-# Allsafe Android 취약점 분석: README 12개 챌린지와 최신 소스의 7개 추가 과제
-
-Allsafe는 의도적으로 취약하게 만든 Android 학습 앱이다. 공식 README에는 12개 챌린지가 소개되어 있지만, 현재 `master`의 내비게이션에는 19개가 있다. README의 1번부터 12번까지 먼저 풀고, README에 아직 반영되지 않은 7개 과제까지 이어서 분석했다. 마지막에는 메뉴 밖에서 발견한 `ProxyActivity` 인텐트 리다이렉션도 별도로 다루었다.
+# Allsafe Android 취약점 분석
 
 ## 1. 분석 환경과 검증 수준
-
-| 항목 | 결과 |
-|---|---|
-| OS / 분석일 | Windows, 2026-10-01~03 KST |
-| 대상 commit | `c7329155cbbd0a2079a48bbfcaa23a6666899ee9` |
-| 앱 ID / 버전 | `infosecadventures.allsafe` / `1.6` (`versionCode=6`) |
-| SDK | min 23, target/compile 35 |
-| 빌드 | Gradle 8.11.1 + AGP 8.9.0 + Temurin JDK 18 |
-| 원본 APK | 10,897,952 bytes, SHA-256 `7C08B9549FFE02C0AEBE03A2B83780D3F87211185CC4045C8F7FABF67421BC4B` |
-| 패치 APK | 10,132,204 bytes, SHA-256 `0D35555763DCB10A470FE6DED3CE30F36C141EE31EFC8D50C5E50A9338AE7825` |
-| APK 서명 | 원본 v1/v2, 패치 v1/v2/v3 검증 성공; 둘 다 Android Debug 인증서 |
-| ABI | arm64-v8a, armeabi-v7a, x86, x86_64 |
-| 동적 실행 | Pixel 10 AVD, Android 37.1 x86_64, ADB 재현 성공 |
 
 첫 빌드는 Android Studio에 포함된 Java 25와 Gradle 8.11.1의 비호환으로 실패했다. Gradle 호환표상 Java 25로 Gradle을 실행하려면 Gradle 9.1 이상이 필요하고, 이 레포의 AGP 8.9는 Gradle 8.11.1/JDK 17 조합을 기준으로 한다고 한다. 레포의 `jvmToolchain(18)`을 존중해 공식 Temurin 18 아카이브를 사용했고, 다운로드 SHA-256도 Adoptium 메타데이터와 대조했다. [Gradle Java 호환표](https://docs.gradle.org/current/userguide/compatibility.html), [AGP 8.9 호환성](https://developer.android.com/build/releases/agp-8-9-0-release-notes)
 
@@ -39,31 +24,6 @@ Allsafe는 의도적으로 취약하게 만든 Android 학습 앱이다. 공식 
 ![Allsafe 메인 화면]({{ '/assets/images/android-vul/01-main.png' | relative_url }})
 
 ![여러 취약점 모듈이 보이는 내비게이션 메뉴]({{ '/assets/images/android-vul/02-menu.png' | relative_url }})
-
-## 2. 한눈에 보는 결과
-
-| 순서 | 과제 | 핵심 원인 | 평가 | 검증 |
-|---:|---|---|---|---|
-| 1 | Insecure Logging | 사용자의 비밀을 `Log.d`로 출력 | 중간 | 정적 |
-| 2 | Hardcoded Credentials | SOAP·URL 자격증명을 APK에 포함 | 높음 | 정적 |
-| 3 | Root Detection | 단일 클라이언트 측 RootBeer 결과 신뢰 | 학습용 | 정적, Frida 미실행 |
-| 4 | Arbitrary Code Execution | 타 앱 코드와 외부 APK를 검증 없이 로드 | 치명적 | 정적 |
-| 5 | Secure Flag Bypass | 클라이언트 런타임에서 플래그 설정 | 학습용 | 정적, Frida 미실행 |
-| 6 | Certificate Pinning | OkHttp 메서드 후킹 가능, 런타임 체인으로 핀 생성 | 방어 우회 학습 | 정적 |
-| 7 | Insecure Broadcast Receiver | 무권한 exported receiver + 공격자 제어 host | 높음 | 정적 |
-| 8 | Deep Link Exploitation | APK에 포함된 키만 비교, 과도하게 넓은 HTTPS 필터 | 중간 | 정적·동적 |
-| 9 | SQL Injection | 문자열 연결로 `rawQuery` 생성 | 높음 | 정적·동적 |
-| 10 | Vulnerable WebView | 임의 HTML/URL + JavaScript + 파일 접근 | 높음 | 정적 |
-| 11 | Smali Patching | 성공 여부를 로컬 enum 하나로 결정 | 정보성 | 재패키징·동적 |
-| 12 | Native Library | 네이티브 바이너리에 평문 비밀번호 포함 | 높음 | 소스·ELF 정적 |
-| A | Firebase Database | 인증 없이 `secret` 읽기 시도 | 조건부 높음 | 서버 규칙 미검증 |
-| B | Insecure SharedPreferences | 아이디/비밀번호 평문 XML 저장 | 중간 | 정적 |
-| C | PIN Bypass | Base64를 보안 통제로 사용 | 높음 | 정적·동적 |
-| D | Weak Cryptography | 고정 키, ECB, MD5, `Random` | 높음 | 정적 |
-| E | Insecure Service | 무권한 exported 녹음 서비스 | 높음 | 정적, 버전 의존 |
-| F | Object Serialization | 변조 가능한 직렬화 데이터의 role 신뢰 | 중간 | 정적 |
-| G | Insecure Providers | 무권한 exported CRUD provider | 높음 | 정적 |
-| X | ProxyActivity | 공격자 제공 중첩 Intent를 즉시 실행 | 높음 | 정적 |
 
 ## 3. README 챌린지 1~12
 
