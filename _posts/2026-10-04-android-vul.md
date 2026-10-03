@@ -53,9 +53,9 @@ Allsafe는 의도적으로 취약하게 만든 Android 학습 앱이다. 공식 
 
 캡처 빌드는 Apktool 3.0.3으로 재빌드하고 Android Debug 키로 서명했으며, `apksigner verify --verbose`에서 v1/v2/v3 검증을 통과했다. SHA-256은 `809D8A7B6A35B43B1D4C5C4978CC8932B82F4900D2D557C6F0D4FDE5E9AD5513`이다. `FLAG_SECURE`가 스크린샷을 차단하는 동작과 한계는 [Android 공식 가이드](https://developer.android.com/security/fraud-prevention/activities#flag-secure)에 설명되어 있다.
 
-![Allsafe 메인 화면](screenshots/01-main.png)
+![Allsafe 메인 화면]({{ '/assets/images/android-vul/01-main.png' | relative_url }})
 
-![여러 취약점 모듈이 보이는 내비게이션 메뉴](screenshots/02-menu.png)
+![여러 취약점 모듈이 보이는 내비게이션 메뉴]({{ '/assets/images/android-vul/02-menu.png' | relative_url }})
 
 ## 2. 한눈에 보는 결과
 
@@ -212,7 +212,7 @@ adb shell am start -W \
 
 이 명령을 에뮬레이터에서 실행하자 `DeepLinkTask`가 열렸고, 화면의 `Congratulations!`와 Snackbar의 `Good job, you did it!`를 확인했다. Logcat에도 동일한 VIEW action과 URI가 기록됐다.
 
-![정적 키를 포함한 딥링크로 과제를 통과한 화면](screenshots/05-deeplink-success.png)
+![정적 키를 포함한 딥링크로 과제를 통과한 화면]({{ '/assets/images/android-vul/05-deeplink-success.png' | relative_url }})
 
 클라이언트에 포함된 정적 키는 권한 검증이 될 수 없다. 서버가 소유한 상태·사용자 세션·단발성 nonce로 조건을 검증해야 한다. HTTPS App Link는 정확한 host와 path를 지정하고 `android:autoVerify="true"` 및 Digital Asset Links를 사용해야 한다. [Unsafe Use of Deep Links](https://developer.android.com/privacy-and-security/risks/unsafe-use-of-deeplinks)
 
@@ -229,7 +229,7 @@ password: anything
 
 실제 에뮬레이터에서는 username에 `admin' -- `를 입력하고 password를 비워 둔 채 로그인했다. Toast에 `User: admin`과 저장된 MD5 값 `21232f297a57a5a743894a0e4a801fc3`가 표시되어 비밀번호 조건 우회를 동적으로 확인했다.
 
-![admin 뒤의 SQL 주석 payload로 비밀번호 검증을 우회한 화면](screenshots/07-sqli-success.png)
+![admin 뒤의 SQL 주석 payload로 비밀번호 검증을 우회한 화면]({{ '/assets/images/android-vul/07-sqli-success.png' | relative_url }})
 
 ```kotlin
 db.rawQuery(
@@ -285,7 +285,7 @@ apksigner verify --verbose --print-certs allsafe-smali-patched.apk
 
 패치 APK를 에뮬레이터에 설치하고 `[CHECK FIREWALL]`을 누르자 `Firewall is now activated, good job!`이 표시됐다. 즉, 파일 수준 변경이 실제 실행 분기까지 바꾼 것을 확인했다.
 
-![Smali 패치 후 방화벽 활성화 성공 화면](screenshots/06-smali-patch-success.png)
+![Smali 패치 후 방화벽 활성화 성공 화면]({{ '/assets/images/android-vul/06-smali-patch-success.png' | relative_url }})
 
 ### 3.12 Native Library
 
@@ -338,7 +338,7 @@ adb shell run-as infosecadventures.allsafe cat shared_prefs/user.xml
 
 에뮬레이터에서 `4863`을 입력하고 검증하자 `Access granted, good job!` Snackbar가 표시됐다. 이 결과는 Base64 디코딩으로 얻은 값이 실제 런타임 검증값임을 보여 준다.
 
-![Base64에서 복원한 PIN 4863으로 검증을 통과한 화면](screenshots/04-pin-success.png)
+![Base64에서 복원한 PIN 4863으로 검증을 통과한 화면]({{ '/assets/images/android-vul/04-pin-success.png' | relative_url }})
 
 Base64는 인코딩이며 암호화가 아니다. 더 근본적으로 APK 안의 값만으로 권한을 승인하면 공격자는 정적 분석, 후킹, Smali 패치 중 하나로 우회할 수 있다. PIN 검증은 서버와 rate limit, 시도 횟수 정책, 강한 사용자 인증에 연결해야 한다.
 
