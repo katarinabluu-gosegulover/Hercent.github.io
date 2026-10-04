@@ -220,7 +220,7 @@ event == "line" and filename == bp.filename and frame.f_lineno == bp.line
 중단점을 예약할 수 있게 됐다. 파일까지 함께 비교하므로 다른 모듈의 동명 함수에서 잘못
 멈추는 경우도 줄였다.
 
-## 7. 감시점과 “값이 바뀌었다”의 정의
+## 7. 감시점
 
 Exercise 2는 `watch CONDITION`의 값이 바뀌면 멈추라고 요구한다.[^debugger-ex2] 여기에는
 세 가지 설계 문제가 있다.
