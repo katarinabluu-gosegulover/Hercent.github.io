@@ -140,27 +140,35 @@ CLI에서는 대상 파일을 읽고 `compile()`한 뒤 별도의 `__main__` 이
 | `UNTIL` | 같은 프레임에서 기준보다 큰 줄의 `line` 또는 `return` |
 | `FINISH` | 명령을 입력한 프레임의 `return` |
 
-이를 흐름으로 나타내면 다음과 같다.
+아래 그림에서는 **둥근 사각형만 실행 상태**이고, 명령과 추적 이벤트는 상태 사이의
+화살표에 적었다. `STEP`, `CONTINUE`, `NEXT`, `UNTIL`, `FINISH`는 별도의 상태가
+아니라 `RUNNING` 상태에 저장되는 정지 정책이다. 같은 상태가 여러 번 그려진 것은 각
+정책의 전이를 한 줄씩 읽을 수 있게 반복한 것이다.
+
+![Python 미니 디버거의 실행 상태 전이. PAUSED에서 명령을 입력하면 정지 정책을 가진 RUNNING으로 전이하고, 정책별 추적 이벤트와 조건이 충족되면 PAUSED로 돌아간다.]({{ '/assets/images/python-debugger-state-machine.svg' | relative_url }})
+
+예를 들어 첫 번째 줄은 다음 순서로 읽는다.
 
 ```text
-초기화 ──> RUNNING(STEP) ── 첫 line ──> PAUSED
-
-PAUSED ── step 명령 ───────> RUNNING(STEP)
-PAUSED ── continue 명령 ───> RUNNING(CONTINUE)
-PAUSED ── next 명령 ───────> RUNNING(NEXT, 현재 frame)
-PAUSED ── until 명령 ──────> RUNNING(UNTIL, 현재 frame, 기준 line)
-PAUSED ── finish 명령 ─────> RUNNING(FINISH, 현재 frame)
-
-RUNNING ── 정책의 정지 조건 충족 ──> PAUSED
-RUNNING ── 중단점/감시점 충족 ─────> PAUSED
-PAUSED  ── quit 명령 ──────────────> TERMINATED
-RUNNING ── 대상 프로그램 종료 ─────> TERMINATED
+현재 상태: PAUSED
+  ── 입력: step 명령 / 동작: policy를 STEP으로 설정 ──>
+다음 상태: RUNNING
+  ── 이벤트: line ──>
+다음 상태: PAUSED
 ```
+
+즉, `step`은 상태가 아니라 `PAUSED → RUNNING` 전이를 일으키는 입력이다. 이후
+`line` 이벤트는 `policy == STEP`이라는 조건에서 `RUNNING → PAUSED` 전이를 일으킨다.
+`next`도 같은 방식이지만, 명령을 입력했던 프레임에서 시작 줄과 다른 `line` 이벤트가
+발생하거나 같은 프레임의 `return` 이벤트가 발생해야 한다. 또한 모든 정지 정책에서
+중단점 일치와 감시값 변경은 정책 자체의 조건보다 먼저 `PAUSED` 전이를 일으킨다.
 
 실제 코드에서는 별도의 `phase`와 `policy` 열거형을 두지 않고 `_mode` 문자열 하나에
 `stopped`, `step`, `continue`, `next`, `until`, `finish`를 저장했다. 즉, 구현은 두 개념을
 한 변수로 표현하지만, 동작을 이해할 때는 `PAUSED/RUNNING/TERMINATED`와
-`STEP~FINISH`를 서로 다른 것으로 보는 것이 정확하다.
+`STEP~FINISH`를 서로 다른 것으로 보는 것이 정확하다. 또한 `TERMINATED`는 `_mode`에
+저장되는 값이 아니라, 추적 함수가 해제되고 대상 실행이 끝난 뒤를 나타내는 수명주기
+상태다.
 
 ### 문제 1
 
