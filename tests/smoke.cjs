@@ -8,6 +8,14 @@ const root = path.resolve(__dirname, "../_site");
 const output = path.resolve(__dirname, "../test-results");
 const prefix = "/Hercent.github.io";
 const types = { ".html": "text/html", ".css": "text/css", ".js": "text/javascript", ".png": "image/png", ".jpg": "image/jpeg", ".svg": "image/svg+xml", ".pdf": "application/pdf" };
+const luminance = (hex) => {
+  let value = hex.trim().replace("#", "");
+  if (value.length === 3) value = [...value].map((digit) => digit + digit).join("");
+  const channels = [0, 2, 4].map((index) => parseInt(value.slice(index, index + 2), 16) / 255)
+    .map((channel) => channel <= .04045 ? channel / 12.92 : ((channel + .055) / 1.055) ** 2.4);
+  return channels[0] * .2126 + channels[1] * .7152 + channels[2] * .0722;
+};
+const contrast = (a, b) => (Math.max(luminance(a), luminance(b)) + .05) / (Math.min(luminance(a), luminance(b)) + .05);
 const server = http.createServer((req, res) => {
   const url = new URL(req.url, "http://localhost");
   const relative = decodeURIComponent(url.pathname).replace(/^\/Hercent\.github\.io(?=\/|$)/, "");
@@ -39,7 +47,21 @@ async function main() {
     const noOverflow = async () => {
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `Horizontal overflow at ${page.url()}`);
     };
+    const checkPalette = async () => {
+      const palette = await page.locator("html").evaluate((el) => {
+        const css = getComputedStyle(el);
+        return Object.fromEntries(["bg", "surface", "raised", "code", "text", "muted", "accent", "warm", "accent-ink"]
+          .map((key) => [key, css.getPropertyValue(`--${key}`).trim()]));
+      });
+      for (const background of ["bg", "surface", "raised", "code"]) {
+        for (const foreground of ["text", "muted", "accent", "warm"]) {
+          assert(contrast(palette[background], palette[foreground]) >= 4.5, `${foreground} on ${background} text contrast`);
+        }
+      }
+      assert(contrast(palette.accent, palette["accent-ink"]) >= 4.5, "Button text contrast");
+    };
     await visit("/");
+    await checkPalette();
     assert.equal(await page.locator(".note-row").count(), 6);
     assert.equal(await page.locator(".case-study").count(), 1);
     const featuredPath = await page.locator(".case-link").getAttribute("href");
@@ -73,6 +95,7 @@ async function main() {
     await page.locator(".case-study").screenshot({ path: path.join(output, "featured-report.png") });
     await page.locator("[data-theme-toggle]").click();
     assert.equal(await page.locator("html").getAttribute("data-theme"), "light");
+    await checkPalette();
     await page.reload();
     assert.equal(await page.locator("html").getAttribute("data-theme"), "light");
     await page.screenshot({ path: path.join(output, "home-light.png"), fullPage: true });
