@@ -25,7 +25,7 @@ const server = http.createServer((req, res) => {
 async function main() {
   fs.mkdirSync(output, { recursive: true });
   await new Promise((resolve) => server.listen(0, "127.0.0.1", resolve));
-  const base = `http://127.0.0.1:${server.address().port}${prefix}`;
+  const base = process.env.SITE_URL?.replace(/\/$/, "") || `http://127.0.0.1:${server.address().port}${prefix}`;
   const browser = await chromium.launch({ headless: true, channel: process.env.BROWSER_CHANNEL || undefined });
   try {
     const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
@@ -41,8 +41,27 @@ async function main() {
     };
     await visit("/");
     assert.equal(await page.locator(".note-row").count(), 6);
+    assert.equal(await page.locator(".case-study").count(), 1);
+    const featuredPath = await page.locator(".case-link").getAttribute("href");
+    const featuredResponse = await context.request.get(new URL(featuredPath, base).href);
+    assert.equal(featuredResponse.status(), 200, "Featured report link");
+    assert.equal(await page.locator(".case-metrics > div").count(), 3);
+    await page.locator(".case-evidence img").scrollIntoViewIfNeeded();
+    await page.locator(".case-evidence img").evaluate((img) => img.decode());
+    assert(await page.locator(".case-evidence img").evaluate((img) => img.naturalWidth > 0));
+    await page.evaluate(() => scrollTo(0, 0));
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    const motion = await page.locator(".trace-flow").evaluate((el) => {
+      const css = getComputedStyle(el);
+      return { name: css.animationName, iterations: css.animationIterationCount, duration: css.animationDuration };
+    });
+    assert.deepEqual(motion, { name: "trace-draw", iterations: "1", duration: "4s" });
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    assert.equal(await page.locator(".trace-flow").evaluate((el) => getComputedStyle(el).animationName), "none");
     await noOverflow();
+    await page.screenshot({ path: path.join(output, "home-first-screen.png"), fullPage: false });
     await page.screenshot({ path: path.join(output, "home-desktop.png"), fullPage: true });
+    await page.locator(".case-study").screenshot({ path: path.join(output, "featured-report.png") });
     await page.locator("[data-theme-toggle]").click();
     assert.equal(await page.locator("html").getAttribute("data-theme"), "light");
     await page.reload();
@@ -79,7 +98,7 @@ async function main() {
     assert(await page.locator(".copy-code").count() > 0);
     await page.screenshot({ path: path.join(output, "article-desktop.png"), fullPage: false });
 
-    for (const width of [390, 768]) {
+    for (const width of [320, 390, 768]) {
       await page.setViewportSize({ width, height: 844 });
       for (const route of ["/", "/posts/", "/categories/", "/about/", "/posts/ethernaut-writeups/", "/posts/thesis-review-mission/", "/404.html"]) {
         await visit(route);
@@ -90,18 +109,24 @@ async function main() {
           await page.locator("#prevSlide").click();
           assert.equal(await page.locator("#slideCounter").textContent(), "1 / 18");
         }
-        if (route === "/" && width === 390) await page.screenshot({ path: path.join(output, "home-mobile.png"), fullPage: true });
+        if (route === "/" && width === 390) {
+          await page.screenshot({ path: path.join(output, "home-mobile.png"), fullPage: true });
+          await page.screenshot({ path: path.join(output, "home-mobile-first-screen.png"), fullPage: false });
+        }
       }
     }
     const noJS = await browser.newContext({ javaScriptEnabled: false, viewport: { width: 390, height: 844 } });
     const staticPage = await noJS.newPage();
+    await staticPage.goto(base + "/");
+    assert(await staticPage.locator(".case-link").isVisible());
+    assert(await staticPage.locator(".trace-flow").isVisible());
     await staticPage.goto(base + "/posts/");
     assert.equal(await staticPage.locator(".post-row:visible").count(), total);
     await staticPage.goto(base + "/posts/ethernaut-writeups/");
     assert.equal(await staticPage.locator("[data-tab-panel]:visible").count(), await staticPage.locator("[data-tab-panel]").count());
     await noJS.close();
     assert.deepEqual(errors, [], "Browser JavaScript errors");
-    console.log(`PASS: ${total} entries, newest-first order, search, theme persistence, tabs, no-JS content, desktop/mobile layouts.`);
+    console.log(`PASS: ${total} entries, featured report/image, finite/reduced motion, newest-first order, search, theme persistence, tabs, no-JS content, desktop/mobile layouts.`);
   } finally {
     await browser.close();
     server.close();

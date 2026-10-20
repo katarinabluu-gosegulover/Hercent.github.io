@@ -6,11 +6,14 @@ nav: home
 ---
 {% assign latest_post = site.posts | first %}
 {% assign entry_count = site.posts.size | plus: site.data.standalone_pages.size %}
+{% assign spotlight = site.data.spotlight %}
+{% assign spotlight_post = site.posts | where: "url", spotlight.post_url | first %}
 <main>
   <section class="research-hero">
     <div class="hero-copy">
       <p class="eyebrow"><span class="status-dot"></span> SECURITY STUDY / PERSONAL ARCHIVE</p>
-      <h1>Under the surface.<br><span>보이지 않는 원리를<br>파고드는 기록.</span></h1>
+      <h1>Under the<br><span>surface<span class="warm-dot">.</span></span></h1>
+      <p class="hero-statement">보이지 않는 원리를 파고드는 기록.</p>
       <p class="hero-text">취약점의 원인을 따라가고, 코드를 직접 만들고, 문제를 풀며 배웁니다.<br class="desktop-break"> Hercent의 보안 공부와 실험을 담은 연구 노트입니다.</p>
       <div class="hero-actions">
         <a class="button button-primary" href="{{ '/posts/' | relative_url }}">연구 기록 살펴보기 <span aria-hidden="true">↗</span></a>
@@ -19,7 +22,7 @@ nav: home
       <div class="hero-caption"><span>01 / OBSERVE</span><span>02 / EXPERIMENT</span><span>03 / DOCUMENT</span></div>
     </div>
     <div class="analysis-figure" aria-hidden="true">
-      <div class="figure-topline"><span>FIG. 01 / BENEATH THE INTERFACE</span><span>0x01</span></div>
+      <div class="figure-topline"><span>FIG. 01 / FOLLOW THE EXECUTION</span><span class="trace-label">TRACE / 001</span></div>
       <svg class="layer-diagram" viewBox="0 0 440 340" fill="none">
         <defs><pattern id="grid" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M22 0H0V22" stroke="currentColor" opacity=".12"/></pattern></defs>
         <rect width="440" height="340" fill="url(#grid)"/>
@@ -34,9 +37,13 @@ nav: home
           <path d="m254 139 42-33h72" class="diagram-callout"/>
           <circle cx="220" cy="139" r="4" class="diagram-focus"/>
         </g>
-        <g fill="currentColor" font-family="monospace" font-size="10"><text x="298" y="98">LOOK CLOSER</text><text x="78" y="270">INPUT</text><text x="285" y="270">BEHAVIOR</text></g>
+        <path class="trace-guide" d="M92 237V183L220 119V183L330 238" />
+        <path class="trace-flow" pathLength="1" d="M92 237V183L220 119V183L330 238" />
+        <g class="trace-nodes"><circle cx="92" cy="237" r="4"/><circle cx="220" cy="119" r="4"/><circle cx="330" cy="238" r="5"/></g>
+        <circle class="trace-pulse" cx="330" cy="238" r="13"/>
+        <g fill="currentColor" font-family="monospace" font-size="10"><text x="298" y="98">LOOK CLOSER</text><text x="60" y="264">01 INPUT</text><text x="180" y="95">02 PARSE</text><text x="280" y="270">03 INSPECT</text></g>
       </svg>
-      <div class="figure-bottomline"><span><i></i> FOLLOW THE WHY</span><span>RESEARCH IN PROGRESS</span></div>
+      <div class="figure-bottomline"><span><i></i> INPUT → EXECUTION → INSIGHT</span><span>CONCEPTUAL TRACE</span></div>
     </div>
   </section>
   <div class="archive-strip">
@@ -45,6 +52,28 @@ nav: home
     <div><strong>2025.09</strong><span>보안 공부의 시작</span></div>
     <div><span class="strip-label">LAST ENTRY</span><strong>{{ latest_post.date | date: "%Y.%m.%d" }}</strong></div>
   </div>
+  {% if spotlight_post %}
+    <section class="case-study" aria-labelledby="case-study-title">
+      <div class="case-heading"><span class="mono">FIELD REPORT / 01</span><span class="mono">SELECTED FROM THE ARCHIVE</span></div>
+      <div class="case-grid">
+        <div class="case-copy">
+          <p class="eyebrow">{{ spotlight.label | escape }}</p>
+          <h2 id="case-study-title"><a href="{{ spotlight_post.url | relative_url }}">{{ spotlight.headline }}</a></h2>
+          <p class="case-description">{{ spotlight.description | escape }}</p>
+          <a class="case-link" href="{{ spotlight_post.url | relative_url }}">분석 과정 읽기 <span aria-hidden="true">↗</span></a>
+          <dl class="case-metrics">
+            {% for metric in spotlight.metrics %}
+              <div><dt>{{ metric.label | escape }}</dt><dd>{{ metric.value | escape }}</dd></div>
+            {% endfor %}
+          </dl>
+        </div>
+        <figure class="case-evidence">
+          <a href="{{ spotlight_post.url | relative_url }}"><img src="{{ spotlight.image | relative_url }}" alt="{{ spotlight.image_alt | escape }}" width="1400" height="900" loading="lazy"></a>
+          <figcaption>{{ spotlight.image_caption | escape }} <a href="{{ spotlight_post.url | relative_url }}">원문 ↗</a></figcaption>
+        </figure>
+      </div>
+    </section>
+  {% endif %}
   <div class="home-columns">
     <section class="latest-notes">
       <div class="section-heading"><div><p class="eyebrow">THE RESEARCH LOG</p><h2>최근 기록<span class="accent">.</span></h2></div><a class="text-link" href="{{ '/posts/' | relative_url }}">모든 글 보기 ↗</a></div>

@@ -1,0 +1,14 @@
+post_url: /posts/fuzzing-101-3-chall/
+label: FUZZING / CRASH ANALYSIS
+headline: 크래시를 찾고,<br>원인까지 추적하기.
+description: Xpdf, tcpdump, LibTIFF. 입력을 변이하고, 크래시를 재현하고, 디버거와 패치 빌드로 원인을 확인한 Fuzzing101 실습 기록.
+image: /assets/images/xpdf-result.png
+image_alt: Xpdf AFL++ 실행 통계와 Parser::getObj 재귀 스택을 원문 로그로 재현한 이미지
+image_caption: 원문 로그를 재현한 캡처 · Xpdf / AFL++ + GDB
+metrics:
+  - value: "567,979"
+    label: Xpdf 총 실행
+  - value: "656 → 59 B"
+    label: Xpdf PoC 최소화
+  - value: "3"
+    label: 분석한 타깃
