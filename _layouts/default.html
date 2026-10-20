@@ -1,20 +1,29 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="ko" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>{% if page.title %}{{ page.title }} | {{ site.title }}{% else %}{{ site.title }}{% endif %}</title>
-  <meta name="description" content="{{ page.page_description | default: site.description }}">
+  <meta name="description" content="{{ page.page_description | default: site.description | escape }}">
+  <meta name="theme-color" content="#111716">
+  <script>
+    try {
+      const theme = localStorage.getItem("hercent-theme");
+      if (theme === "light" || theme === "dark") document.documentElement.dataset.theme = theme;
+    } catch (_) {}
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="{{ '/assets/styles.css' | relative_url }}">
-  <script src="{{ '/assets/site.js' | relative_url }}" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+KR:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ '/assets/research.css' | relative_url }}?v=20261020">
+  <script src="{{ '/assets/research.js' | relative_url }}?v=20261020" defer></script>
+  <noscript><style>[data-tab-panel][hidden], [data-document-slide][hidden] { display: block !important; } .search-tools, [data-tab-trigger], .theme-toggle { display: none; }</style></noscript>
 </head>
 <body{% if page.body_class %} class="{{ page.body_class }}"{% endif %}>
+  <a class="skip-link" href="#content">본문으로 건너뛰기</a>
   <div class="page-shell">
     {% include site-header.html %}
-    {{ content }}
+    <div id="content" tabindex="-1">{{ content }}</div>
     {% include site-footer.html %}
   </div>
 </body>

@@ -1,20 +1,15 @@
 <header class="site-header">
   <a class="brand" href="{{ '/' | relative_url }}">
-    {% assign github_avatar = site.github.owner_gravatar_url %}
-    <img
-      class="brand-avatar"
-      src="{% if github_avatar %}{{ github_avatar }}{% else %}{{ '/assets/profile.png' | relative_url }}{% endif %}"
-      alt="{{ site.github.owner_name | default: 'Hercent' }} profile image">
-    <span>Hercent</span>
+    <span class="brand-symbol" aria-hidden="true">h<span>_</span></span>
+    <span>Hercent<span class="brand-suffix"> / field notes</span></span>
   </a>
   <nav class="site-nav" aria-label="주요 메뉴">
-    <a href="{{ '/' | relative_url }}"{% if page.nav == "home" %} aria-current="page"{% endif %}>Home</a>
-    <a href="{{ '/about/' | relative_url }}"{% if page.nav == "about" %} aria-current="page"{% endif %}>About</a>
-    <a href="{{ '/categories/' | relative_url }}"{% if page.nav == "categories" %} aria-current="page"{% endif %}>Categories</a>
-    <a href="{{ '/posts/' | relative_url }}"{% if page.nav == "posts" %} aria-current="page"{% endif %}>Posts</a>
-    <a href="https://github.com/katarinabluu-gosegulover" target="_blank" rel="noreferrer">GitHub</a>
+    <a href="{{ '/' | relative_url }}"{% if page.nav == "home" %} aria-current="page"{% endif %}>홈</a>
+    <a href="{{ '/posts/' | relative_url }}"{% if page.nav == "posts" or page.layout == "post" %} aria-current="page"{% endif %}>전체 기록</a>
+    <a href="{{ '/categories/' | relative_url }}"{% if page.nav == "categories" or page.layout == "category_page" %} aria-current="page"{% endif %}>분야별 탐색</a>
+    <a href="{{ '/about/' | relative_url }}"{% if page.nav == "about" %} aria-current="page"{% endif %}>소개</a>
   </nav>
   <button class="theme-toggle" type="button" data-theme-toggle aria-label="다크 모드 전환" aria-pressed="false">
-    <span class="theme-toggle-icon" aria-hidden="true"></span>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5"/></svg>
   </button>
 </header>

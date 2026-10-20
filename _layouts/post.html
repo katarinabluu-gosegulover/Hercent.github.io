@@ -4,6 +4,7 @@ layout: default
 {% assign category = site.data.categories | where: "key", page.category_key | first %}
 <main class="subpage-layout">
   <article class="panel article-page">
+    <a class="article-back" href="{{ '/posts/' | relative_url }}">← 전체 기록으로</a>
     <header class="article-header">
       <div class="kicker-row">
         <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
@@ -17,5 +18,6 @@ layout: default
     <div class="article-body">
       {{ content }}
     </div>
+    <footer class="article-end"><a href="{{ '/posts/' | relative_url }}">← 모든 연구 기록</a>{% if category %}<a href="{{ category.path | relative_url }}">{{ category.title }} 더 읽기 ↗</a>{% endif %}</footer>
   </article>
 </main>

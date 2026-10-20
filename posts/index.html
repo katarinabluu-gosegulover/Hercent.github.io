@@ -9,8 +9,8 @@ permalink: /posts/
 {% assign standalone_inserted = false %}
 <main class="subpage-layout">
   <section class="panel article-hero" data-reveal>
-    <p class="eyebrow">Post Index</p>
-    <h1>All Posts</h1>
+    <p class="eyebrow">THE COMPLETE ARCHIVE</p>
+    <h1>전체 연구 기록<span class="accent">.</span></h1>
     <p>모든 글을 최신순으로 정렬했습니다.</p>
     <div class="category-links">
       {% for category in site.data.categories %}
@@ -19,6 +19,11 @@ permalink: /posts/
     </div>
   </section>
 
+  <div class="search-tools">
+    <label for="post-search">기록 검색<input id="post-search" type="search" data-post-search placeholder="제목, 주제 또는 키워드로 찾아보기" autocomplete="off"></label>
+    <output data-search-count aria-live="polite"></output>
+  </div>
+  <p class="empty-state" data-search-empty hidden>검색 결과가 없습니다. 다른 키워드로 찾아보세요.</p>
   {% if site.posts.size > 0 or standalone_entry %}
     <section class="post-list" data-reveal>
       {% for post in site.posts %}

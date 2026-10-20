@@ -13,7 +13,30 @@ GitHub Pages + Jekyll 기반의 카테고리형 개인 블로그입니다.
 - 워크플로는 Jekyll 빌드를 실행한 뒤 `_site`를 배포합니다.
 - `Settings > Pages` 에서 Source는 `GitHub Actions` 로 두어야 합니다.
 
-## 글 작성 방법
+## 디자인과 검증
+
+공통 화면은 `assets/research.css`와 `assets/research.js`를 사용합니다.
+기본 테마는 잉크색과 녹색 포인트의 보안 연구 노트이며, 헤더에서 밝은 테마로 전환할 수 있습니다.
+홈은 최근 글 6개, 전체 기록은 최신순 목록과 제목/요약/카테고리 검색을 제공합니다.
+GitHub 프로필 사진은 계정 이미지 URL을 그대로 사용합니다.
+글과 기존 URL은 변경하지 않습니다. 별도 논문 슬라이드는 자체 레이아웃을 유지합니다.
+
+로컬 검증 (Ruby/Jekyll 3.10, Node.js 및 Playwright 필요):
+
+```sh
+jekyll build
+node tests/smoke.cjs
+```
+
+Playwright 브라우저가 없으면 `npx playwright install chromium`을 실행합니다.
+이미 설치된 Edge를 사용하려면 `BROWSER_CHANNEL=msedge` 환경변수를 지정할 수 있습니다.
+
+브라우저 테스트는 `_site`를 임시 로컬 서버로 제공하고 데스크톱/모바일 화면,
+정렬, 검색, 테마 저장, 글의 탭 전환 및 JavaScript 비활성 상태를 점검합니다.
+화면 캡처는 `test-results/`에 저장되며 배포와 Git에서는 제외됩니다.
+기존 `assets/styles.css`와 `assets/site.js`는 보존하되 공통 화면에서는 불러오지 않습니다.
+
+## 글 작성
 
 새 글은 `_posts` 폴더에 Markdown 파일로 추가하면 됩니다.
 
