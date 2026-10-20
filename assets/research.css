@@ -85,6 +85,28 @@ h1,h2,h3 { line-height: 1.4; letter-spacing: -.035em; }
 .diagram-surface { fill: color-mix(in srgb,var(--accent) 6%,var(--bg)); }
 .diagram-focus { fill: var(--accent); fill-opacity: .5; }
 .diagram-callout { opacity: .8; }
+.analysis-stage { min-width: 0; perspective: 1000px; }
+.analysis-tilt { transform: rotateX(var(--tilt-x,0deg)) rotateY(var(--tilt-y,0deg)); transition: transform .25s ease-out; }
+.figure-coordinate { display: flex; justify-content: space-between; margin-top: 28px; font: 8px var(--mono); letter-spacing: .08em; color: var(--muted); }
+.research-hero { position: relative; isolation: isolate; }
+.research-hero::before { content: ""; position: absolute; inset: 22px -24px; z-index: -1; pointer-events: none; background-image: radial-gradient(var(--line) .7px,transparent .7px); background-size: 12px 12px; mask-image: linear-gradient(90deg,transparent 38%,#000); opacity: .55; }
+.diagram-layer-back,.diagram-layer-mid { transition: transform .45s ease; }
+.research-glyph { display: block; width: 100%; height: 130px; margin-top: 20px; color: var(--accent); background-image: linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px); background-size: 26px 26px; border: 1px solid var(--line); }
+.path-card:nth-child(2) .research-glyph { color: var(--warm); }
+.glyph-route { stroke-dasharray: 5 3; }
+.path-card { position: relative; }
+.path-card::after { content: ""; position: absolute; left: 26px; right: 26px; bottom: 0; height: 2px; background: var(--warm); transform: scaleX(0); transform-origin: left; transition: transform .25s ease; }
+.path-card:focus-visible::after { transform: scaleX(1); }
+.path-card h3 span { display: inline-block; transition: transform .25s ease; }
+.case-evidence > a { overflow: hidden; }
+.case-evidence img { transition: transform .4s ease; }
+@media (min-width: 761px) and (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .analysis-stage:hover .diagram-layer-back { transform: translateY(12px); }
+  .analysis-stage:hover .diagram-layer-mid { transform: translateY(6px); }
+  .path-card:hover::after { transform: scaleX(1); }
+  .path-card:hover h3 span { transform: translate(3px,-3px); color: var(--warm); }
+  .case-evidence > a:hover img { transform: scale(1.025); }
+}
 .trace-label { color: var(--warm); }
 .trace-guide { stroke: var(--warm); stroke-width: 2; opacity: .18; }
 .trace-flow { stroke: var(--warm); stroke-width: 2.5; stroke-linejoin: round; stroke-dasharray: 1; stroke-dashoffset: 0; }
@@ -277,6 +299,10 @@ code { font-family: var(--mono); }
   .research-hero h1 { font-size: clamp(58px,13vw,88px); }
   .hero-statement { font-size: 20px; }
   .analysis-figure { max-width: 440px; width: calc(100% - 16px); justify-self: center; transform: none; }
+  .analysis-stage { width: 100%; max-width: 440px; justify-self: center; }
+  .analysis-tilt { transform: none; }
+  .analysis-stage .analysis-figure,.analysis-stage .trace-flow,.analysis-stage .trace-pulse { animation: none; }
+  .research-hero::before { inset: 20px 0; }
   .hero-caption { font-size: 9px; margin-top: 30px; }
   .archive-strip { grid-template-columns: 1fr 1fr; }
   .archive-strip > div,.archive-strip > div:first-child,.archive-strip > div:last-child { padding: 16px; justify-content: flex-start; }

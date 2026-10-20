@@ -56,8 +56,17 @@ async function main() {
       return { name: css.animationName, iterations: css.animationIterationCount, duration: css.animationDuration };
     });
     assert.deepEqual(motion, { name: "trace-draw", iterations: "1", duration: "4s" });
+    assert.equal(await page.locator(".research-glyph").count(), 3);
+    const stage = page.locator("[data-analysis-stage]");
+    const bounds = await stage.boundingBox();
+    await page.mouse.move(bounds.x + bounds.width * .8, bounds.y + bounds.height * .3);
+    assert.notEqual(await stage.evaluate((el) => el.style.getPropertyValue("--tilt-y")), "");
+    await page.mouse.move(0, 0);
+    assert.equal(await stage.evaluate((el) => el.style.getPropertyValue("--tilt-y")), "");
+    await page.mouse.move(bounds.x + bounds.width * .8, bounds.y + bounds.height * .3);
     await page.emulateMedia({ reducedMotion: "reduce" });
     assert.equal(await page.locator(".trace-flow").evaluate((el) => getComputedStyle(el).animationName), "none");
+    await page.waitForFunction(() => document.querySelector("[data-analysis-stage]").style.getPropertyValue("--tilt-y") === "");
     await noOverflow();
     await page.screenshot({ path: path.join(output, "home-first-screen.png"), fullPage: false });
     await page.screenshot({ path: path.join(output, "home-desktop.png"), fullPage: true });
@@ -100,9 +109,14 @@ async function main() {
 
     for (const width of [320, 390, 768]) {
       await page.setViewportSize({ width, height: 844 });
+      await page.emulateMedia({ reducedMotion: "no-preference" });
       for (const route of ["/", "/posts/", "/categories/", "/about/", "/posts/ethernaut-writeups/", "/posts/thesis-review-mission/", "/404.html"]) {
         await visit(route);
         await noOverflow();
+        if (route === "/" && width < 761) {
+          assert.equal(await page.locator(".analysis-tilt").evaluate((el) => getComputedStyle(el).transform), "none");
+          assert.equal(await page.locator(".trace-flow").evaluate((el) => getComputedStyle(el).animationName), "none");
+        }
         if (route === "/posts/thesis-review-mission/") {
           await page.locator("#nextSlide").click();
           assert.equal(await page.locator("#slideCounter").textContent(), "2 / 18");
@@ -120,6 +134,7 @@ async function main() {
     await staticPage.goto(base + "/");
     assert(await staticPage.locator(".case-link").isVisible());
     assert(await staticPage.locator(".trace-flow").isVisible());
+    assert.equal(await staticPage.locator(".path-card:visible").count(), 3);
     await staticPage.goto(base + "/posts/");
     assert.equal(await staticPage.locator(".post-row:visible").count(), total);
     await staticPage.goto(base + "/posts/ethernaut-writeups/");

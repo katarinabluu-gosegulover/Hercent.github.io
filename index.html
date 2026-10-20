@@ -21,15 +21,15 @@ nav: home
       </div>
       <div class="hero-caption"><span>01 / OBSERVE</span><span>02 / EXPERIMENT</span><span>03 / DOCUMENT</span></div>
     </div>
-    <div class="analysis-figure" aria-hidden="true">
+    <div class="analysis-stage" data-analysis-stage aria-hidden="true"><div class="analysis-tilt"><div class="analysis-figure">
       <div class="figure-topline"><span>FIG. 01 / FOLLOW THE EXECUTION</span><span class="trace-label">TRACE / 001</span></div>
       <svg class="layer-diagram" viewBox="0 0 440 340" fill="none">
         <defs><pattern id="grid" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M22 0H0V22" stroke="currentColor" opacity=".12"/></pattern></defs>
         <rect width="440" height="340" fill="url(#grid)"/>
         <path d="M220 34v262M50 170h340" stroke="currentColor" stroke-dasharray="3 7" opacity=".2"/>
         <g stroke="currentColor">
-          <path d="m220 153 148 74-148 74-148-74Z" opacity=".3"/>
-          <path d="m220 109 148 74-148 74-148-74Z" opacity=".55"/>
+          <path d="m220 153 148 74-148 74-148-74Z" opacity=".3" class="diagram-layer-back"/>
+          <path d="m220 109 148 74-148 74-148-74Z" opacity=".55" class="diagram-layer-mid"/>
           <path d="m220 65 148 74-148 74-148-74Z" class="diagram-surface"/>
           <path d="M72 139v88m296-88v88m-148-14v88" stroke-dasharray="4 5" opacity=".45"/>
           <path d="M146 102l148 74M109 120l148 74M183 83l148 74M294 102l-148 74M331 120l-148 74M257 83l-148 74" opacity=".3"/>
@@ -44,7 +44,7 @@ nav: home
         <g fill="currentColor" font-family="monospace" font-size="10"><text x="298" y="98">LOOK CLOSER</text><text x="60" y="264">01 INPUT</text><text x="180" y="95">02 PARSE</text><text x="280" y="270">03 INSPECT</text></g>
       </svg>
       <div class="figure-bottomline"><span><i></i> INPUT → EXECUTION → INSIGHT</span><span>CONCEPTUAL TRACE</span></div>
-    </div>
+    </div></div><div class="figure-coordinate"><span>VIEW / ISOMETRIC</span><span>X: 220 · Y: 139</span></div></div>
   </section>
   <div class="archive-strip">
     <div><strong>{{ entry_count }}</strong><span>공개 기록</span></div>
@@ -114,9 +114,9 @@ nav: home
   <section class="selected-section">
     <div class="section-heading"><div><p class="eyebrow">EXPLORE THE ARCHIVE</p><h2>다음으로 읽어볼 기록</h2></div><span class="mono muted">SELECTED PATHS / 03</span></div>
     <div class="path-grid">
-      <a class="path-card" href="{{ '/categories/ctf-wargame/' | relative_url }}"><span class="mono accent">01 / BREAK IT DOWN</span><h3>CTF &amp; Wargame <span>↗</span></h3><p>문제를 해석하고, 가설을 세우고, 풀이 과정을 복기합니다.</p></a>
-      <a class="path-card" href="{{ '/categories/development/' | relative_url }}"><span class="mono accent">02 / BUILD TO LEARN</span><h3>Tools &amp; Code <span>↗</span></h3><p>디버거부터 패킷 분석기까지. 직접 만들어 이해하는 기록.</p></a>
-      <a class="path-card" href="{{ '/categories/papers-conferences/' | relative_url }}"><span class="mono accent">03 / READ &amp; REFLECT</span><h3>Papers &amp; Talks <span>↗</span></h3><p>논문과 컨퍼런스에서 발견한 생각을 내 언어로 정리합니다.</p></a>
+      <a class="path-card" href="{{ '/categories/ctf-wargame/' | relative_url }}"><span class="mono accent">01 / BREAK IT DOWN</span>{% include research-glyph.html kind="branch" %}<h3>CTF &amp; Wargame <span>↗</span></h3><p>문제를 해석하고, 가설을 세우고, 풀이 과정을 복기합니다.</p></a>
+      <a class="path-card" href="{{ '/categories/development/' | relative_url }}"><span class="mono accent">02 / BUILD TO LEARN</span>{% include research-glyph.html kind="code" %}<h3>Tools &amp; Code <span>↗</span></h3><p>디버거부터 패킷 분석기까지. 직접 만들어 이해하는 기록.</p></a>
+      <a class="path-card" href="{{ '/categories/papers-conferences/' | relative_url }}"><span class="mono accent">03 / READ &amp; REFLECT</span>{% include research-glyph.html kind="paper" %}<h3>Papers &amp; Talks <span>↗</span></h3><p>논문과 컨퍼런스에서 발견한 생각을 내 언어로 정리합니다.</p></a>
     </div>
   </section>
 </main>

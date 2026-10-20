@@ -1,4 +1,50 @@
 (() => {
+  const motionPreference = matchMedia("(prefers-reduced-motion: reduce)");
+  const pointerPreference = matchMedia("(hover: hover) and (pointer: fine) and (min-width: 761px)");
+  const stage = document.querySelector("[data-analysis-stage]");
+  if (stage) {
+    const resetTilt = () => {
+      stage.style.removeProperty("--tilt-x");
+      stage.style.removeProperty("--tilt-y");
+    };
+    stage.addEventListener("pointermove", (event) => {
+      if (motionPreference.matches || !pointerPreference.matches) return;
+      const bounds = stage.getBoundingClientRect();
+      const x = Math.max(-.5, Math.min(.5, (event.clientX - bounds.left) / bounds.width - .5));
+      const y = Math.max(-.5, Math.min(.5, (event.clientY - bounds.top) / bounds.height - .5));
+      stage.style.setProperty("--tilt-x", `${-y * 8}deg`);
+      stage.style.setProperty("--tilt-y", `${x * 8}deg`);
+    });
+    stage.addEventListener("pointerleave", resetTilt);
+    motionPreference.addEventListener("change", resetTilt);
+    pointerPreference.addEventListener("change", resetTilt);
+    window.addEventListener("blur", resetTilt);
+  }
+
+  // Content is always visible. Scroll accents only move it, never gate opacity.
+  if ("IntersectionObserver" in window) {
+    const activeAnimations = new Set();
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(({ target, isIntersecting }) => {
+        if (!isIntersecting) return;
+        observer.unobserve(target);
+        if (motionPreference.matches || !pointerPreference.matches || !target.animate) return;
+        const animation = target.animate(
+          [{ transform: "translateY(14px)" }, { transform: "translateY(0)" }],
+          { duration: 550, easing: "cubic-bezier(.2,.7,.3,1)" }
+        );
+        activeAnimations.add(animation);
+        const cleanup = () => activeAnimations.delete(animation);
+        animation.onfinish = cleanup;
+        animation.oncancel = cleanup;
+      });
+    }, { threshold: 0 });
+    document.querySelectorAll(".case-study,.selected-section .section-heading,.path-card").forEach((element) => observer.observe(element));
+    motionPreference.addEventListener("change", () => {
+      if (motionPreference.matches) activeAnimations.forEach((animation) => animation.cancel());
+    });
+  }
+
   const root = document.documentElement;
   const toggle = document.querySelector("[data-theme-toggle]");
   const updateToggle = () => {
