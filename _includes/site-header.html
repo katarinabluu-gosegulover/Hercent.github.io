@@ -5,7 +5,7 @@
   </a>
   <nav class="site-nav" aria-label="주요 메뉴">
     <a href="{{ '/' | relative_url }}"{% if page.nav == "home" %} aria-current="page"{% endif %}>홈</a>
-    <a href="{{ '/posts/' | relative_url }}"{% if page.nav == "posts" or page.layout == "post" %} aria-current="page"{% endif %}>전체 기록</a>
+    <a href="{{ '/posts/' | relative_url }}" data-search-link{% if page.nav == "posts" or page.layout == "post" %} aria-current="page"{% endif %}>전체 기록</a>
     <a href="{{ '/categories/' | relative_url }}"{% if page.nav == "categories" or page.layout == "category_page" %} aria-current="page"{% endif %}>분야별 탐색</a>
     <a href="{{ '/about/' | relative_url }}"{% if page.nav == "about" %} aria-current="page"{% endif %}>소개</a>
   </nav>

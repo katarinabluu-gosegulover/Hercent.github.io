@@ -46,6 +46,29 @@
   }
 
   const root = document.documentElement;
+  if (document.querySelector(".profile-cursor")) {
+    let cursorEnabled = true;
+    try { cursorEnabled = localStorage.getItem("hercent-cursor-enabled") !== "false"; } catch (_) {}
+    const cursorControls = document.querySelectorAll("[data-cursor-toggle]");
+    const renderCursor = () => {
+      const enabled = cursorEnabled && !motionPreference.matches;
+      root.classList.toggle("cursor-blink-enabled", enabled && !document.hidden);
+      cursorControls.forEach((button) => {
+        button.hidden = false;
+        button.disabled = motionPreference.matches;
+        button.setAttribute("aria-pressed", String(enabled));
+        button.textContent = motionPreference.matches ? "동작 줄임" : enabled ? "커서 켬" : "커서 끔";
+      });
+    };
+    cursorControls.forEach((button) => button.addEventListener("click", () => {
+      cursorEnabled = !cursorEnabled;
+      try { localStorage.setItem("hercent-cursor-enabled", String(cursorEnabled)); } catch (_) {}
+      renderCursor();
+    }));
+    motionPreference.addEventListener("change", renderCursor);
+    document.addEventListener("visibilitychange", renderCursor);
+    renderCursor();
+  }
   const toggle = document.querySelector("[data-theme-toggle]");
   const updateToggle = () => {
     if (!toggle) return;
@@ -61,6 +84,22 @@
   });
 
   const search = document.querySelector("[data-post-search]");
+  const focusSearch = () => {
+    if (search) {
+      search.focus();
+      search.scrollIntoView({ block: "center", behavior: motionPreference.matches ? "instant" : "smooth" });
+    }
+  };
+  document.addEventListener("keydown", (event) => {
+    if (event.defaultPrevented || event.isComposing || event.repeat || event.key !== "/" || event.ctrlKey || event.metaKey || event.altKey) return;
+    const target = event.target;
+    if (target instanceof Element && (target.isContentEditable || target.closest("input,textarea,select,[role='textbox'],[role='combobox']"))) return;
+    const link = document.querySelector("[data-search-link]");
+    if (!search && !link) return;
+    event.preventDefault();
+    if (search) focusSearch();
+    else location.assign(`${link.href}#post-search`);
+  });
   if (search) {
     const rows = Array.from(document.querySelectorAll(".post-list .post-row"));
     const entries = rows.map((row) => ({ row, text: row.textContent.normalize("NFKC").toLocaleLowerCase() }));
@@ -78,6 +117,7 @@
     };
     search.addEventListener("input", filter);
     filter();
+    if (location.hash === "#post-search") focusSearch();
   }
 
   // Keep every panel readable without JavaScript; enhance to tabs on initialization.
@@ -105,6 +145,7 @@
       if (updateHash && group.hasAttribute("data-tab-sync-hash")) {
         try { history.replaceState(null, "", `#${id}`); } catch (_) {}
       }
+      document.dispatchEvent(new Event("hercent:tabchange"));
     };
     triggers.forEach((trigger, index) => {
       trigger.addEventListener("click", () => activate(trigger.dataset.tabTrigger));
@@ -120,8 +161,23 @@
         activate(triggers[next].dataset.tabTrigger);
       });
     });
-    const hash = group.hasAttribute("data-tab-sync-hash") ? location.hash.slice(1) : "";
-    activate(triggers.some((trigger) => trigger.dataset.tabTrigger === hash) ? hash : triggers[0].dataset.tabTrigger, false);
+    const syncFromHash = () => {
+      if (!group.hasAttribute("data-tab-sync-hash")) return false;
+      let hash;
+      try { hash = decodeURIComponent(location.hash.slice(1)); } catch (_) { return false; }
+      const anchor = document.getElementById(hash);
+      const panel = anchor?.closest("[data-tab-panel]");
+      const targetId = triggers.some((trigger) => trigger.dataset.tabTrigger === hash)
+        ? hash : panel && group.contains(panel) ? panel.dataset.tabPanel : null;
+      if (!targetId) return false;
+      const revealAnchor = panel?.hidden && anchor !== panel;
+      activate(targetId, false);
+      if (revealAnchor) requestAnimationFrame(() => anchor.scrollIntoView({ behavior: "instant", block: "start" }));
+      return true;
+    };
+    if (!syncFromHash()) activate(triggers[0].dataset.tabTrigger, false);
+    window.addEventListener("hashchange", syncFromHash);
+    document.addEventListener("hercent:headingsready", syncFromHash);
   });
 
   document.querySelectorAll("[data-document-deck]").forEach((viewer) => {
@@ -151,23 +207,4 @@
     render();
   });
 
-  if (navigator.clipboard?.writeText) {
-    document.querySelectorAll(".article-body pre").forEach((pre) => {
-      const button = document.createElement("button");
-      button.type = "button";
-      button.className = "copy-code";
-      button.textContent = "코드 복사";
-      button.setAttribute("aria-live", "polite");
-      button.addEventListener("click", async () => {
-        try {
-          await navigator.clipboard.writeText(pre.textContent);
-          button.textContent = "복사 완료";
-        } catch (_) {
-          button.textContent = "복사 실패 · 직접 선택해 주세요";
-        }
-        setTimeout(() => { button.textContent = "코드 복사"; }, 2000);
-      });
-      pre.before(button);
-    });
-  }
 })();

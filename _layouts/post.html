@@ -3,7 +3,8 @@ layout: default
 ---
 {% assign category = site.data.categories | where: "key", page.category_key | first %}
 <main class="subpage-layout">
-  <article class="panel article-page">
+  <div class="reading-progress" data-reading-progress role="progressbar" aria-label="본문 읽기 진행" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" hidden><span></span></div>
+  <article class="panel article-page reading-article">
     <a class="article-back" href="{{ '/posts/' | relative_url }}">← 전체 기록으로</a>
     <header class="article-header">
       <div class="kicker-row">
@@ -15,9 +16,18 @@ layout: default
         <p class="lead">{{ page.lead }}</p>
       {% endif %}
     </header>
-    <div class="article-body">
-      {{ content }}
+    <div class="reading-layout">
+      <aside class="reading-sidebar" data-reading-sidebar hidden>
+        <details class="article-toc" data-reading-toc open>
+          <summary>이 글의 목차 <span data-toc-count></span></summary>
+          <nav aria-label="본문 목차"><ol data-toc-list></ol></nav>
+        </details>
+      </aside>
+      <div class="article-body">
+        {{ content }}
+      </div>
     </div>
     <footer class="article-end"><a href="{{ '/posts/' | relative_url }}">← 모든 연구 기록</a>{% if category %}<a href="{{ category.path | relative_url }}">{{ category.title }} 더 읽기 ↗</a>{% endif %}</footer>
+    {% include related-posts.html %}
   </article>
 </main>

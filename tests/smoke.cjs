@@ -42,7 +42,7 @@ async function main() {
     page.on("pageerror", (error) => errors.push(error.message));
     const visit = async (route) => {
       const response = await page.goto(base + route, { waitUntil: "networkidle" });
-      assert.equal(response.status(), 200, route);
+      if (response) assert.equal(response.status(), 200, route);
     };
     const noOverflow = async () => {
       assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1), `Horizontal overflow at ${page.url()}`);
@@ -101,6 +101,21 @@ async function main() {
     await page.screenshot({ path: path.join(output, "home-light.png"), fullPage: true });
     await page.locator("[data-theme-toggle]").click();
 
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    const cursor = page.locator(".profile-cursor");
+    assert.equal(await cursor.evaluate((el) => getComputedStyle(el).animationName), "profile-blink");
+    await page.locator("[data-cursor-toggle]").click();
+    assert.equal(await cursor.evaluate((el) => getComputedStyle(el).animationName), "none");
+    await page.reload({ waitUntil: "networkidle" });
+    assert.equal(await cursor.evaluate((el) => getComputedStyle(el).animationName), "none", "Cursor pause persists");
+    await page.locator("[data-cursor-toggle]").click();
+    await page.emulateMedia({ reducedMotion: "reduce" });
+    assert.equal(await cursor.evaluate((el) => getComputedStyle(el).animationName), "none");
+    assert(await page.locator("[data-cursor-toggle]").isDisabled());
+    await page.keyboard.press("/");
+    await page.waitForURL("**/posts/#post-search");
+    await page.waitForFunction(() => document.activeElement === document.querySelector("[data-post-search]"));
+
     await visit("/posts/");
     const total = await page.locator(".post-row").count();
     assert(total > 30);
@@ -109,6 +124,13 @@ async function main() {
     const hrefs = await page.locator(".post-row h2 a").evaluateAll((links) => links.map((link) => link.getAttribute("href")));
     assert.equal(new Set(hrefs).size, total, "Each entry is listed exactly once");
     const search = page.locator("[data-post-search]");
+    await page.keyboard.press("/");
+    assert(await search.evaluate((el) => document.activeElement === el));
+    await search.press("/");
+    assert.equal(await search.inputValue(), "/", "Slash must remain normal input while typing");
+    await search.evaluate((el) => el.blur());
+    await page.evaluate(() => document.body.dispatchEvent(new KeyboardEvent("keydown", { key: "/", isComposing: true, bubbles: true })));
+    assert(await search.evaluate((el) => document.activeElement !== el), "Composition must not trigger search");
     await search.fill("fuzzing");
     const matching = await page.locator(".post-row:visible").count();
     assert(matching > 0 && matching < total);
@@ -119,6 +141,46 @@ async function main() {
     assert.equal(await page.locator(".post-row:visible").count(), total);
     await page.screenshot({ path: path.join(output, "archive-desktop.png"), fullPage: false });
 
+    // Mock clipboard writes so tests never replace the user's system clipboard.
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, "clipboard", {
+        configurable: true, value: { writeText: async (text) => { window.__copiedCode = text; } }
+      });
+    });
+    await visit("/posts/fuzzing-101-3-chall/");
+    assert(await page.locator("[data-reading-sidebar]").isVisible());
+    const headingCount = await page.locator(".article-body h2,.article-body h3").count();
+    assert.equal(await page.locator("[data-toc-list] a").count(), headingCount);
+    const tocLink = page.locator("[data-toc-list] a").nth(1);
+    const targetHash = await tocLink.getAttribute("href");
+    await tocLink.click();
+    await page.waitForFunction((hash) => document.querySelector("[data-toc-list] a[aria-current]")?.getAttribute("href") === hash, targetHash);
+    await page.evaluate(() => {
+      const body = document.querySelector(".article-body");
+      scrollTo({ top: body.getBoundingClientRect().bottom + scrollY - innerHeight + 2, behavior: "instant" });
+    });
+    await page.waitForFunction(() => document.querySelector("[data-reading-progress]").getAttribute("aria-valuenow") === "100");
+    await page.evaluate(() => scrollTo({ top: 0, behavior: "instant" }));
+    await page.waitForFunction(() => document.querySelector("[data-reading-progress]").getAttribute("aria-valuenow") === "0");
+    const codeBlock = page.locator(".code-block").first();
+    assert.equal(await codeBlock.locator(".code-language").textContent(), "Bash");
+    const codeText = await codeBlock.locator("pre").textContent();
+    await codeBlock.locator(".copy-code").click();
+    await page.waitForFunction(() => document.querySelector(".copy-code").textContent === "복사 완료");
+    assert.equal(await page.evaluate(() => window.__copiedCode), codeText);
+    await page.evaluate(() => { navigator.clipboard.writeText = async () => { throw new Error("Clipboard denied"); }; });
+    await codeBlock.locator(".copy-code").click();
+    await page.waitForFunction(() => document.querySelector(".copy-code").textContent.includes("복사 실패"));
+    const relatedLinks = await page.locator(".related-card").evaluateAll((links) => links.map((link) => link.href));
+    assert(relatedLinks.length > 0 && relatedLinks.length <= 3);
+    for (const href of relatedLinks) {
+      assert.notEqual(new URL(href).pathname, new URL(page.url()).pathname);
+      assert.equal((await context.request.get(href)).status(), 200);
+    }
+    await noOverflow();
+    await page.waitForFunction(() => document.querySelector(".copy-code").textContent === "코드 복사");
+    await page.screenshot({ path: path.join(output, "reading-desktop.png"), fullPage: false });
+
     await visit("/posts/ethernaut-writeups/");
     const tabs = page.locator("[data-tab-trigger]");
     await tabs.nth(1).click();
@@ -126,6 +188,22 @@ async function main() {
     assert.equal(await page.locator("[data-tab-panel]:visible").count(), 1);
     await tabs.nth(1).press("ArrowRight");
     assert.equal(await tabs.nth(2).getAttribute("aria-selected"), "true");
+    assert(await page.locator("[data-toc-list] a").evaluateAll((links) => links.every((link) => {
+      const heading = document.getElementById(decodeURIComponent(link.hash.slice(1)));
+      return heading && !heading.closest("[hidden]");
+    })), "TOC must only include the visible tab");
+    const ids = await page.locator(".article-body h2,.article-body h3").evaluateAll((headings) => headings.map((heading) => heading.id));
+    assert.equal(new Set(ids).size, ids.length, "Unique heading anchors across tabs");
+    const deepHeading = await page.locator("[data-tab-panel]:not([hidden]) h2").first().getAttribute("id");
+    await tabs.nth(1).click();
+    await visit(`/posts/ethernaut-writeups/#${encodeURIComponent(deepHeading)}`);
+    await page.waitForFunction((id) => {
+      const heading = document.getElementById(id);
+      const offset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) + parseFloat(getComputedStyle(heading).scrollMarginTop);
+      return !heading.closest("[hidden]") && Math.abs(heading.getBoundingClientRect().top - offset) < 3;
+    }, deepHeading);
+    await page.reload({ waitUntil: "networkidle" });
+    assert.equal(await tabs.nth(2).getAttribute("aria-selected"), "true", "Heading deep link restores tab");
     await noOverflow();
     assert(await page.locator(".copy-code").count() > 0);
     await page.screenshot({ path: path.join(output, "article-desktop.png"), fullPage: false });
@@ -146,6 +224,20 @@ async function main() {
           await page.locator("#prevSlide").click();
           assert.equal(await page.locator("#slideCounter").textContent(), "1 / 18");
         }
+        if (route === "/posts/ethernaut-writeups/" && width === 390) {
+          assert.equal(await page.locator("[data-reading-toc]").getAttribute("open"), null);
+          await page.locator("[data-reading-toc] summary").click();
+          assert(await page.locator("[data-toc-list] a").first().isVisible());
+          const mobileHeadingId = decodeURIComponent((await page.locator("[data-toc-list] a").first().getAttribute("href")).slice(1));
+          await page.locator("[data-toc-list] a").first().click();
+          await page.waitForFunction((id) => {
+            const heading = document.getElementById(id);
+            const offset = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) + parseFloat(getComputedStyle(heading).scrollMarginTop);
+            return Math.abs(heading.getBoundingClientRect().top - offset) < 3;
+          }, mobileHeadingId);
+          await noOverflow();
+          await page.screenshot({ path: path.join(output, "reading-mobile.png"), fullPage: false });
+        }
         if (route === "/" && width === 390) {
           await page.screenshot({ path: path.join(output, "home-mobile.png"), fullPage: true });
           await page.screenshot({ path: path.join(output, "home-mobile-first-screen.png"), fullPage: false });
@@ -162,9 +254,12 @@ async function main() {
     assert.equal(await staticPage.locator(".post-row:visible").count(), total);
     await staticPage.goto(base + "/posts/ethernaut-writeups/");
     assert.equal(await staticPage.locator("[data-tab-panel]:visible").count(), await staticPage.locator("[data-tab-panel]").count());
+    assert(await staticPage.locator("[data-reading-sidebar]").isHidden());
+    assert(await staticPage.locator("[data-reading-progress]").isHidden());
+    assert(await staticPage.locator(".related-card").count() > 0);
     await noJS.close();
     assert.deepEqual(errors, [], "Browser JavaScript errors");
-    console.log(`PASS: ${total} entries, featured report/image, finite/reduced motion, newest-first order, search, theme persistence, tabs, no-JS content, desktop/mobile layouts.`);
+    console.log(`PASS: ${total} entries, palette contrast, graphics, TOC/deep links, reading progress, code headers/copy, related posts, slash search, cursor preferences, no-JS and responsive layouts.`);
   } finally {
     await browser.close();
     server.close();

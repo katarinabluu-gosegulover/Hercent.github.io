@@ -1,0 +1,18 @@
+{% if page.category_key %}
+  {% assign related_posts = site.posts | where: "category_key", page.category_key | where_exp: "entry", "entry.url != page.url" %}
+  {% if related_posts.size > 0 %}
+    <section class="related-posts" aria-labelledby="related-heading">
+      <div class="section-heading"><div><p class="eyebrow">CONTINUE EXPLORING</p><h2 id="related-heading">같은 분야의 다른 기록</h2></div></div>
+      <div class="related-grid">
+        {% for entry in related_posts limit: 3 %}
+          <a class="related-card" href="{{ entry.url | relative_url }}">
+            <time class="post-meta" datetime="{{ entry.date | date_to_xmlschema }}">{{ entry.date | date: "%Y.%m.%d" }}</time>
+            <h3>{{ entry.title | escape }}</h3>
+            <p>{{ entry.summary | default: entry.page_description | default: entry.excerpt | strip_html | strip_newlines | truncate: 90 | escape }}</p>
+            <span class="related-arrow" aria-hidden="true">↗</span>
+          </a>
+        {% endfor %}
+      </div>
+    </section>
+  {% endif %}
+{% endif %}
