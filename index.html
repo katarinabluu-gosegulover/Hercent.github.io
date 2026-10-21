@@ -84,6 +84,7 @@ nav: home
           <article class="note-row">
             <span class="note-number" aria-hidden="true">{{ forloop.index | prepend: '0' }}</span>
             <div>
+              {% include post-cover.html post=post compact=true %}
               <div class="kicker-row">{% include category-badge.html category=category %}<time class="post-meta" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time></div>
               <h3><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3>
               <p>{{ preview | truncate: 110 | escape }}</p>

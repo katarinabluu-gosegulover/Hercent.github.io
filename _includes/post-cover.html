@@ -1,0 +1,35 @@
+{% assign cover_title = include.post.title | append: ' ' | append: include.post.summary | downcase %}
+{% assign cover_kind = 'code' %}
+{% assign cover_label = 'CODE / RESEARCH NOTES' %}
+{% if cover_title contains 'fuzz' %}
+  {% assign cover_kind = 'trace' %}{% assign cover_label = 'INPUT / EXECUTION PATH' %}
+{% elsif cover_title contains 'web' or cover_title contains '웹' or cover_title contains 'http' %}
+  {% assign cover_kind = 'web' %}{% assign cover_label = 'REQUEST / RESPONSE' %}
+{% elsif cover_title contains 'revers' or cover_title contains '리버' or cover_title contains 'pwn' or cover_title contains '디버거' %}
+  {% assign cover_kind = 'memory' %}{% assign cover_label = 'MEMORY / INSPECTION' %}
+{% endif %}
+<div class="post-cover{% if include.compact %} post-cover-compact{% endif %}" data-cover="{{ cover_kind }}" aria-hidden="true">
+  {% unless include.compact %}<div class="cover-caption"><span>FIELD NOTES / {{ include.post.date | date: '%Y.%m.%d' }}</span><strong>{{ cover_label }}</strong><span>CONCEPTUAL DIAGRAM</span></div>{% endunless %}
+  <svg viewBox="0 0 420 150" fill="none" focusable="false">
+    <g stroke="currentColor" stroke-width="1.5">
+      <path d="M10 25h400M10 75h400M10 125h400M60 10v130M160 10v130M260 10v130M360 10v130" opacity=".14"/>
+      {% case cover_kind %}
+      {% when 'trace' %}
+        <path d="M30 75h75l55-45h90l55 45h85M105 75l55 45h90l55-45" opacity=".5"/>
+        <path class="cover-highlight" d="M30 75h75l55-45h90l55 45h85" stroke-width="3"/>
+        <circle cx="30" cy="75" r="7"/><rect x="150" y="20" width="20" height="20"/><rect x="240" y="110" width="20" height="20"/><circle cx="390" cy="75" r="7"/>
+      {% when 'web' %}
+        <rect x="28" y="35" width="85" height="80"/><rect x="307" y="35" width="85" height="80"/>
+        <path class="cover-highlight" d="M125 55h165m-12-10 12 10-12 10M295 95H130m12-10-12 10 12 10" stroke-width="3"/>
+        <path d="M45 53h50M45 65h30M325 55h50m-50 20h50m-50 20h50"/>
+      {% when 'memory' %}
+        <path d="M80 25h240v100H80zM80 50h240M80 75h240M80 100h240M140 25v100"/>
+        <path class="cover-highlight" d="M140 75h180v25H140zM25 87h45m-10-10 10 10-10 10" stroke-width="3"/>
+        <path d="M95 38h25m-25 25h25m-25 25h25m-25 25h25M340 25h30v100h-30" opacity=".6"/>
+      {% else %}
+        <rect x="65" y="20" width="290" height="110"/><path d="M65 42h290M80 31h8m9 0h8m9 0h8"/>
+        <path class="cover-highlight" d="m160 62-25 24 25 24m100-48 25 24-25 24m-38-52-24 57" stroke-width="3"/>
+      {% endcase %}
+    </g>
+  </svg>
+</div>

@@ -19,3 +19,12 @@ Existing Markdown paragraph, including its links and inline code.
 Supported kinds: `finding`, `warning`, `result`. Callouts render on the server
 and do not create extra headings in the article's table of contents.
 The Fuzzing101 article demonstrates all three with existing text unchanged.
+
+Post covers are decorative conceptual diagrams, not measured execution traces.
+The title and summary select fuzzing, web, memory or generic code motifs. The actual date
+is displayed only on the full article cover; home previews use compact covers.
+
+The image viewer enhances only unlinked article images. Existing image links
+are preserved. Visible images form the gallery, excluding hidden tab panels.
+Native dialog provides modal focus and Escape handling; closing restores focus
+and document scrolling. Without JavaScript, original images remain unchanged.
