@@ -21,7 +21,7 @@ layout: default
         <article class="panel post-row">
           <div>
             <div class="kicker-row">
-              <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
+        {% include category-badge.html category=category %}
               <p class="post-meta">{{ post.date | date: "%Y.%m.%d" }}</p>
             </div>
             <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
@@ -34,7 +34,7 @@ layout: default
         <article class="panel post-row">
           <div>
             <div class="kicker-row">
-              <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
+        {% include category-badge.html category=category %}
               <p class="post-meta">{{ entry.date }}</p>
             </div>
             <h2><a href="{{ entry.url | relative_url }}">{{ entry.title }}</a></h2>

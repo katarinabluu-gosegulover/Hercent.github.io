@@ -63,6 +63,11 @@ async function main() {
     await visit("/");
     await checkPalette();
     assert.equal(await page.locator(".note-row").count(), 6);
+    assert.equal(await page.locator(".research-timeline .note-row").count(), 6);
+    assert.equal(await page.locator(".research-timeline .field-badge .field-icon").count(), 6);
+    const timelineDates = await page.locator(".research-timeline time").evaluateAll((els) => els.map((el) => el.dateTime));
+    assert.deepEqual(timelineDates, [...timelineDates].sort().reverse());
+    await page.locator(".latest-notes").screenshot({ path: path.join(output, "research-timeline.png") });
     assert.equal(await page.locator(".case-study").count(), 1);
     const featuredPath = await page.locator(".case-link").getAttribute("href");
     const featuredResponse = await context.request.get(new URL(featuredPath, base).href);
@@ -162,6 +167,16 @@ async function main() {
       });
     });
     await visit("/posts/fuzzing-101-3-chall/");
+    assert.equal(await page.locator(".analysis-note").count(), 3);
+    assert.deepEqual(await page.locator(".analysis-note").evaluateAll((els) => els.map((el) => el.dataset.note)), ["finding", "warning", "result"]);
+    assert.equal(await page.locator('.analysis-note[data-note="finding"] a').getAttribute("href"), "https://nvd.nist.gov/vuln/detail/CVE-2019-13288");
+    assert.equal(await page.locator('.analysis-note[data-note="result"] code').count(), 2);
+    await page.locator('.analysis-note[data-note="warning"]').scrollIntoViewIfNeeded();
+    await page.screenshot({ path: path.join(output, "analysis-notes-dark.png") });
+    await page.locator("[data-theme-toggle]").click();
+    await page.locator('.analysis-note[data-note="warning"]').scrollIntoViewIfNeeded();
+    await page.screenshot({ path: path.join(output, "analysis-notes-light.png") });
+    await page.locator("[data-theme-toggle]").click();
     assert(await page.locator("[data-reading-sidebar]").isVisible());
     const headingCount = await page.locator(".article-body h2,.article-body h3").count();
     assert.equal(await page.locator("[data-toc-list] a").count(), headingCount);
@@ -271,9 +286,12 @@ async function main() {
     assert(await staticPage.locator("[data-reading-sidebar]").isHidden());
     assert(await staticPage.locator("[data-reading-progress]").isHidden());
     assert(await staticPage.locator(".related-card").count() > 0);
+    await staticPage.goto(base + "/posts/fuzzing-101-3-chall/");
+    assert.equal(await staticPage.locator(".analysis-note:visible").count(), 3);
+    assert.equal(await staticPage.locator(".field-badge:visible").count(), 1);
     await noJS.close();
     assert.deepEqual(errors, [], "Browser JavaScript errors");
-    console.log(`PASS: ${total} entries, palette contrast, graphics, TOC/deep links, reading progress, code headers/copy, related posts, slash search, cursor preferences, no-JS and responsive layouts.`);
+    console.log(`PASS: ${total} entries, category badges, timeline, analysis notes, palette contrast, graphics, TOC/deep links, reading progress, code headers/copy, related posts, slash search, cursor preferences, no-JS and responsive layouts.`);
   } finally {
     await browser.close();
     server.close();

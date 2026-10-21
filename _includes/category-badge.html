@@ -1,0 +1,3 @@
+{% if include.category %}
+<a class="category-badge field-badge" data-field="{{ include.category.key | escape }}" href="{{ include.category.path | relative_url }}"><span class="field-icon" aria-hidden="true">{% case include.category.key %}{% when 'ctf-wargame' %}&gt;_{% when 'development' %}&lt;/&gt;{% when 'projects' %}[]{% when 'bugbounty' %}[!]{% when 'papers-conferences' %}={% when 'contests-certifications' %}#{% when 'achievements' %}+{% else %}::{% endcase %}</span>{{ include.category.title | escape }}</a>
+{% endif %}

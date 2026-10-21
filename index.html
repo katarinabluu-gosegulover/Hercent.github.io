@@ -77,14 +77,14 @@ nav: home
   <div class="home-columns">
     <section class="latest-notes">
       <div class="section-heading"><div><p class="eyebrow">THE RESEARCH LOG</p><h2>최근 기록<span class="accent">.</span></h2></div><a class="text-link" href="{{ '/posts/' | relative_url }}">모든 글 보기 ↗</a></div>
-      <div class="post-list">
+      <div class="post-list research-timeline">
         {% for post in site.posts limit: 6 %}
           {% assign category = site.data.categories | where: "key", post.category_key | first %}
           {% assign preview = post.summary | default: post.page_description | default: post.excerpt | strip_html | strip_newlines | strip %}
           <article class="note-row">
             <span class="note-number" aria-hidden="true">{{ forloop.index | prepend: '0' }}</span>
             <div>
-              <div class="kicker-row"><a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a><time class="post-meta" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time></div>
+              <div class="kicker-row">{% include category-badge.html category=category %}<time class="post-meta" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time></div>
               <h3><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3>
               <p>{{ preview | truncate: 110 | escape }}</p>
             </div>

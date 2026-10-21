@@ -14,7 +14,7 @@ permalink: /posts/
     <p>모든 글을 최신순으로 정렬했습니다.</p>
     <div class="category-links">
       {% for category in site.data.categories %}
-        <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
+        {% include category-badge.html category=category %}
       {% endfor %}
     </div>
   </section>
@@ -36,7 +36,7 @@ permalink: /posts/
               <div>
                 <div class="kicker-row">
                   {% if category %}
-                    <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
+        {% include category-badge.html category=category %}
                   {% endif %}
                   <p class="post-meta">{{ standalone_entry.date }}</p>
                 </div>
@@ -54,7 +54,7 @@ permalink: /posts/
           <div>
             <div class="kicker-row">
               {% if category %}
-                <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
+        {% include category-badge.html category=category %}
               {% endif %}
               <p class="post-meta">{{ post.date | date: "%Y.%m.%d" }}</p>
             </div>
@@ -72,7 +72,7 @@ permalink: /posts/
             <div>
               <div class="kicker-row">
                 {% if category %}
-                  <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
+        {% include category-badge.html category=category %}
                 {% endif %}
                 <p class="post-meta">{{ standalone_entry.date }}</p>
               </div>

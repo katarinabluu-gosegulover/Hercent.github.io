@@ -1,0 +1,5 @@
+{% assign note_kind = include.kind | default: 'finding' %}
+<aside class="analysis-note" data-note="{{ note_kind | escape }}">
+  <p class="analysis-note-label"><span aria-hidden="true">{% case note_kind %}{% when 'warning' %}!{% when 'result' %}={% else %}+{% endcase %}</span> {% case note_kind %}{% when 'warning' %}주의{% when 'result' %}실험 결과{% else %}핵심 발견{% endcase %}</p>
+  <div class="analysis-note-content">{{ include.content | markdownify }}</div>
+</aside>

@@ -6,7 +6,7 @@ layout: default
   <article class="panel article-page paper-review-page is-visible">
     <div class="paper-review-hero">
       <div class="paper-review-kicker-row">
-        <a class="category-badge" href="{{ category.path | relative_url }}">{{ category.title }}</a>
+        {% include category-badge.html category=category %}
         {% if page.paper_venue %}
           <span class="paper-review-venue">{{ page.paper_venue }}</span>
         {% endif %}
