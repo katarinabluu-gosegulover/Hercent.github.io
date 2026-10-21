@@ -1,0 +1,17 @@
+<section class="research-map-section" aria-labelledby="research-map-title">
+  <div class="section-heading"><div><p class="eyebrow">FOLLOW YOUR CURIOSITY</p><h2 id="research-map-title">탐구의 연결점<span class="accent">.</span></h2></div><span class="mono muted">{{ site.data.categories.size }} FIELDS / ONE ARCHIVE</span></div>
+  <p class="map-intro">관심 있는 분야에서 다음 기록을 찾아보세요.</p>
+  <nav class="research-map" aria-label="탐구 분야 지도">
+    <svg class="map-wires" viewBox="0 0 1000 440" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M500 220H390V65H200M390 220V168H200M390 220V272H200M390 220V375H200M500 220H610V65H800M610 220V168H800M610 220V272H800M610 220V375H800"/><circle cx="390" cy="220" r="4"/><circle cx="610" cy="220" r="4"/></g></svg>
+    <div class="map-core"><span class="mono">PERSONAL RESEARCH</span><strong>Hercent<span class="accent">.</span></strong><span class="map-core-count">{{ site.posts.size | plus: site.data.standalone_pages.size }}개의 공개 기록</span><span class="map-core-caption">OBSERVE / CONNECT / LEARN</span></div>
+    {% for category in site.data.categories %}
+      {% assign field_count = site.posts | where: 'category_key', category.key | size %}
+      {% assign extra_count = site.data.standalone_pages | where: 'category_key', category.key | size %}
+      {% assign field_count = field_count | plus: extra_count %}
+      {% assign map_row = forloop.index0 | modulo: 4 | plus: 1 %}
+      <a class="map-node{% if field_count == 0 %} map-node-empty{% endif %}" href="{{ category.path | relative_url }}" style="--map-row: {{ map_row }}; --map-column: {% if forloop.index0 < 4 %}1{% else %}3{% endif %}">
+        <span class="map-node-index" aria-hidden="true">{{ forloop.index | prepend: '0' }}</span><span class="map-node-copy"><strong>{{ category.title | escape }}</strong><span>{% if field_count == 0 %}첫 기록을 기다리는 중{% else %}{{ field_count }}개의 기록{% endif %}</span></span><span class="map-node-arrow" aria-hidden="true">↗</span>
+      </a>
+    {% endfor %}
+  </nav>
+</section>

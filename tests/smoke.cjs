@@ -62,6 +62,19 @@ async function main() {
     };
     await visit("/");
     await checkPalette();
+    assert.equal(await page.locator('.map-node').count(), 8);
+    assert.equal(await page.locator('.terminal-profile .profile-facts > div').count(), 3);
+    assert((await page.locator('.terminal-profile .profile-identity img').getAttribute('src')).startsWith('https://github.com/katarinabluu-gosegulover.png'));
+    const mapCounts = await page.locator('.map-node-copy > span').allTextContents();
+    assert.equal(mapCounts.reduce((sum, text) => sum + (parseInt(text, 10) || 0), 0), 41);
+    for (const href of await page.locator('.map-node').evaluateAll(nodes => nodes.map(node => node.href))) {
+      assert.equal((await context.request.get(href)).status(), 200, 'Map category link');
+    }
+    await page.locator('.research-map-section').screenshot({ path: path.join(output, 'research-map-desktop.png') });
+    await page.locator('.terminal-profile').screenshot({ path: path.join(output, 'terminal-profile.png') });
+    await page.locator('[data-theme-toggle]').click();
+    await page.locator('.research-map-section').screenshot({ path: path.join(output, 'research-map-light.png') });
+    await page.locator('[data-theme-toggle]').click();
     assert.equal(await page.locator(".note-row").count(), 6);
     assert.equal(await page.locator(".post-cover-compact svg").count(), 6);
     assert.equal(await page.locator(".research-timeline .note-row").count(), 6);
@@ -303,6 +316,9 @@ async function main() {
           await page.screenshot({ path: path.join(output, "reading-mobile.png"), fullPage: false });
         }
         if (route === "/" && width === 390) {
+          assert.equal(await page.locator('.map-node:visible').count(), 8);
+          assert(await page.locator('.map-wires').isHidden());
+          await page.locator('.research-map-section').screenshot({ path: path.join(output, 'research-map-mobile.png') });
           await page.screenshot({ path: path.join(output, "home-mobile.png"), fullPage: true });
           await page.screenshot({ path: path.join(output, "home-mobile-first-screen.png"), fullPage: false });
         }
@@ -312,6 +328,8 @@ async function main() {
     const staticPage = await noJS.newPage();
     await staticPage.goto(base + "/");
     assert(await staticPage.locator(".case-link").isVisible());
+    assert.equal(await staticPage.locator('.map-node:visible').count(), 8);
+    assert(await staticPage.locator('.terminal-profile').isVisible());
     assert(await staticPage.locator(".trace-flow").isVisible());
     assert.equal(await staticPage.locator(".path-card:visible").count(), 3);
     await staticPage.goto(base + "/posts/");

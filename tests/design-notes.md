@@ -28,3 +28,13 @@ The image viewer enhances only unlinked article images. Existing image links
 are preserved. Visible images form the gallery, excluding hidden tab panels.
 Native dialog provides modal focus and Escape handling; closing restores focus
 and document scrolling. Without JavaScript, original images remain unchanged.
+
+The home research map renders category names, counts and links directly from
+Jekyll data, including standalone entries. Empty fields remain navigable and
+are labelled explicitly. Connections are decorative, not a claim that posts
+have semantic relationships. Below 761px, links become a normal grid/list in
+data order. No JavaScript or animation is required.
+
+The terminal profile keeps the original biography and GitHub avatar source.
+The window marks and whoami prompt are decorative, not a live terminal or
+online-status indicator. The existing cursor preference remains available.

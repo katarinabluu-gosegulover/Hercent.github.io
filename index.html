@@ -95,10 +95,13 @@ nav: home
       </div>
     </section>
     <aside class="research-sidebar">
-      <section class="profile-card">
+      <section class="profile-card terminal-profile">
+        <div class="terminal-titlebar"><span class="terminal-window-marks" aria-hidden="true"><i></i><i></i><i></i></span><span>hercent / identity</span></div>
         <div class="profile-label"><p class="eyebrow">BEHIND THE NOTES</p>{% include profile-cursor-control.html %}</div>
+        <p class="profile-command"><span aria-hidden="true">$ </span>whoami</p>
         <div class="profile-identity"><img src="https://github.com/katarinabluu-gosegulover.png?size=120" alt="Hercent GitHub 프로필" width="52" height="52"><div><h2>Hercent<span class="profile-cursor" aria-hidden="true">_</span></h2><p>목진서 · Jinseo Mok</p></div></div>
         <p>인하대학교 전기전자공학부.<br>문제가 풀린 다음, 왜 풀렸는지까지 이해하고 싶은 보안 학습자입니다.</p>
+        <dl class="profile-facts"><div><dt>ROLE</dt><dd>보안 학습자</dd></div><div><dt>ARCHIVE</dt><dd>{{ entry_count }}개의 공개 기록</dd></div><div><dt>FOCUS</dt><dd>취약점 분석 · 도구 제작 · 문제 풀이</dd></div></dl>
         <div class="profile-links"><a href="https://github.com/katarinabluu-gosegulover">GitHub ↗</a><a href="https://dreamhack.io/users/16471">Dreamhack ↗</a></div>
       </section>
       <section class="topic-directory">
@@ -112,6 +115,7 @@ nav: home
       <div class="margin-note"><span class="mono">A NOTE TO SELF</span><p>정답보다 오래 남는 것은<br>거기까지 도달한 과정.</p></div>
     </aside>
   </div>
+  {% include research-map.html %}
   <section class="selected-section">
     <div class="section-heading"><div><p class="eyebrow">EXPLORE THE ARCHIVE</p><h2>다음으로 읽어볼 기록</h2></div><span class="mono muted">SELECTED PATHS / 03</span></div>
     <div class="path-grid">
