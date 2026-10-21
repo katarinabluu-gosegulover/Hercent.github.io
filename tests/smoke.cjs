@@ -121,6 +121,7 @@ async function main() {
     await page.locator("[data-cursor-toggle]").click();
     await page.emulateMedia({ reducedMotion: "reduce" });
     assert.equal(await cursor.evaluate((el) => getComputedStyle(el).animationName), "none");
+    await page.waitForFunction(() => document.querySelector("[data-cursor-toggle]").disabled);
     assert(await page.locator("[data-cursor-toggle]").isDisabled());
     assert.equal(await logoCursor.evaluate((el) => getComputedStyle(el).animationName), "none", "Logo respects reduced motion");
     await page.keyboard.press("/");
