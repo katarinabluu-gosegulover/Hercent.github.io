@@ -102,21 +102,35 @@ async function main() {
     await page.locator("[data-theme-toggle]").click();
 
     await page.emulateMedia({ reducedMotion: "no-preference" });
-    const cursor = page.locator(".profile-cursor");
+    const cursor = page.locator(".profile-identity .profile-cursor");
+    const logoCursor = page.locator(".brand-symbol .profile-cursor");
+    assert.equal(await logoCursor.evaluate((el) => getComputedStyle(el).animationName), "profile-blink");
+    assert.equal(await logoCursor.evaluate((el) => getComputedStyle(el).animationDuration), "1.2s");
     assert.equal(await cursor.evaluate((el) => getComputedStyle(el).animationName), "profile-blink");
     await page.locator("[data-cursor-toggle]").click();
     assert.equal(await cursor.evaluate((el) => getComputedStyle(el).animationName), "none");
+    assert.equal(await logoCursor.evaluate((el) => getComputedStyle(el).animationName), "none");
     await page.reload({ waitUntil: "networkidle" });
     assert.equal(await cursor.evaluate((el) => getComputedStyle(el).animationName), "none", "Cursor pause persists");
+    assert.equal(await logoCursor.evaluate((el) => getComputedStyle(el).animationName), "none", "Logo pause persists");
     await page.locator("[data-cursor-toggle]").click();
     await page.emulateMedia({ reducedMotion: "reduce" });
     assert.equal(await cursor.evaluate((el) => getComputedStyle(el).animationName), "none");
     assert(await page.locator("[data-cursor-toggle]").isDisabled());
+    assert.equal(await logoCursor.evaluate((el) => getComputedStyle(el).animationName), "none", "Logo respects reduced motion");
     await page.keyboard.press("/");
     await page.waitForURL("**/posts/#post-search");
     await page.waitForFunction(() => document.activeElement === document.querySelector("[data-post-search]"));
 
     await visit("/posts/");
+    await page.emulateMedia({ reducedMotion: "no-preference" });
+    assert.equal(await logoCursor.evaluate((el) => getComputedStyle(el).animationName), "profile-blink");
+    await page.locator(".site-header [data-cursor-toggle]").click();
+    assert.equal(await logoCursor.evaluate((el) => getComputedStyle(el).animationName), "none");
+    await page.reload({ waitUntil: "networkidle" });
+    assert.equal(await logoCursor.evaluate((el) => getComputedStyle(el).animationName), "none");
+    await page.locator(".site-header [data-cursor-toggle]").click();
+    await page.emulateMedia({ reducedMotion: "reduce" });
     const total = await page.locator(".post-row").count();
     assert(total > 30);
     const dates = await page.locator(".post-row .post-meta").allTextContents();
