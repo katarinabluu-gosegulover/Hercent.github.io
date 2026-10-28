@@ -44,3 +44,11 @@ The featured report uses its existing image, text and metrics; the two side
 cards are the newest posts excluding that report, never invented content.
 Below 761px the hero and report spread become single-column layouts. Existing
 motion preferences, article order and image links remain unchanged.
+
+Ambient motion uses a 7-second hero signal and eight staggered map paths in
+an 8-second cycle. Both controls share a persisted preference, independent of
+the profile cursor setting. IntersectionObserver and document visibility pause
+offscreen/background animations. Reduced-motion and no-JavaScript states keep
+the underlying diagrams static. Mobile map links retain their list layout;
+the hero signal also runs on mobile. Hover/focus highlights map routes without
+requiring animation. Tests simulate the document visibility event explicitly.

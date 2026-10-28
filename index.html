@@ -19,7 +19,7 @@ nav: home
         <a class="button button-primary" href="{{ '/posts/' | relative_url }}">연구 기록 살펴보기 <span aria-hidden="true">↗</span></a>
         <a class="text-link" href="{{ '/about/' | relative_url }}">작성자 소개 <span aria-hidden="true">→</span></a>
       </div>
-      <div class="hero-caption"><span>01 / OBSERVE</span><span>02 / EXPERIMENT</span><span>03 / DOCUMENT</span></div>
+      <div class="hero-caption"><span>01 / OBSERVE</span><span>02 / EXPERIMENT</span><span>03 / DOCUMENT</span>{% include motion-control.html %}</div>
     </div>
     <div class="analysis-stage" data-analysis-stage aria-hidden="true"><div class="analysis-tilt"><div class="analysis-figure">
       <div class="figure-topline"><span>FIG. 01 / FOLLOW THE EXECUTION</span><span class="trace-label">TRACE / 001</span></div>
@@ -39,6 +39,7 @@ nav: home
         </g>
         <path class="trace-guide" d="M92 237V183L220 119V183L330 238" />
         <path class="trace-flow" pathLength="1" d="M92 237V183L220 119V183L330 238" />
+        <path class="ambient-signal hero-signal" pathLength="1" d="M92 237V183L220 119V183L330 238" />
         <g class="trace-nodes"><circle cx="92" cy="237" r="4"/><circle cx="220" cy="119" r="4"/><circle cx="330" cy="238" r="5"/></g>
         <circle class="trace-pulse" cx="330" cy="238" r="13"/>
         <g fill="currentColor" font-family="monospace" font-size="10"><text x="298" y="98">LOOK CLOSER</text><text x="60" y="264">01 INPUT</text><text x="180" y="95">02 PARSE</text><text x="280" y="270">03 INSPECT</text></g>

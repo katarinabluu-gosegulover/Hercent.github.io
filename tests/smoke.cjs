@@ -99,11 +99,31 @@ async function main() {
     assert(await page.locator(".case-evidence img").evaluate((img) => img.naturalWidth > 0));
     await page.evaluate(() => scrollTo(0, 0));
     await page.emulateMedia({ reducedMotion: "no-preference" });
-    const motion = await page.locator(".trace-flow").evaluate((el) => {
+    await page.waitForFunction(() => document.querySelector('[data-analysis-stage]').classList.contains('ambient-running'));
+    const motion = await page.locator(".hero-signal").evaluate((el) => {
       const css = getComputedStyle(el);
       return { name: css.animationName, iterations: css.animationIterationCount, duration: css.animationDuration };
     });
-    assert.deepEqual(motion, { name: "trace-draw", iterations: "1", duration: "4s" });
+    assert.deepEqual(motion, { name: "signal-travel", iterations: "infinite", duration: "7s" });
+    const signalOffset = await page.locator('.hero-signal').evaluate(el => getComputedStyle(el).strokeDashoffset);
+    await page.waitForFunction(offset => getComputedStyle(document.querySelector('.hero-signal')).strokeDashoffset !== offset, signalOffset);
+    await page.locator('.research-map').scrollIntoViewIfNeeded();
+    await page.waitForFunction(() => !document.querySelector('[data-analysis-stage]').classList.contains('ambient-running') && document.querySelector('.research-map').classList.contains('ambient-running'));
+    assert.equal(await page.locator('.hero-signal').evaluate(el => getComputedStyle(el).animationPlayState), 'paused');
+    assert.equal(await page.locator('.map-signal').count(), 8);
+    await page.locator('.map-node').nth(2).focus();
+    assert.equal(await page.locator('.route-active').getAttribute('data-map-route'), '2');
+    await page.evaluate(() => { Object.defineProperty(document, 'hidden', { configurable: true, value: true }); document.dispatchEvent(new Event('visibilitychange')); });
+    assert.equal(await page.locator('.ambient-running').count(), 0, 'Background visibility pauses both regions');
+    await page.evaluate(() => { delete document.hidden; document.dispatchEvent(new Event('visibilitychange')); });
+    await page.locator('[data-motion-toggle]').last().click();
+    assert.deepEqual(await page.locator('[data-motion-toggle]').evaluateAll(nodes => nodes.map(node => node.getAttribute('aria-pressed'))), ['false', 'false']);
+    await page.reload({ waitUntil: 'networkidle' });
+    assert.equal(await page.locator('[data-motion-toggle]').first().getAttribute('aria-pressed'), 'false');
+    assert(await page.locator('.hero-signal').isHidden());
+    await page.locator('[data-motion-toggle]').first().click();
+    await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
+    await page.waitForFunction(() => document.querySelector('[data-analysis-stage]').classList.contains('ambient-running'));
     assert.equal(await page.locator(".research-glyph").count(), 3);
     const stage = page.locator("[data-analysis-stage]");
     const bounds = await stage.boundingBox();
@@ -113,6 +133,8 @@ async function main() {
     assert.equal(await stage.evaluate((el) => el.style.getPropertyValue("--tilt-y")), "");
     await page.mouse.move(bounds.x + bounds.width * .8, bounds.y + bounds.height * .3);
     await page.emulateMedia({ reducedMotion: "reduce" });
+    await page.waitForFunction(() => document.querySelector('[data-motion-toggle]').disabled);
+    assert(await page.locator('.hero-signal').isHidden());
     assert.equal(await page.locator(".trace-flow").evaluate((el) => getComputedStyle(el).animationName), "none");
     await page.waitForFunction(() => document.querySelector("[data-analysis-stage]").style.getPropertyValue("--tilt-y") === "");
     await noOverflow();
@@ -339,6 +361,8 @@ async function main() {
     assert.equal(await staticPage.locator('.map-node:visible').count(), 8);
     assert(await staticPage.locator('.terminal-profile').isVisible());
     assert(await staticPage.locator(".trace-flow").isVisible());
+    assert(await staticPage.locator('.hero-signal').isHidden());
+    assert(await staticPage.locator('[data-motion-toggle]').first().isHidden());
     assert.equal(await staticPage.locator(".path-card:visible").count(), 3);
     await staticPage.goto(base + "/posts/");
     assert.equal(await staticPage.locator(".post-row:visible").count(), total);

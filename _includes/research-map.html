@@ -1,8 +1,16 @@
 <section class="research-map-section" aria-labelledby="research-map-title">
   <div class="section-heading"><div><p class="eyebrow">FOLLOW YOUR CURIOSITY</p><h2 id="research-map-title">탐구의 연결점<span class="accent">.</span></h2></div><span class="mono muted">{{ site.data.categories.size }} FIELDS / ONE ARCHIVE</span></div>
   <p class="map-intro">관심 있는 분야에서 다음 기록을 찾아보세요.</p>
+  <div class="map-motion-control">{% include motion-control.html %}</div>
   <nav class="research-map" aria-label="탐구 분야 지도">
-    <svg class="map-wires" viewBox="0 0 1000 440" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5"><path d="M500 220H390V65H200M390 220V168H200M390 220V272H200M390 220V375H200M500 220H610V65H800M610 220V168H800M610 220V272H800M610 220V375H800"/><circle cx="390" cy="220" r="4"/><circle cx="610" cy="220" r="4"/></g></svg>
+    <svg class="map-wires" viewBox="0 0 1000 440" preserveAspectRatio="none" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="1.5">
+      {% for category in site.data.categories %}
+        {% assign route_row = forloop.index0 | modulo: 4 %}
+        {% capture route_y %}{% case route_row %}{% when 0 %}65{% when 1 %}168{% when 2 %}272{% else %}375{% endcase %}{% endcapture %}
+        {% capture route_d %}M500 220H{% if forloop.index0 < 4 %}390V{{ route_y }}H200{% else %}610V{{ route_y }}H800{% endif %}{% endcapture %}
+        <g data-map-route="{{ forloop.index0 }}"><path class="map-route" d="{{ route_d }}"/><path class="ambient-signal map-signal" pathLength="1" d="{{ route_d }}" style="--signal-delay: {{ forloop.index0 }}s"/></g>
+      {% endfor %}
+    </g></svg>
     <div class="map-core"><span class="mono">PERSONAL RESEARCH</span><strong>Hercent<span class="accent">.</span></strong><span class="map-core-count">{{ site.posts.size | plus: site.data.standalone_pages.size }}개의 공개 기록</span><span class="map-core-caption">OBSERVE / CONNECT / LEARN</span></div>
     {% for category in site.data.categories %}
       {% assign field_count = site.posts | where: 'category_key', category.key | size %}
