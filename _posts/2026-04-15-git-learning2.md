@@ -1,5 +1,8 @@
 ---
 layout: post
+topics: [Git]
+series: Git 배우기
+series_order: 2
 title: Git 배우기 2
 page_description: Git 원격 저장소와 로컬에 관련한 명령어 학습 글입니다.
 category_key: development

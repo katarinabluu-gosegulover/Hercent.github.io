@@ -105,17 +105,40 @@
     const entries = rows.map((row) => ({ row, text: row.textContent.normalize("NFKC").toLocaleLowerCase() }));
     const output = document.querySelector("[data-search-count]");
     const empty = document.querySelector("[data-search-empty]");
+    const categoryFilter = document.querySelector('[data-category-filter]');
+    const topicButtons = [...document.querySelectorAll('[data-topic-filter]')];
+    const selectedTopics = new Set();
+    const filters = document.querySelector('[data-archive-filters]');
+    if (filters) filters.hidden = false;
     const filter = () => {
       const words = search.value.normalize("NFKC").trim().toLocaleLowerCase().split(/\s+/).filter(Boolean);
       let count = 0;
       entries.forEach(({ row, text }) => {
-        row.hidden = !words.every((word) => text.includes(word));
+        const topics = JSON.parse(row.dataset.topics || 'null') || [];
+        row.hidden = !words.every((word) => text.includes(word)) ||
+          Boolean(categoryFilter?.value && row.dataset.category !== categoryFilter.value) ||
+          ![...selectedTopics].every(topic => topics.includes(topic));
         if (!row.hidden) count++;
       });
       if (output) output.textContent = `${count} / ${rows.length}개의 기록`;
       if (empty) empty.hidden = count !== 0;
     };
     search.addEventListener("input", filter);
+    categoryFilter?.addEventListener('change', filter);
+    topicButtons.forEach(button => button.addEventListener('click', () => {
+      const topic = button.dataset.topicFilter;
+      selectedTopics.has(topic) ? selectedTopics.delete(topic) : selectedTopics.add(topic);
+      button.setAttribute('aria-pressed', String(selectedTopics.has(topic)));
+      filter();
+    }));
+    document.querySelector('[data-filter-reset]')?.addEventListener('click', () => {
+      search.value = '';
+      if (categoryFilter) categoryFilter.value = '';
+      selectedTopics.clear();
+      topicButtons.forEach(button => button.setAttribute('aria-pressed', 'false'));
+      filter();
+      search.focus();
+    });
     filter();
     if (location.hash === "#post-search") focusSearch();
   }

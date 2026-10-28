@@ -1,5 +1,10 @@
 ---
 layout: post
+topics: [Python, Network]
+source_code: https://github.com/katarinabluu-gosegulover/pcap_analyzer
+analysis_info:
+  - label: 구현 대상
+    value: dpkt 기반 PCAP 분석기
 title: pcap 파일 분석기 제작
 page_description: pcap 파일을 분석하고 통계를 내보는 분석기를 제작
 category_key: development

@@ -76,7 +76,8 @@ async function main() {
     await page.locator('.research-map-section').screenshot({ path: path.join(output, 'research-map-light.png') });
     await page.locator('[data-theme-toggle]').click();
     assert.equal(await page.locator(".note-row").count(), 6);
-    assert.equal(await page.locator(".research-timeline .post-cover-compact svg").count(), 6);
+    assert.equal(await page.locator(".research-timeline .post-cover-compact svg").count(), 0);
+    assert.equal(await page.locator('.topic-directory,.selected-section').count(), 0);
     assert.equal(await page.locator('.report-companion').count(), 2);
     const companionLinks = await page.locator('.companion-link').evaluateAll(nodes => nodes.map(node => node.href));
     assert.equal(new Set(companionLinks).size, 2);
@@ -124,7 +125,7 @@ async function main() {
     await page.locator('[data-motion-toggle]').first().click();
     await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
     await page.waitForFunction(() => document.querySelector('[data-analysis-stage]').classList.contains('ambient-running'));
-    assert.equal(await page.locator(".research-glyph").count(), 3);
+    assert.equal(await page.locator(".research-glyph").count(), 0);
     const stage = page.locator("[data-analysis-stage]");
     const bounds = await stage.boundingBox();
     await page.mouse.move(bounds.x + bounds.width * .8, bounds.y + bounds.height * .3);
@@ -203,6 +204,28 @@ async function main() {
     await search.fill("");
     assert.equal(await page.locator(".post-row:visible").count(), total);
     await page.screenshot({ path: path.join(output, "archive-desktop.png"), fullPage: false });
+    await page.locator('[data-topic-filter="Python"]').click();
+    await page.locator('[data-topic-filter="Network"]').click();
+    assert.equal(await page.locator('.post-row:visible').count(), 1);
+    assert((await page.locator('.post-row:visible h2').textContent()).includes('pcap'));
+    await page.locator('[data-category-filter]').selectOption('ctf-wargame');
+    assert.equal(await page.locator('.post-row:visible').count(), 0);
+    assert(await page.locator('[data-search-empty]').isVisible());
+    await page.locator('[data-filter-reset]').click();
+    assert.equal(await page.locator('.post-row:visible').count(), total);
+    assert.equal(await page.locator('[data-topic-filter][aria-pressed="true"]').count(), 0);
+    await page.locator('[data-topic-filter="Fuzzing"]').click();
+    await search.fill('클리어');
+    assert.equal(await page.locator('.post-row:visible').count(), 1);
+    await page.locator('[data-filter-reset]').click();
+    await visit('/posts/git-learning1/');
+    assert.equal(await page.locator('.series-navigation [rel="next"]').getAttribute('href'), prefix + '/posts/git-learning2/');
+    assert.equal(await page.locator('.series-navigation [rel="prev"]').count(), 0);
+    await page.locator('.series-navigation summary').click();
+    assert.equal(await page.locator('.series-navigation ol a').count(), 2);
+    await page.locator('.series-navigation [rel="next"]').click();
+    assert.equal(await page.locator('.series-navigation [rel="prev"]').getAttribute('href'), prefix + '/posts/git-learning1/');
+    assert.equal(await page.locator('.series-navigation [rel="next"]').count(), 0);
 
     // Mock clipboard writes so tests never replace the user's system clipboard.
     await page.addInitScript(() => {
@@ -211,7 +234,8 @@ async function main() {
       });
     });
     await visit("/posts/fuzzing-101-3-chall/");
-    assert.equal(await page.locator('.post-cover').getAttribute('data-cover'), 'trace');
+    assert((await page.locator('.article-context').textContent()).includes('WSL2 Ubuntu 24.04.3'));
+    assert.equal(await page.locator('.post-cover').count(), 0);
     await page.screenshot({ path: path.join(output, 'post-cover-desktop.png') });
     const zoom = page.locator('.image-zoom').first();
     await zoom.focus();
@@ -363,8 +387,9 @@ async function main() {
     assert(await staticPage.locator(".trace-flow").isVisible());
     assert(await staticPage.locator('.hero-signal').isHidden());
     assert(await staticPage.locator('[data-motion-toggle]').first().isHidden());
-    assert.equal(await staticPage.locator(".path-card:visible").count(), 3);
+    assert.equal(await staticPage.locator(".path-card").count(), 0);
     await staticPage.goto(base + "/posts/");
+    assert(await staticPage.locator('[data-archive-filters]').isHidden());
     assert.equal(await staticPage.locator(".post-row:visible").count(), total);
     await staticPage.goto(base + "/posts/ethernaut-writeups/");
     assert.equal(await staticPage.locator("[data-tab-panel]:visible").count(), await staticPage.locator("[data-tab-panel]").count());
@@ -373,7 +398,7 @@ async function main() {
     assert(await staticPage.locator(".related-card").count() > 0);
     await staticPage.goto(base + "/posts/fuzzing-101-3-chall/");
     assert.equal(await staticPage.locator(".analysis-note:visible").count(), 3);
-    assert.equal(await staticPage.locator('.post-cover svg').count(), 1);
+    assert(await staticPage.locator('.article-context').isVisible());
     assert.equal(await staticPage.locator('.image-zoom').count(), 0);
     assert(await staticPage.locator('.article-body img').count() > 0);
     assert.equal(await staticPage.locator(".field-badge:visible").count(), 1);

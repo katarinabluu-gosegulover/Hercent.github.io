@@ -24,6 +24,16 @@ permalink: /posts/
     <output data-search-count aria-live="polite"></output>
   </div>
   <p class="empty-state" data-search-empty hidden>검색 결과가 없습니다. 다른 키워드로 찾아보세요.</p>
+  <div class="archive-filters" data-archive-filters hidden>
+    <label>분류 <select data-category-filter><option value="">모든 분류</option>{% for category in site.data.categories %}<option value="{{ category.key | escape }}">{{ category.title | escape }}</option>{% endfor %}</select></label>
+    <fieldset><legend>주제 · 여러 개 선택하면 모두 포함된 글</legend>
+      {% capture topic_values %}{% for post in site.posts %}{% for topic in post.topics %}{{ topic }}|{% endfor %}{% endfor %}{% endcapture %}
+      {% assign all_topics = topic_values | split: '|' | uniq | sort %}
+      {% for topic in all_topics %}{% unless topic == '' %}<button type="button" data-topic-filter="{{ topic | escape }}" aria-pressed="false">{{ topic | escape }}</button>{% endunless %}{% endfor %}
+    </fieldset>
+    <button type="button" data-filter-reset>검색·필터 초기화</button>
+    <p>주제 태그는 확인된 글부터 정리 중입니다. 태그를 선택하지 않으면 미분류 글도 모두 표시됩니다.</p>
+  </div>
   {% if site.posts.size > 0 or standalone_entry %}
     <section class="post-list" data-reveal>
       {% for post in site.posts %}
@@ -32,7 +42,7 @@ permalink: /posts/
         {% unless standalone_inserted %}
           {% if standalone_entry and post_date_key < standalone_entry.date %}
             {% assign category = site.data.categories | where: "key", standalone_entry.category_key | first %}
-            <article class="panel post-row compact-row">
+            <article class="panel post-row compact-row" data-category="{{ standalone_entry.category_key | escape }}" data-topics="[]">
               <div>
                 <div class="kicker-row">
                   {% if category %}
@@ -50,7 +60,7 @@ permalink: /posts/
         {% endunless %}
 
         {% assign category = site.data.categories | where: "key", post.category_key | first %}
-        <article class="panel post-row compact-row">
+        <article class="panel post-row compact-row" data-category="{{ post.category_key | escape }}" data-topics="{{ post.topics | jsonify | escape }}">
           <div>
             <div class="kicker-row">
               {% if category %}
@@ -60,6 +70,7 @@ permalink: /posts/
             </div>
             <h2><a href="{{ post.url | relative_url }}">{{ post.title }}</a></h2>
             <p>{{ post_preview | default: "Read this post." | truncate: 180 }}</p>
+            {% if post.topics.size > 0 %}<div class="article-topics">{% for topic in post.topics %}<span>{{ topic | escape }}</span>{% endfor %}</div>{% endif %}
           </div>
           <a class="view-link" href="{{ post.url | relative_url }}">view</a>
         </article>
@@ -68,7 +79,7 @@ permalink: /posts/
       {% unless standalone_inserted %}
         {% if standalone_entry %}
           {% assign category = site.data.categories | where: "key", standalone_entry.category_key | first %}
-          <article class="panel post-row compact-row">
+          <article class="panel post-row compact-row" data-category="{{ standalone_entry.category_key | escape }}" data-topics="[]">
             <div>
               <div class="kicker-row">
                 {% if category %}

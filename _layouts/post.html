@@ -16,7 +16,8 @@ layout: default
         <p class="lead">{{ page.lead }}</p>
       {% endif %}
     </header>
-    {% include post-cover.html post=page %}
+    {% include article-context.html %}
+    {% include series-navigation.html %}
     <div class="reading-layout">
       <aside class="reading-sidebar" data-reading-sidebar hidden>
         <details class="article-toc" data-reading-toc open>

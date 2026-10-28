@@ -1,5 +1,6 @@
 ---
 layout: post
+topics: [Web]
 title: Dreamhack Indexed Hollow wargame writeup
 page_description: Web - Indexed Hollow
 category_key: ctf-wargame

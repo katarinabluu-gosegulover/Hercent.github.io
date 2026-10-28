@@ -74,16 +74,18 @@ nav: home
           </dl>
         </div>
       </div>
-      <aside class="report-companions" aria-label="함께 읽을 최신 기록">
-        <p class="report-companions-label">NEXT IN THE NOTEBOOK</p>
+      <aside class="report-companions" aria-label="주제별 추천 기록">
+        <p class="report-companions-label">다른 주제로 이어 읽기</p>
         {% assign companion_count = 0 %}
-        {% for post in site.posts %}
+        {% for selection in site.data.reading_picks %}
+          {% assign post = site.posts | where: 'url', selection.url | first %}
+          {% if post %}
           {% unless post.url == spotlight_post.url %}
             {% assign companion_count = companion_count | plus: 1 %}
             {% assign companion_category = site.data.categories | where: 'key', post.category_key | first %}
             <article class="report-companion">
               <div class="companion-index"><span>0{{ companion_count | plus: 1 }} / FIELD NOTES</span><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time></div>
-              {% include post-cover.html post=post compact=true %}
+              <p class="companion-context">{{ selection.context | escape }}</p>
               {% include category-badge.html category=companion_category %}
               <h3><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3>
               <p>{{ post.summary | default: post.page_description | default: post.excerpt | strip_html | strip_newlines | truncate: 95 | escape }}</p>
@@ -91,6 +93,7 @@ nav: home
             </article>
             {% if companion_count == 2 %}{% break %}{% endif %}
           {% endunless %}
+          {% endif %}
         {% endfor %}
       </aside>
       </div>
@@ -106,7 +109,6 @@ nav: home
           <article class="note-row">
             <span class="note-number" aria-hidden="true">{{ forloop.index | prepend: '0' }}</span>
             <div>
-              {% include post-cover.html post=post compact=true %}
               <div class="kicker-row">{% include category-badge.html category=category %}<time class="post-meta" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time></div>
               <h3><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3>
               <p>{{ preview | truncate: 110 | escape }}</p>
@@ -126,24 +128,8 @@ nav: home
         <dl class="profile-facts"><div><dt>ROLE</dt><dd>보안 학습자</dd></div><div><dt>ARCHIVE</dt><dd>{{ entry_count }}개의 공개 기록</dd></div><div><dt>FOCUS</dt><dd>취약점 분석 · 도구 제작 · 문제 풀이</dd></div></dl>
         <div class="profile-links"><a href="https://github.com/katarinabluu-gosegulover">GitHub ↗</a><a href="https://dreamhack.io/users/16471">Dreamhack ↗</a></div>
       </section>
-      <section class="topic-directory">
-        <div class="sidebar-heading"><h2>탐구 분야</h2><span class="mono">INDEX / 08</span></div>
-        {% for category in site.data.categories %}
-          {% assign count = site.posts | where: "category_key", category.key | size %}
-          {% assign standalone_count = site.data.standalone_pages | where: "category_key", category.key | size %}
-          <a href="{{ category.path | relative_url }}"><span>{{ category.title }}</span><span class="topic-count">{{ count | plus: standalone_count | prepend: '0' | slice: -2, 2 }}</span></a>
-        {% endfor %}
-      </section>
       <div class="margin-note"><span class="mono">A NOTE TO SELF</span><p>정답보다 오래 남는 것은<br>거기까지 도달한 과정.</p></div>
     </aside>
   </div>
   {% include research-map.html %}
-  <section class="selected-section">
-    <div class="section-heading"><div><p class="eyebrow">EXPLORE THE ARCHIVE</p><h2>다음으로 읽어볼 기록</h2></div><span class="mono muted">SELECTED PATHS / 03</span></div>
-    <div class="path-grid">
-      <a class="path-card" href="{{ '/categories/ctf-wargame/' | relative_url }}"><span class="mono accent">01 / BREAK IT DOWN</span>{% include research-glyph.html kind="branch" %}<h3>CTF &amp; Wargame <span>↗</span></h3><p>문제를 해석하고, 가설을 세우고, 풀이 과정을 복기합니다.</p></a>
-      <a class="path-card" href="{{ '/categories/development/' | relative_url }}"><span class="mono accent">02 / BUILD TO LEARN</span>{% include research-glyph.html kind="code" %}<h3>Tools &amp; Code <span>↗</span></h3><p>디버거부터 패킷 분석기까지. 직접 만들어 이해하는 기록.</p></a>
-      <a class="path-card" href="{{ '/categories/papers-conferences/' | relative_url }}"><span class="mono accent">03 / READ &amp; REFLECT</span>{% include research-glyph.html kind="paper" %}<h3>Papers &amp; Talks <span>↗</span></h3><p>논문과 컨퍼런스에서 발견한 생각을 내 언어로 정리합니다.</p></a>
-    </div>
-  </section>
 </main>

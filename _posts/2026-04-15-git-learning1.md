@@ -1,5 +1,8 @@
 ---
 layout: post
+topics: [Git]
+series: Git 배우기
+series_order: 1
 title: Git 배우기 1
 page_description: Git 기본 명령어와 브랜치, 리베이스, 태그 개념을 정리한 학습 글입니다.
 category_key: development

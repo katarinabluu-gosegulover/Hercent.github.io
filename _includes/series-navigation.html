@@ -1,0 +1,17 @@
+{% if page.series %}
+  {% assign series_posts = site.posts | where: 'series', page.series | sort: 'series_order' %}
+  <nav class="series-navigation" aria-label="시리즈 읽는 순서">
+    <details><summary>{{ page.series | escape }} · {{ page.series_order }} / {{ series_posts.size }}편</summary><ol>
+      {% for entry in series_posts %}<li><a href="{{ entry.url | relative_url }}"{% if entry.url == page.url %} aria-current="page"{% endif %}>{{ entry.title | escape }}</a></li>{% endfor %}
+    </ol></details>
+    <div class="series-directions">
+      {% assign previous_entry = nil %}{% assign next_entry = nil %}
+      {% for entry in series_posts %}
+        {% if entry.series_order < page.series_order %}{% assign previous_entry = entry %}{% endif %}
+        {% if entry.series_order > page.series_order and next_entry == nil %}{% assign next_entry = entry %}{% endif %}
+      {% endfor %}
+      {% if previous_entry %}<a rel="prev" href="{{ previous_entry.url | relative_url }}">← 이전 편: {{ previous_entry.title | escape }}</a>{% endif %}
+      {% if next_entry %}<a rel="next" href="{{ next_entry.url | relative_url }}">다음 편: {{ next_entry.title | escape }} →</a>{% endif %}
+    </div>
+  </nav>
+{% endif %}

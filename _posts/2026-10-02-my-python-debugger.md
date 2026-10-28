@@ -1,5 +1,10 @@
 ---
 layout: post
+topics: [Python, Debugging]
+source_code: https://github.com/katarinabluu-gosegulover/python-mini-debugger
+analysis_info:
+  - label: 구현 대상
+    value: sys.settrace() 기반 Python 디버거
 title: 나만의 Python 디버거 만들기
 page_description: sys.settrace()로 추적 이벤트를 받아 작은 Python 디버거를 만든 과정을 남긴 글
 category_key: development

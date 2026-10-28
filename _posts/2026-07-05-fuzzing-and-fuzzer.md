@@ -1,5 +1,6 @@
 ---
 layout: post
+topics: [Fuzzing]
 title: Fuzzing & Fuzzer
 page_description: Fuzzing이 무엇인지 알아보고 Fuzzing 과 Fuzzer 의 종류를 알아보기
 category_key: blog-docs

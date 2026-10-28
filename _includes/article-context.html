@@ -1,0 +1,8 @@
+{% if page.topics.size > 0 or page.analysis_info or page.last_modified_at or page.source_code %}
+<section class="article-context" aria-label="글 정보">
+  {% if page.topics.size > 0 %}<div class="article-topics">{% for topic in page.topics %}<span>{{ topic | escape }}</span>{% endfor %}</div>{% endif %}
+  {% if page.analysis_info %}<dl>{% for item in page.analysis_info %}<div><dt>{{ item.label | escape }}</dt><dd>{{ item.value | escape }}</dd></div>{% endfor %}</dl>{% endif %}
+  {% if page.last_modified_at %}<p>최종 수정 <time datetime="{{ page.last_modified_at | date_to_xmlschema }}">{{ page.last_modified_at | date: '%Y.%m.%d' }}</time></p>{% endif %}
+  {% if page.source_code %}<a href="{{ page.source_code | escape }}">관련 코드 저장소 ↗</a>{% endif %}
+</section>
+{% endif %}

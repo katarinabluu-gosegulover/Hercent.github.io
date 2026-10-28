@@ -1,5 +1,27 @@
 # Research notebook components
 
+## October 28 editorial cleanup
+
+Home keeps one field navigator (the map), removes generic repeated covers and
+uses explicit `reading_picks.yml` selections instead of duplicating latest
+posts. The featured image remains the existing labelled reconstruction of
+original Fuzzing logs; it is not presented as a new screenshot.
+
+Archive filters combine search, one category and ALL selected topics. Topics
+are explicit front matter, initially populated for seven reviewed posts only.
+Untagged posts remain visible by default. JavaScript-disabled archives show all
+entries and retain category links. Reset clears every filter and returns focus
+to search.
+
+Optional post fields: `topics` (array), `analysis_info` (label/value entries),
+`source_code` (trusted HTTPS URL), `last_modified_at` (actual editorial date).
+Never infer unknown environments or use deployment time as a modification date.
+`series` and numeric `series_order` enable the ordered list and previous/next
+links; Git learning parts 1 and 2 are the initial verified series.
+
+Earlier component notes below describe implementation history; generic covers
+remain reusable includes but are no longer rendered on home or post pages.
+
 Category badges use the existing `_data/categories.yml` keys. Render them with
 `{% include category-badge.html category=category %}`. Labels and symbols remain
 visible without JavaScript; color is not the only category cue.
