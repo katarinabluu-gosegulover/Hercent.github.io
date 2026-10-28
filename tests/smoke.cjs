@@ -128,6 +128,9 @@ async function main() {
     assert.equal(await page.locator(".research-glyph").count(), 0);
     const stage = page.locator("[data-analysis-stage]");
     const bounds = await stage.boundingBox();
+    const heroBounds = await page.locator('.research-hero').boundingBox();
+    assert(bounds.width >= heroBounds.width * .45, 'Hero graphic must fill its half of the layout');
+    assert(bounds.x - heroBounds.x <= heroBounds.width * .5, 'Hero graphic must not drift to the far right');
     await page.mouse.move(bounds.x + bounds.width * .8, bounds.y + bounds.height * .3);
     assert.notEqual(await stage.evaluate((el) => el.style.getPropertyValue("--tilt-y")), "");
     await page.mouse.move(0, 0);
@@ -338,6 +341,16 @@ async function main() {
     assert(await page.locator(".copy-code").count() > 0);
     await page.screenshot({ path: path.join(output, "article-desktop.png"), fullPage: false });
 
+    for (const width of [1024, 1920]) {
+      await page.setViewportSize({ width, height: 1000 });
+      await visit('/');
+      await noOverflow();
+      const hero = await page.locator('.research-hero').boundingBox();
+      const graphic = await page.locator('[data-analysis-stage]').boundingBox();
+      assert(graphic.width >= hero.width * .45);
+      assert(graphic.x - hero.x <= hero.width * .5);
+      await page.screenshot({ path: path.join(output, `hero-${width}.png`) });
+    }
     for (const width of [320, 390, 768]) {
       await page.setViewportSize({ width, height: 844 });
       await page.emulateMedia({ reducedMotion: "no-preference" });
