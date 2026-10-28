@@ -38,3 +38,9 @@ data order. No JavaScript or animation is required.
 The terminal profile keeps the original biography and GitHub avatar source.
 The window marks and whoami prompt are decorative, not a live terminal or
 online-status indicator. The existing cursor preference remains available.
+
+The editorial home layout enlarges the conceptual hero diagram and headline.
+The featured report uses its existing image, text and metrics; the two side
+cards are the newest posts excluding that report, never invented content.
+Below 761px the hero and report spread become single-column layouts. Existing
+motion preferences, article order and image links remain unchanged.

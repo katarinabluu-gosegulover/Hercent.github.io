@@ -76,7 +76,14 @@ async function main() {
     await page.locator('.research-map-section').screenshot({ path: path.join(output, 'research-map-light.png') });
     await page.locator('[data-theme-toggle]').click();
     assert.equal(await page.locator(".note-row").count(), 6);
-    assert.equal(await page.locator(".post-cover-compact svg").count(), 6);
+    assert.equal(await page.locator(".research-timeline .post-cover-compact svg").count(), 6);
+    assert.equal(await page.locator('.report-companion').count(), 2);
+    const companionLinks = await page.locator('.companion-link').evaluateAll(nodes => nodes.map(node => node.href));
+    assert.equal(new Set(companionLinks).size, 2);
+    for (const href of companionLinks) {
+      assert.notEqual(href, await page.locator('.case-link').evaluate(node => node.href));
+      assert.equal((await context.request.get(href)).status(), 200, 'Companion article link');
+    }
     assert.equal(await page.locator(".research-timeline .note-row").count(), 6);
     assert.equal(await page.locator(".research-timeline .field-badge .field-icon").count(), 6);
     const timelineDates = await page.locator(".research-timeline time").evaluateAll((els) => els.map((el) => el.dateTime));
@@ -319,6 +326,7 @@ async function main() {
           assert.equal(await page.locator('.map-node:visible').count(), 8);
           assert(await page.locator('.map-wires').isHidden());
           await page.locator('.research-map-section').screenshot({ path: path.join(output, 'research-map-mobile.png') });
+          await page.evaluate(() => scrollTo({ top: 0, behavior: 'instant' }));
           await page.screenshot({ path: path.join(output, "home-mobile.png"), fullPage: true });
           await page.screenshot({ path: path.join(output, "home-mobile-first-screen.png"), fullPage: false });
         }

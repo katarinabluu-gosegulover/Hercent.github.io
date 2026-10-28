@@ -9,7 +9,7 @@ nav: home
 {% assign spotlight = site.data.spotlight %}
 {% assign spotlight_post = site.posts | where: "url", spotlight.post_url | first %}
 <main>
-  <section class="research-hero">
+  <section class="research-hero hero-editorial">
     <div class="hero-copy">
       <p class="eyebrow"><span class="status-dot"></span> SECURITY STUDY / PERSONAL ARCHIVE</p>
       <h1>Under the<br><span>surface<span class="warm-dot">.</span></span></h1>
@@ -53,9 +53,14 @@ nav: home
     <div><span class="strip-label">LAST ENTRY</span><strong>{{ latest_post.date | date: "%Y.%m.%d" }}</strong></div>
   </div>
   {% if spotlight_post %}
-    <section class="case-study" aria-labelledby="case-study-title">
+    <section class="case-study case-editorial" aria-labelledby="case-study-title">
       <div class="case-heading"><span class="mono">FIELD REPORT / 01</span><span class="mono">SELECTED FROM THE ARCHIVE</span></div>
+      <div class="report-spread">
       <div class="case-grid">
+        <figure class="case-evidence">
+          <a href="{{ spotlight_post.url | relative_url }}"><img src="{{ spotlight.image | relative_url }}" alt="{{ spotlight.image_alt | escape }}" width="1400" height="900" loading="lazy"></a>
+          <figcaption>{{ spotlight.image_caption | escape }} <a href="{{ spotlight_post.url | relative_url }}">원문 ↗</a></figcaption>
+        </figure>
         <div class="case-copy">
           <p class="eyebrow">{{ spotlight.label | escape }}</p>
           <h2 id="case-study-title"><a href="{{ spotlight_post.url | relative_url }}">{{ spotlight.headline }}</a></h2>
@@ -67,10 +72,26 @@ nav: home
             {% endfor %}
           </dl>
         </div>
-        <figure class="case-evidence">
-          <a href="{{ spotlight_post.url | relative_url }}"><img src="{{ spotlight.image | relative_url }}" alt="{{ spotlight.image_alt | escape }}" width="1400" height="900" loading="lazy"></a>
-          <figcaption>{{ spotlight.image_caption | escape }} <a href="{{ spotlight_post.url | relative_url }}">원문 ↗</a></figcaption>
-        </figure>
+      </div>
+      <aside class="report-companions" aria-label="함께 읽을 최신 기록">
+        <p class="report-companions-label">NEXT IN THE NOTEBOOK</p>
+        {% assign companion_count = 0 %}
+        {% for post in site.posts %}
+          {% unless post.url == spotlight_post.url %}
+            {% assign companion_count = companion_count | plus: 1 %}
+            {% assign companion_category = site.data.categories | where: 'key', post.category_key | first %}
+            <article class="report-companion">
+              <div class="companion-index"><span>0{{ companion_count | plus: 1 }} / FIELD NOTES</span><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time></div>
+              {% include post-cover.html post=post compact=true %}
+              {% include category-badge.html category=companion_category %}
+              <h3><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3>
+              <p>{{ post.summary | default: post.page_description | default: post.excerpt | strip_html | strip_newlines | truncate: 95 | escape }}</p>
+              <a class="companion-link" href="{{ post.url | relative_url }}">기록 읽기 <span aria-hidden="true">↗</span></a>
+            </article>
+            {% if companion_count == 2 %}{% break %}{% endif %}
+          {% endunless %}
+        {% endfor %}
+      </aside>
       </div>
     </section>
   {% endif %}
