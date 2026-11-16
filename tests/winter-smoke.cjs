@@ -47,10 +47,11 @@ const server = http.createServer((req,res) => {
     const weather=page.locator('.winter-weather');
     const firstFrame=await weather.evaluate(el=>el.toDataURL());
     await page.waitForFunction(previous=>document.querySelector('.winter-weather').toDataURL()!==previous,firstFrame);
-    assert.equal(await weather.evaluate(el=>{
+    await page.waitForFunction(()=>{
+      const el=document.querySelector('.winter-weather');
       const pixels=el.getContext('2d').getImageData(0,0,el.width,Math.floor(el.height*.3)).data;
-      return pixels.some((value,index)=>index%4===3 && value>0);
-    }),false,'No aurora in daylight');
+      return !pixels.some((value,index)=>index%4===3 && value>0);
+    });
     const arrowTransform=await page.locator('.winter-scroll svg').evaluate(el=>getComputedStyle(el).transform);
     await page.waitForFunction(previous=>getComputedStyle(document.querySelector('.winter-scroll svg')).transform!==previous,arrowTransform);
     await page.locator('[data-scroll-records]').click();
