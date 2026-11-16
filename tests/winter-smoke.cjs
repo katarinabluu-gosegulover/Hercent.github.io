@@ -35,6 +35,13 @@ const server = http.createServer((req,res) => {
     assert.equal(await page.locator('[data-motion-toggle]').textContent(),'Motion: On');
     assert.equal(await page.locator('[data-cursor-toggle]').textContent(),'Cursor: On');
     await page.waitForFunction(()=>getComputedStyle(document.querySelector('.winter-scroll svg')).animationPlayState==='running');
+    const weather=page.locator('.winter-weather');
+    const firstFrame=await weather.evaluate(el=>el.toDataURL());
+    await page.waitForFunction(previous=>document.querySelector('.winter-weather').toDataURL()!==previous,firstFrame);
+    assert.equal(await weather.evaluate(el=>{
+      const pixels=el.getContext('2d').getImageData(0,0,el.width,Math.floor(el.height*.3)).data;
+      return pixels.some((value,index)=>index%4===3 && value>0);
+    }),false,'No aurora in daylight');
     const arrowTransform=await page.locator('.winter-scroll svg').evaluate(el=>getComputedStyle(el).transform);
     await page.waitForFunction(previous=>getComputedStyle(document.querySelector('.winter-scroll svg')).transform!==previous,arrowTransform);
     await page.locator('[data-scroll-records]').click();
@@ -55,9 +62,14 @@ const server = http.createServer((req,res) => {
     await page.waitForFunction(()=>getComputedStyle(document.querySelector('.scene-night')).opacity==='1');
     await page.waitForFunction(()=>document.querySelector('.winter-hero').classList.contains('ambient-running'));
     assert.equal(await page.locator('.winter-sky').evaluate(el=>getComputedStyle(el).animationPlayState),'running');
+    await page.waitForFunction(()=>{
+      const el=document.querySelector('.winter-weather');
+      return el.getContext('2d').getImageData(0,0,el.width,Math.floor(el.height*.3)).data.some((v,i)=>i%4===3&&v>0);
+    });
     await page.screenshot({path:path.join(output,'beta-dark.png'),fullPage:true});
     await page.locator('[data-motion-toggle]').click();
     assert.equal(await page.locator('html').evaluate(el=>el.classList.contains('ambient-enabled')),false);
+    assert.equal(await weather.evaluate(el=>el.getContext('2d').getImageData(0,0,el.width,el.height).data.some(v=>v!==0)),false,'Motion Off clears weather');
     assert.equal(await page.locator('.winter-scroll svg').evaluate(el=>getComputedStyle(el).animationName),'none');
     await page.reload({waitUntil:'networkidle'});
     assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');

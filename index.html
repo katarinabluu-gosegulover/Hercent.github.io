@@ -10,6 +10,7 @@ body_class: winter-home
 <main>
   <section class="winter-hero" aria-labelledby="winter-title" data-winter-scene>
     <div class="winter-scene scene-sunset" aria-hidden="true"></div><div class="winter-scene scene-night" aria-hidden="true"></div><div class="winter-sky" aria-hidden="true"></div>
+    <canvas class="winter-weather" aria-hidden="true"></canvas>
     <div class="winter-copy"><h1 id="winter-title">Beneath<br>the quiet<span class="profile-cursor">_</span></h1><p>고요한 풍경 아래, 끝없이 궁금한 것들.</p><div class="winter-actions"><a href="{{ '/posts/' | relative_url }}">기록 탐색 →</a><a href="{{ '/posts/#post-search' | relative_url }}"><kbd>/</kbd> 검색</a></div></div>
     <div class="winter-controls">{% include motion-control.html %}{% include profile-cursor-control.html %}</div>
     <a class="winter-scroll" href="#winter-records" data-scroll-records aria-label="아래 연구 기록으로 이동"><span>SCROLL</span><svg width="24" height="28" viewBox="0 0 24 28" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v20m-7-7 7 7 7-7"/></svg></a>

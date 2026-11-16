@@ -16,8 +16,9 @@
       button.disabled = preference.matches;
       button.setAttribute('aria-pressed', String(allowed));
       button.textContent = preference.matches ? 'Motion: Reduced' : enabled ? 'Motion: On' : 'Motion: Off';
-      button.title = 'Animate sky light and the scroll arrow';
+      button.title = 'Animate snowfall, aurora and the scroll arrow';
     });
+    document.dispatchEvent(new Event('winter:motion'));
   };
   controls.forEach(button => button.addEventListener('click', () => {
     enabled = !enabled;
