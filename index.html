@@ -11,7 +11,6 @@ nav: home
 <main>
   <section class="research-hero hero-editorial">
     <div class="hero-copy">
-      <p class="eyebrow"><span class="status-dot"></span> SECURITY STUDY / PERSONAL ARCHIVE</p>
       <h1>Under the<br><span>surface<span class="warm-dot">.</span></span></h1>
       <p class="hero-statement">보이지 않는 원리를 파고드는 기록.</p>
       <p class="hero-text">취약점의 원인을 따라가고, 코드를 직접 만들고, 문제를 풀며 배웁니다.<br class="desktop-break"> Hercent의 보안 공부와 실험을 담은 연구 노트입니다.</p>
@@ -19,10 +18,10 @@ nav: home
         <a class="button button-primary" href="{{ '/posts/' | relative_url }}">연구 기록 살펴보기 <span aria-hidden="true">↗</span></a>
         <a class="text-link" href="{{ '/about/' | relative_url }}">작성자 소개 <span aria-hidden="true">→</span></a>
       </div>
-      <div class="hero-caption"><span>01 / OBSERVE</span><span>02 / EXPERIMENT</span><span>03 / DOCUMENT</span>{% include motion-control.html %}</div>
+      <div class="hero-caption">{% include motion-control.html %}</div>
     </div>
     <div class="analysis-stage" data-analysis-stage aria-hidden="true"><div class="analysis-tilt"><div class="analysis-figure">
-      <div class="figure-topline"><span>FIG. 01 / FOLLOW THE EXECUTION</span><span class="trace-label">TRACE / 001</span></div>
+      <div class="figure-topline"><span>입력에서 분석까지</span><span>EXECUTION TRACE</span></div>
       <svg class="layer-diagram" viewBox="0 0 440 340" fill="none">
         <defs><pattern id="grid" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M22 0H0V22" stroke="currentColor" opacity=".12"/></pattern></defs>
         <rect width="440" height="340" fill="url(#grid)"/>
@@ -42,20 +41,18 @@ nav: home
         <path class="ambient-signal hero-signal" pathLength="1" d="M92 237V183L220 119V183L330 238" />
         <g class="trace-nodes"><circle cx="92" cy="237" r="4"/><circle cx="220" cy="119" r="4"/><circle cx="330" cy="238" r="5"/></g>
         <circle class="trace-pulse" cx="330" cy="238" r="13"/>
-        <g fill="currentColor" font-family="monospace" font-size="10"><text x="298" y="98">LOOK CLOSER</text><text x="60" y="264">01 INPUT</text><text x="180" y="95">02 PARSE</text><text x="280" y="270">03 INSPECT</text></g>
+        <g fill="currentColor" font-family="monospace" font-size="10"><text x="60" y="264">INPUT</text><text x="180" y="95">PARSE</text><text x="280" y="270">INSPECT</text></g>
       </svg>
-      <div class="figure-bottomline"><span><i></i> INPUT → EXECUTION → INSIGHT</span><span>CONCEPTUAL TRACE</span></div>
-    </div></div><div class="figure-coordinate"><span>VIEW / ISOMETRIC</span><span>X: 220 · Y: 139</span></div></div>
+      <div class="figure-bottomline"><span>코드의 실행 경로를 따라가며 원인을 찾습니다.</span></div>
+    </div></div></div>
   </section>
   <div class="archive-strip">
-    <div><strong>{{ entry_count }}</strong><span>공개 기록</span></div>
-    <div><strong>{{ site.data.categories.size }}</strong><span>탐구 분야</span></div>
-    <div><strong>2025.09</strong><span>보안 공부의 시작</span></div>
-    <div><span class="strip-label">LAST ENTRY</span><strong>{{ latest_post.date | date: "%Y.%m.%d" }}</strong></div>
+    <p><strong>{{ entry_count }}개의 공개 기록</strong>을 읽을 수 있습니다.</p>
+    <p>최근 기록 <time datetime="{{ latest_post.date | date_to_xmlschema }}">{{ latest_post.date | date: "%Y.%m.%d" }}</time></p>
   </div>
   {% if spotlight_post %}
     <section class="case-study case-editorial" aria-labelledby="case-study-title">
-      <div class="case-heading"><span class="mono">FIELD REPORT / 01</span><span class="mono">SELECTED FROM THE ARCHIVE</span></div>
+      <div class="case-heading"><span>대표 분석</span></div>
       <div class="report-spread">
       <div class="case-grid">
         <figure class="case-evidence">
@@ -84,7 +81,7 @@ nav: home
             {% assign companion_count = companion_count | plus: 1 %}
             {% assign companion_category = site.data.categories | where: 'key', post.category_key | first %}
             <article class="report-companion">
-              <div class="companion-index"><span>0{{ companion_count | plus: 1 }} / FIELD NOTES</span><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time></div>
+              <div class="companion-index"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time></div>
               <p class="companion-context">{{ selection.context | escape }}</p>
               {% include category-badge.html category=companion_category %}
               <h3><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3>
@@ -101,7 +98,7 @@ nav: home
   {% endif %}
   <div class="home-columns">
     <section class="latest-notes">
-      <div class="section-heading"><div><p class="eyebrow">THE RESEARCH LOG</p><h2>최근 기록<span class="accent">.</span></h2></div><a class="text-link" href="{{ '/posts/' | relative_url }}">모든 글 보기 ↗</a></div>
+      <div class="section-heading"><h2>최근 기록<span class="accent">.</span></h2><a class="text-link" href="{{ '/posts/' | relative_url }}">모든 글 보기 ↗</a></div>
       <div class="post-list research-timeline">
         {% for post in site.posts limit: 6 %}
           {% assign category = site.data.categories | where: "key", post.category_key | first %}
