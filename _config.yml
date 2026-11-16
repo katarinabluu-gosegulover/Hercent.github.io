@@ -6,6 +6,8 @@ timezone: Asia/Seoul
 markdown: kramdown
 permalink: /posts/:slug/
 exclude:
+  - PRODUCT.md
+  - DESIGN.md
   - README.md
   - tests
   - test-results

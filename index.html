@@ -1,132 +1,32 @@
 ---
 layout: default
 title: Home
-page_description: Hercent의 보안 연구 노트. 취약점 분석, CTF 풀이, 직접 만든 도구와 학습 기록.
+page_description: 고요한 풍경 아래, 끝없이 궁금한 것들. Hercent의 공부와 실험 기록.
 nav: home
+body_class: winter-home
 ---
-{% assign latest_post = site.posts | first %}
-{% assign entry_count = site.posts.size | plus: site.data.standalone_pages.size %}
 {% assign spotlight = site.data.spotlight %}
-{% assign spotlight_post = site.posts | where: "url", spotlight.post_url | first %}
+{% assign spotlight_post = site.posts | where: 'url', spotlight.post_url | first %}
 <main>
-  <section class="research-hero hero-editorial">
-    <div class="hero-copy">
-      <h1>Under the<br><span>surface<span class="warm-dot">.</span></span></h1>
-      <p class="hero-statement">보이지 않는 원리를 파고드는 기록.</p>
-      <p class="hero-text">취약점의 원인을 따라가고, 코드를 직접 만들고, 문제를 풀며 배웁니다.<br class="desktop-break"> Hercent의 보안 공부와 실험을 담은 연구 노트입니다.</p>
-      <div class="hero-actions">
-        <a class="button button-primary" href="{{ '/posts/' | relative_url }}">연구 기록 살펴보기 <span aria-hidden="true">↗</span></a>
-        <a class="text-link" href="{{ '/about/' | relative_url }}">작성자 소개 <span aria-hidden="true">→</span></a>
-      </div>
-      <div class="hero-caption">{% include motion-control.html %}</div>
-    </div>
-    <div class="analysis-stage" data-analysis-stage aria-hidden="true"><div class="analysis-tilt"><div class="analysis-figure">
-      <div class="figure-topline"><span>입력에서 분석까지</span><span>EXECUTION TRACE</span></div>
-      <svg class="layer-diagram" viewBox="0 0 440 340" fill="none">
-        <defs><pattern id="grid" width="22" height="22" patternUnits="userSpaceOnUse"><path d="M22 0H0V22" stroke="currentColor" opacity=".12"/></pattern></defs>
-        <rect width="440" height="340" fill="url(#grid)"/>
-        <path d="M220 34v262M50 170h340" stroke="currentColor" stroke-dasharray="3 7" opacity=".2"/>
-        <g stroke="currentColor">
-          <path d="m220 153 148 74-148 74-148-74Z" opacity=".3" class="diagram-layer-back"/>
-          <path d="m220 109 148 74-148 74-148-74Z" opacity=".55" class="diagram-layer-mid"/>
-          <path d="m220 65 148 74-148 74-148-74Z" class="diagram-surface"/>
-          <path d="M72 139v88m296-88v88m-148-14v88" stroke-dasharray="4 5" opacity=".45"/>
-          <path d="M146 102l148 74M109 120l148 74M183 83l148 74M294 102l-148 74M331 120l-148 74M257 83l-148 74" opacity=".3"/>
-          <path d="m220 122 34 17-34 17-34-17Z" class="diagram-focus"/>
-          <path d="m254 139 42-33h72" class="diagram-callout"/>
-          <circle cx="220" cy="139" r="4" class="diagram-focus"/>
-        </g>
-        <path class="trace-guide" d="M92 237V183L220 119V183L330 238" />
-        <path class="trace-flow" pathLength="1" d="M92 237V183L220 119V183L330 238" />
-        <path class="ambient-signal hero-signal" pathLength="1" d="M92 237V183L220 119V183L330 238" />
-        <g class="trace-nodes"><circle cx="92" cy="237" r="4"/><circle cx="220" cy="119" r="4"/><circle cx="330" cy="238" r="5"/></g>
-        <circle class="trace-pulse" cx="330" cy="238" r="13"/>
-        <g fill="currentColor" font-family="monospace" font-size="10"><text x="60" y="264">INPUT</text><text x="180" y="95">PARSE</text><text x="280" y="270">INSPECT</text></g>
-      </svg>
-      <div class="figure-bottomline"><span>코드의 실행 경로를 따라가며 원인을 찾습니다.</span></div>
-    </div></div></div>
+  <section class="winter-hero" aria-labelledby="winter-title" data-winter-scene>
+    <div class="winter-scene scene-sunset" aria-hidden="true"></div><div class="winter-scene scene-night" aria-hidden="true"></div><div class="winter-sky" aria-hidden="true"></div>
+    <div class="winter-copy"><h1 id="winter-title">Beneath<br>the quiet<span class="profile-cursor">_</span></h1><p>고요한 풍경 아래, 끝없이 궁금한 것들.</p><div class="winter-actions"><a href="{{ '/posts/' | relative_url }}">기록 탐색 →</a><a href="{{ '/posts/#post-search' | relative_url }}"><kbd>/</kbd> 검색</a></div></div>
+    <div class="winter-controls">{% include motion-control.html %}{% include profile-cursor-control.html %}</div>
   </section>
-  <div class="archive-strip">
-    <p><strong>{{ entry_count }}개의 공개 기록</strong>을 읽을 수 있습니다.</p>
-    <p>최근 기록 <time datetime="{{ latest_post.date | date_to_xmlschema }}">{{ latest_post.date | date: "%Y.%m.%d" }}</time></p>
-  </div>
-  {% if spotlight_post %}
-    <section class="case-study case-editorial" aria-labelledby="case-study-title">
-      <div class="case-heading"><span>대표 분석</span></div>
-      <div class="report-spread">
-      <div class="case-grid">
-        <figure class="case-evidence">
-          <a href="{{ spotlight_post.url | relative_url }}"><img src="{{ spotlight.image | relative_url }}" alt="{{ spotlight.image_alt | escape }}" width="1400" height="900" loading="lazy"></a>
-          <figcaption>{{ spotlight.image_caption | escape }} <a href="{{ spotlight_post.url | relative_url }}">원문 ↗</a></figcaption>
-        </figure>
-        <div class="case-copy">
-          <p class="eyebrow">{{ spotlight.label | escape }}</p>
-          <h2 id="case-study-title"><a href="{{ spotlight_post.url | relative_url }}">{{ spotlight.headline }}</a></h2>
-          <p class="case-description">{{ spotlight.description | escape }}</p>
-          <a class="case-link" href="{{ spotlight_post.url | relative_url }}">분석 과정 읽기 <span aria-hidden="true">↗</span></a>
-          <dl class="case-metrics">
-            {% for metric in spotlight.metrics %}
-              <div><dt>{{ metric.label | escape }}</dt><dd>{{ metric.value | escape }}</dd></div>
-            {% endfor %}
-          </dl>
-        </div>
-      </div>
-      <aside class="report-companions" aria-label="주제별 추천 기록">
-        <p class="report-companions-label">다른 주제로 이어 읽기</p>
-        {% assign companion_count = 0 %}
-        {% for selection in site.data.reading_picks %}
-          {% assign post = site.posts | where: 'url', selection.url | first %}
-          {% if post %}
-          {% unless post.url == spotlight_post.url %}
-            {% assign companion_count = companion_count | plus: 1 %}
-            {% assign companion_category = site.data.categories | where: 'key', post.category_key | first %}
-            <article class="report-companion">
-              <div class="companion-index"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time></div>
-              <p class="companion-context">{{ selection.context | escape }}</p>
-              {% include category-badge.html category=companion_category %}
-              <h3><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3>
-              <p>{{ post.summary | default: post.page_description | default: post.excerpt | strip_html | strip_newlines | truncate: 95 | escape }}</p>
-              <a class="companion-link" href="{{ post.url | relative_url }}">기록 읽기 <span aria-hidden="true">↗</span></a>
-            </article>
-            {% if companion_count == 2 %}{% break %}{% endif %}
-          {% endunless %}
-          {% endif %}
-        {% endfor %}
-      </aside>
-      </div>
+  <div class="winter-content">
+    {% if spotlight_post %}
+    <section class="winter-feature" aria-labelledby="feature-title">
+      <div class="winter-section-head"><h2 id="feature-title">깊이 들여다본 기록</h2><span>Fuzzing / Debugging</span></div>
+      <div class="winter-feature-grid"><figure><a href="{{ spotlight_post.url | relative_url }}"><img src="{{ spotlight.image | relative_url }}" alt="{{ spotlight.image_alt | escape }}" width="1400" height="900" loading="lazy"></a><figcaption>{{ spotlight.image_caption | escape }}</figcaption></figure><div><h3><a href="{{ spotlight_post.url | relative_url }}">{{ spotlight.headline }}</a></h3><p>{{ spotlight.description | escape }}</p><a class="winter-feature-link" href="{{ spotlight_post.url | relative_url }}">분석 과정 읽기 →</a></div></div>
     </section>
-  {% endif %}
-  <div class="home-columns">
-    <section class="latest-notes">
-      <div class="section-heading"><h2>최근 기록<span class="accent">.</span></h2><a class="text-link" href="{{ '/posts/' | relative_url }}">모든 글 보기 ↗</a></div>
-      <div class="post-list research-timeline">
-        {% for post in site.posts limit: 6 %}
-          {% assign category = site.data.categories | where: "key", post.category_key | first %}
-          {% assign preview = post.summary | default: post.page_description | default: post.excerpt | strip_html | strip_newlines | strip %}
-          <article class="note-row">
-            <span class="note-number" aria-hidden="true">{{ forloop.index | prepend: '0' }}</span>
-            <div>
-              <div class="kicker-row">{% include category-badge.html category=category %}<time class="post-meta" datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%Y.%m.%d" }}</time></div>
-              <h3><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3>
-              <p>{{ preview | truncate: 110 | escape }}</p>
-            </div>
-            <a class="row-arrow" href="{{ post.url | relative_url }}" aria-label="{{ post.title | escape }} 읽기">↗</a>
-          </article>
-        {% endfor %}
-      </div>
-    </section>
-    <aside class="research-sidebar">
-      <section class="profile-card terminal-profile">
-        <div class="terminal-titlebar"><span class="terminal-window-marks" aria-hidden="true"><i></i><i></i><i></i></span><span>hercent / identity</span></div>
-        <div class="profile-label"><p class="eyebrow">BEHIND THE NOTES</p>{% include profile-cursor-control.html %}</div>
-        <p class="profile-command"><span aria-hidden="true">$ </span>whoami</p>
-        <div class="profile-identity"><img src="https://github.com/katarinabluu-gosegulover.png?size=120" alt="Hercent GitHub 프로필" width="52" height="52"><div><h2>Hercent<span class="profile-cursor" aria-hidden="true">_</span></h2><p>목진서 · Jinseo Mok</p></div></div>
-        <p>인하대학교 전기전자공학부.<br>문제가 풀린 다음, 왜 풀렸는지까지 이해하고 싶은 보안 학습자입니다.</p>
-        <dl class="profile-facts"><div><dt>ROLE</dt><dd>보안 학습자</dd></div><div><dt>ARCHIVE</dt><dd>{{ entry_count }}개의 공개 기록</dd></div><div><dt>FOCUS</dt><dd>취약점 분석 · 도구 제작 · 문제 풀이</dd></div></dl>
-        <div class="profile-links"><a href="https://github.com/katarinabluu-gosegulover">GitHub ↗</a><a href="https://dreamhack.io/users/16471">Dreamhack ↗</a></div>
+    {% endif %}
+    <div class="winter-columns">
+      <section class="winter-latest" aria-labelledby="latest-title"><h2 id="latest-title">최근 기록</h2>
+        {% for post in site.posts limit: 6 %}{% assign category = site.data.categories | where: 'key', post.category_key | first %}
+        <article><div class="winter-meta"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time>{% if category %}<a href="{{ category.path | relative_url }}">{{ category.title | escape }}</a>{% endif %}</div><h3><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3><p>{{ post.summary | default: post.page_description | default: post.excerpt | strip_html | strip_newlines | truncate: 110 | escape }}</p></article>
+        {% endfor %}<a class="winter-all" href="{{ '/posts/' | relative_url }}">전체 기록 탐색 →</a>
       </section>
-      <div class="margin-note"><span class="mono">A NOTE TO SELF</span><p>정답보다 오래 남는 것은<br>거기까지 도달한 과정.</p></div>
-    </aside>
+      <aside class="winter-identity" aria-label="작성자와 주제 탐색"><div class="winter-monogram" aria-hidden="true">h_</div><div class="winter-author"><img src="https://github.com/katarinabluu-gosegulover.png?size=120" alt="Hercent GitHub 프로필" width="44" height="44" loading="lazy"><h2>Hercent</h2></div><p>문제가 풀린 다음,<br>왜 풀렸는지까지 이해하고 싶은 보안 학습자입니다.</p><a href="https://github.com/katarinabluu-gosegulover">GitHub ↗</a><a href="{{ '/about/' | relative_url }}">작성자 소개 →</a><section class="winter-topics"><h3>주제로 탐색</h3>{% for category in site.data.categories %}<a href="{{ category.path | relative_url }}">{{ category.title | escape }} →</a>{% endfor %}</section></aside>
+    </div><p class="winter-ending">정답보다 오래 남는 것은, 거기까지 도달한 과정.</p>
   </div>
-  {% include research-map.html %}
 </main>

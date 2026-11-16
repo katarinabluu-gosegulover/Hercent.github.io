@@ -3,7 +3,7 @@
   if (!controls.length) return;
   const preference = matchMedia('(prefers-reduced-motion: reduce)');
   const root = document.documentElement;
-  const regions = [...document.querySelectorAll('[data-analysis-stage],.research-map')];
+  const regions = [...document.querySelectorAll('[data-analysis-stage],.research-map,[data-winter-scene]')];
   const visible = new Set();
   let enabled = true;
   try { enabled = localStorage.getItem('hercent-ambient-enabled') !== 'false'; } catch (_) {}

@@ -1,0 +1,75 @@
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const path = require('node:path');
+const http = require('node:http');
+const { chromium } = require('playwright');
+const root = path.resolve(__dirname, '../_site');
+const output = path.resolve(__dirname, '../test-results');
+const prefix = '/Hercent.github.io';
+const mime = {'.css':'text/css','.js':'text/javascript','.html':'text/html','.woff2':'font/woff2','.webp':'image/webp','.png':'image/png'};
+const server = http.createServer((req,res) => {
+  const rel = decodeURIComponent(new URL(req.url,'http://localhost').pathname).replace(/^\/Hercent\.github\.io(?=\/|$)/,'');
+  let file = path.resolve(root, '.' + rel);
+  if (!file.startsWith(root + path.sep) && file !== root) return res.writeHead(403).end();
+  if (fs.existsSync(file) && fs.statSync(file).isDirectory()) file = path.join(file,'index.html');
+  if (!fs.existsSync(file)) return res.writeHead(404).end();
+  res.setHeader('Content-Type',mime[path.extname(file)] || 'application/octet-stream'); fs.createReadStream(file).pipe(res);
+});
+(async () => {
+  await new Promise(resolve => server.listen(0,'127.0.0.1',resolve));
+  const base = process.env.SITE_URL?.replace(/\/$/,'') || `http://127.0.0.1:${server.address().port}${prefix}`;
+  const browser = await chromium.launch({channel:'msedge',headless:true});
+  fs.mkdirSync(output,{recursive:true});
+  try {
+    const context = await browser.newContext({viewport:{width:1440,height:1000}});
+    const page = await context.newPage(); const errors = [];
+    page.on('pageerror',e => errors.push(e.message));
+    const visit = async route => { assert.equal((await page.goto(base+route,{waitUntil:'networkidle'})).status(),200); };
+    const noOverflow = async () => assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth+1),page.url());
+    await visit('/');
+    await page.evaluate(() => document.fonts.ready);
+    assert(await page.evaluate(() => document.fonts.check('24px NeoCode')));
+    assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
+    assert.equal(await page.locator('.winter-latest article').count(),6);
+    const dates = await page.locator('.winter-meta time').evaluateAll(els=>els.map(el=>el.dateTime));
+    assert.deepEqual(dates,[...dates].sort().reverse());
+    for (const href of await page.locator('.winter-content a').evaluateAll(els=>[...new Set(els.map(el=>el.href))].filter(url=>url.startsWith(location.origin)))) assert.equal((await context.request.get(href)).status(),200,href);
+    assert.equal((await context.request.get(base+'/assets/winter/landscape.webp')).status(),200);
+    await page.screenshot({path:path.join(output,'beta-light.png'),fullPage:true});
+    await page.locator('[data-theme-toggle]').click();
+    await page.waitForFunction(()=>getComputedStyle(document.querySelector('.scene-night')).opacity==='1');
+    await page.waitForFunction(()=>document.querySelector('.winter-hero').classList.contains('ambient-running'));
+    assert.equal(await page.locator('.winter-sky').evaluate(el=>getComputedStyle(el).animationPlayState),'running');
+    await page.screenshot({path:path.join(output,'beta-dark.png'),fullPage:true});
+    await page.locator('[data-motion-toggle]').click();
+    assert.equal(await page.locator('html').evaluate(el=>el.classList.contains('ambient-enabled')),false);
+    await page.reload({waitUntil:'networkidle'});
+    assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');
+    assert.equal(await page.locator('[data-motion-toggle]').getAttribute('aria-pressed'),'false');
+    await page.locator('[data-motion-toggle]').click();
+    await page.emulateMedia({reducedMotion:'reduce'});
+    await page.waitForFunction(()=>document.querySelector('[data-motion-toggle]').disabled);
+    assert(await page.locator('[data-motion-toggle]').isDisabled());
+    assert.equal(await page.locator('.winter-sky').evaluate(el=>getComputedStyle(el).animationName),'none');
+    for (const width of [360,390,768,1024,1920]) { await page.setViewportSize({width,height:900}); await noOverflow(); if(width===390) await page.screenshot({path:path.join(output,'beta-mobile.png'),fullPage:true}); }
+    await page.setViewportSize({width:1440,height:1000});
+    await page.keyboard.press('/'); await page.waitForURL('**/posts/#post-search');
+    const search = page.locator('[data-post-search]'); await search.fill('fuzzing');
+    assert(await page.locator('.post-row:visible').count()>0);
+    await search.fill('no-such-entry-92837'); assert.equal(await page.locator('.post-row:visible').count(),0);
+    await search.fill(''); const total=await page.locator('.post-row').count(); assert(total>30);
+    await page.addInitScript(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async text=>{window.__copy=text;}}}));
+    await visit('/posts/fuzzing-101-3-chall/');
+    assert(await page.locator('[data-reading-sidebar]').isVisible());
+    assert.equal(await page.locator('[data-toc-list] a').count(),await page.locator('.article-body h2,.article-body h3').count());
+    const code=page.locator('.code-block').first(); await code.locator('.copy-code').click();
+    assert.equal(await page.evaluate(()=>window.__copy),await code.locator('pre').textContent());
+    assert(await page.locator('.related-card').count()>0);
+    await page.locator('.image-zoom').first().click(); assert(await page.locator('.image-viewer').isVisible()); await page.keyboard.press('Escape');
+    for (const route of ['/posts/','/categories/','/about/','/posts/ethernaut-writeups/']) { await visit(route); await noOverflow(); await page.setViewportSize({width:390,height:844}); await noOverflow(); await page.setViewportSize({width:1440,height:1000}); }
+    const nojs=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:844}}); const staticPage=await nojs.newPage(); await staticPage.goto(base+'/');
+    assert(await staticPage.locator('.winter-feature-link').isVisible()); assert.equal(await staticPage.locator('.winter-latest article').count(),6); assert(await staticPage.locator('[data-motion-toggle]').isHidden());
+    assert.deepEqual(errors,[]);
+    console.log(`PASS: beta themes, font, links, ${total} entries, search, TOC, code copy, image viewer, motion persistence, reduced motion, no-JS, 360–1920px layouts.`);
+  } finally { await browser.close(); server.close(); }
+})().catch(e=>{console.error(e);server.close();process.exitCode=1;});
