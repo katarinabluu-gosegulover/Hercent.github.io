@@ -15,7 +15,8 @@
       button.hidden = false;
       button.disabled = preference.matches;
       button.setAttribute('aria-pressed', String(allowed));
-      button.textContent = preference.matches ? '동작 줄임' : enabled ? '모션 켬' : '모션 끔';
+      button.textContent = preference.matches ? 'Motion: Reduced' : enabled ? 'Motion: On' : 'Motion: Off';
+      button.title = 'Animate sky light and the scroll arrow';
     });
   };
   controls.forEach(button => button.addEventListener('click', () => {
@@ -32,6 +33,14 @@
   }
   preference.addEventListener('change', render);
   document.addEventListener('visibilitychange', render);
+  document.querySelector('[data-scroll-records]')?.addEventListener('click', event => {
+    const target = document.getElementById('winter-records');
+    if (!target) return;
+    event.preventDefault();
+    target.focus({ preventScroll: true });
+    target.scrollIntoView({ behavior: enabled && !preference.matches ? 'smooth' : 'instant', block: 'start' });
+    history.replaceState(null, '', '#winter-records');
+  });
   const map = document.querySelector('.research-map');
   if (map) {
     const nodes = [...map.querySelectorAll('.map-node')];

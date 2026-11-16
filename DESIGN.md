@@ -6,6 +6,10 @@ Run `tests/winter-smoke.cjs` for this release. `tests/smoke.cjs` retains the pre
 
 ## Previous Direction (Historical)
 
+### Beta v1.0 polish
+
+Desktop uses separate 1774x887 sunset/night WebP scenes (native generated resolution, not claimed as 4K). Mobile keeps the original portrait composition via `landscape.webp`. Do not reuse the half-width mobile image for desktop. Preserve opacity crossfades except when reduced motion is requested. Motion controls animate sky illumination and the scroll invitation; they do not play a landscape video. Keep native wheel/touch scrolling; only the explicit scroll link requests smooth navigation. English Motion/Cursor controls remain separate. Archive filter labels sit above 44px controls on a shared baseline; wrap to stacked groups on mobile.
+
 This is a reading-first security study archive, not a simulated security dashboard. The homepage should help visitors find real notes and understand the author's approach before it shows decorative interface details.
 
 ## Keep

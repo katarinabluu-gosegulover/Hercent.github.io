@@ -12,8 +12,9 @@ body_class: winter-home
     <div class="winter-scene scene-sunset" aria-hidden="true"></div><div class="winter-scene scene-night" aria-hidden="true"></div><div class="winter-sky" aria-hidden="true"></div>
     <div class="winter-copy"><h1 id="winter-title">Beneath<br>the quiet<span class="profile-cursor">_</span></h1><p>고요한 풍경 아래, 끝없이 궁금한 것들.</p><div class="winter-actions"><a href="{{ '/posts/' | relative_url }}">기록 탐색 →</a><a href="{{ '/posts/#post-search' | relative_url }}"><kbd>/</kbd> 검색</a></div></div>
     <div class="winter-controls">{% include motion-control.html %}{% include profile-cursor-control.html %}</div>
+    <a class="winter-scroll" href="#winter-records" data-scroll-records aria-label="아래 연구 기록으로 이동"><span>SCROLL</span><svg width="24" height="28" viewBox="0 0 24 28" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v20m-7-7 7 7 7-7"/></svg></a>
   </section>
-  <div class="winter-content">
+  <div class="winter-content" id="winter-records" tabindex="-1">
     {% if spotlight_post %}
     <section class="winter-feature" aria-labelledby="feature-title">
       <div class="winter-section-head"><h2 id="feature-title">깊이 들여다본 기록</h2><span>Fuzzing / Debugging</span></div>
@@ -26,7 +27,7 @@ body_class: winter-home
         <article><div class="winter-meta"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time>{% if category %}<a href="{{ category.path | relative_url }}">{{ category.title | escape }}</a>{% endif %}</div><h3><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3><p>{{ post.summary | default: post.page_description | default: post.excerpt | strip_html | strip_newlines | truncate: 110 | escape }}</p></article>
         {% endfor %}<a class="winter-all" href="{{ '/posts/' | relative_url }}">전체 기록 탐색 →</a>
       </section>
-      <aside class="winter-identity" aria-label="작성자와 주제 탐색"><div class="winter-monogram" aria-hidden="true">h_</div><div class="winter-author"><img src="https://github.com/katarinabluu-gosegulover.png?size=120" alt="Hercent GitHub 프로필" width="44" height="44" loading="lazy"><h2>Hercent</h2></div><p>문제가 풀린 다음,<br>왜 풀렸는지까지 이해하고 싶은 보안 학습자입니다.</p><a href="https://github.com/katarinabluu-gosegulover">GitHub ↗</a><a href="{{ '/about/' | relative_url }}">작성자 소개 →</a><section class="winter-topics"><h3>주제로 탐색</h3>{% for category in site.data.categories %}<a href="{{ category.path | relative_url }}">{{ category.title | escape }} →</a>{% endfor %}</section></aside>
+      <aside class="winter-identity" aria-label="작성자와 주제 탐색"><div class="winter-author"><img src="https://github.com/katarinabluu-gosegulover.png?size=120" alt="Hercent GitHub 프로필" width="44" height="44" loading="lazy"><h2>Hercent</h2></div><p>문제가 풀린 다음,<br>왜 풀렸는지까지 이해하고 싶은 보안 학습자입니다.</p><a href="https://github.com/katarinabluu-gosegulover">GitHub ↗</a><a href="{{ '/about/' | relative_url }}">작성자 소개 →</a><section class="winter-topics"><h3>주제로 탐색</h3>{% for category in site.data.categories %}<a href="{{ category.path | relative_url }}">{{ category.title | escape }} →</a>{% endfor %}</section></aside>
     </div><p class="winter-ending">정답보다 오래 남는 것은, 거기까지 도달한 과정.</p>
   </div>
 </main>

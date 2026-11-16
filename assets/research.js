@@ -57,7 +57,8 @@
         button.hidden = false;
         button.disabled = motionPreference.matches;
         button.setAttribute("aria-pressed", String(enabled));
-        button.textContent = motionPreference.matches ? "동작 줄임" : enabled ? "커서 켬" : "커서 끔";
+        button.textContent = motionPreference.matches ? "Cursor: Reduced" : enabled ? "Cursor: On" : "Cursor: Off";
+        button.title = "Blink the logo and headline cursor";
       });
     };
     cursorControls.forEach((button) => button.addEventListener("click", () => {

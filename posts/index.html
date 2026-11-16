@@ -25,11 +25,11 @@ permalink: /posts/
   </div>
   <p class="empty-state" data-search-empty hidden>검색 결과가 없습니다. 다른 키워드로 찾아보세요.</p>
   <div class="archive-filters" data-archive-filters hidden>
-    <label>분류 <select data-category-filter><option value="">모든 분류</option>{% for category in site.data.categories %}<option value="{{ category.key | escape }}">{{ category.title | escape }}</option>{% endfor %}</select></label>
+    <label><span>분류</span><select data-category-filter><option value="">모든 분류</option>{% for category in site.data.categories %}<option value="{{ category.key | escape }}">{{ category.title | escape }}</option>{% endfor %}</select></label>
     <fieldset><legend>주제 · 여러 개 선택하면 모두 포함된 글</legend>
       {% capture topic_values %}{% for post in site.posts %}{% for topic in post.topics %}{{ topic }}|{% endfor %}{% endfor %}{% endcapture %}
       {% assign all_topics = topic_values | split: '|' | uniq | sort %}
-      {% for topic in all_topics %}{% unless topic == '' %}<button type="button" data-topic-filter="{{ topic | escape }}" aria-pressed="false">{{ topic | escape }}</button>{% endunless %}{% endfor %}
+      <div class="topic-filter-options">{% for topic in all_topics %}{% unless topic == '' %}<button type="button" data-topic-filter="{{ topic | escape }}" aria-pressed="false">{{ topic | escape }}</button>{% endunless %}{% endfor %}</div>
     </fieldset>
     <button type="button" data-filter-reset>검색·필터 초기화</button>
     <p>주제 태그는 확인된 글부터 정리 중입니다. 태그를 선택하지 않으면 미분류 글도 모두 표시됩니다.</p>

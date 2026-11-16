@@ -30,6 +30,21 @@ const server = http.createServer((req,res) => {
     await page.evaluate(() => document.fonts.ready);
     assert(await page.evaluate(() => document.fonts.check('24px NeoCode')));
     assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
+    assert.equal(await page.locator('.winter-monogram').count(),0);
+    assert((await page.locator('.scene-sunset').evaluate(el=>getComputedStyle(el).backgroundImage)).includes('sunset-desktop.webp'));
+    assert.equal(await page.locator('[data-motion-toggle]').textContent(),'Motion: On');
+    assert.equal(await page.locator('[data-cursor-toggle]').textContent(),'Cursor: On');
+    await page.waitForFunction(()=>getComputedStyle(document.querySelector('.winter-scroll svg')).animationPlayState==='running');
+    const arrowTransform=await page.locator('.winter-scroll svg').evaluate(el=>getComputedStyle(el).transform);
+    await page.waitForFunction(previous=>getComputedStyle(document.querySelector('.winter-scroll svg')).transform!==previous,arrowTransform);
+    await page.locator('[data-scroll-records]').click();
+    await page.waitForFunction(()=>{
+      const target=document.getElementById('winter-records');
+      const offset=parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop)+parseFloat(getComputedStyle(target).scrollMarginTop);
+      return Math.abs(target.getBoundingClientRect().top-offset)<3;
+    });
+    assert(await page.locator('#winter-records').evaluate(el=>document.activeElement===el));
+    await page.evaluate(()=>scrollTo({top:0,behavior:'instant'}));
     assert.equal(await page.locator('.winter-latest article').count(),6);
     const dates = await page.locator('.winter-meta time').evaluateAll(els=>els.map(el=>el.dateTime));
     assert.deepEqual(dates,[...dates].sort().reverse());
@@ -43,6 +58,7 @@ const server = http.createServer((req,res) => {
     await page.screenshot({path:path.join(output,'beta-dark.png'),fullPage:true});
     await page.locator('[data-motion-toggle]').click();
     assert.equal(await page.locator('html').evaluate(el=>el.classList.contains('ambient-enabled')),false);
+    assert.equal(await page.locator('.winter-scroll svg').evaluate(el=>getComputedStyle(el).animationName),'none');
     await page.reload({waitUntil:'networkidle'});
     assert.equal(await page.locator('html').getAttribute('data-theme'),'dark');
     assert.equal(await page.locator('[data-motion-toggle]').getAttribute('aria-pressed'),'false');
@@ -51,13 +67,25 @@ const server = http.createServer((req,res) => {
     await page.waitForFunction(()=>document.querySelector('[data-motion-toggle]').disabled);
     assert(await page.locator('[data-motion-toggle]').isDisabled());
     assert.equal(await page.locator('.winter-sky').evaluate(el=>getComputedStyle(el).animationName),'none');
-    for (const width of [360,390,768,1024,1920]) { await page.setViewportSize({width,height:900}); await noOverflow(); if(width===390) await page.screenshot({path:path.join(output,'beta-mobile.png'),fullPage:true}); }
+    for (const width of [360,390,768,1024,1920]) {
+      await page.setViewportSize({width,height:900}); await noOverflow();
+      const scene=await page.locator('.scene-sunset').evaluate(el=>getComputedStyle(el).backgroundImage);
+      assert(scene.includes(width<=760?'landscape.webp':'sunset-desktop.webp'));
+      if(width===390) await page.screenshot({path:path.join(output,'beta-mobile.png'),fullPage:true});
+    }
     await page.setViewportSize({width:1440,height:1000});
     await page.keyboard.press('/'); await page.waitForURL('**/posts/#post-search');
     const search = page.locator('[data-post-search]'); await search.fill('fuzzing');
     assert(await page.locator('.post-row:visible').count()>0);
     await search.fill('no-such-entry-92837'); assert.equal(await page.locator('.post-row:visible').count(),0);
     await search.fill(''); const total=await page.locator('.post-row').count(); assert(total>30);
+    const boxes=await page.locator('[data-category-filter],[data-topic-filter],[data-filter-reset]').evaluateAll(els=>els.map(el=>({bottom:el.getBoundingClientRect().bottom,height:el.getBoundingClientRect().height})));
+    assert(boxes.every(box=>box.height===44));
+    assert(Math.max(...boxes.map(b=>b.bottom))-Math.min(...boxes.map(b=>b.bottom))<2,'Desktop filter baseline');
+    await page.screenshot({path:path.join(output,'beta-filters-desktop.png')});
+    await page.setViewportSize({width:390,height:844}); await noOverflow();
+    await page.locator('[data-archive-filters]').screenshot({path:path.join(output,'beta-filters-mobile.png')});
+    await page.setViewportSize({width:1440,height:1000});
     await page.addInitScript(()=>Object.defineProperty(navigator,'clipboard',{configurable:true,value:{writeText:async text=>{window.__copy=text;}}}));
     await visit('/posts/fuzzing-101-3-chall/');
     assert(await page.locator('[data-reading-sidebar]').isVisible());
