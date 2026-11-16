@@ -16,7 +16,7 @@ Desktop has separate native 1774x887 sunset/night WebP images. Mobile keeps the 
 
 `winter-weather.js` renders snow and night-only aurora at up to 30 fps. Mobile uses 36 particles and 1x resolution; desktop uses 80 particles and at most 1.5x. Motion Off, reduced motion, hidden tabs and offscreen heroes stop rendering. This is procedural animation over a still image, not video. The subtle CSS sky light supports, rather than competes with, the canvas aurora.
 
-Keep native wheel/touch scrolling. Only the explicit scroll link requests smooth navigation. Motion and Cursor controls are separate, in English, with persistent preferences. Theme icons show the destination theme.
+Keep native wheel/touch scrolling. Only the explicit scroll link requests smooth navigation. Motion and Cursor controls are separate, in English, with persistent preferences. Theme icons show the current theme: sun for light, moon for dark. Accessible button labels describe the action (the destination theme).
 
 ## Craft Rules
 

@@ -30,7 +30,14 @@ const server = http.createServer((req,res) => {
     await page.evaluate(() => document.fonts.ready);
     assert(await page.evaluate(() => document.fonts.check('24px NeoCode')));
     assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
+    assert(await page.locator('.theme-sun').isVisible());
+    assert(await page.locator('.theme-moon').isHidden());
+    await page.locator('[data-theme-toggle]').click();
     assert(await page.locator('.theme-moon').isVisible());
+    assert(await page.locator('.theme-sun').isHidden());
+    await page.locator('[data-theme-toggle]').click();
+    assert(await page.locator('.theme-sun').isVisible());
+    assert(await page.locator('.theme-moon').isHidden());
     assert.equal(await page.locator('.theme-toggle').evaluate(el=>el.getBoundingClientRect().height),44);
     assert.equal(await page.locator('.winter-monogram').count(),0);
     assert((await page.locator('.scene-sunset').evaluate(el=>getComputedStyle(el).backgroundImage)).includes('sunset-desktop.webp'));
@@ -62,7 +69,8 @@ const server = http.createServer((req,res) => {
     await page.screenshot({path:path.join(output,'beta-light.png'),fullPage:true});
     await page.locator('[data-theme-toggle]').click();
     await page.waitForFunction(()=>getComputedStyle(document.querySelector('.scene-night')).opacity==='1');
-    assert(await page.locator('.theme-sun').isVisible());
+    assert(await page.locator('.theme-moon').isVisible());
+    assert(await page.locator('.theme-sun').isHidden());
     assert.equal(await page.locator('meta[name="theme-color"]').getAttribute('content'),'#0a1c28');
     await page.waitForFunction(()=>document.querySelector('.winter-hero').classList.contains('ambient-running'));
     assert.equal(await page.locator('.winter-sky').evaluate(el=>getComputedStyle(el).animationPlayState),'running');

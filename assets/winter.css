@@ -94,9 +94,11 @@ body{font-synthesis:none}h1,h2,h3,.brand,.site-nav,.site-footer,.button,.text-li
 
 /* Reading and control polish: retain the winter/pixel identity without shrinking prose. */
 .theme-toggle { width:44px; height:44px; flex:0 0 44px; }
-.theme-toggle .theme-sun { display:none; }
-:root[data-theme="dark"] .theme-toggle .theme-sun { display:block; }
-:root[data-theme="dark"] .theme-toggle .theme-moon { display:none; }
+.theme-toggle .theme-sun { display:block; }
+.theme-toggle .theme-moon { display:none; }
+:root[data-theme="dark"] .theme-toggle .theme-sun { display:none; }
+:root[data-theme="dark"] .theme-toggle .theme-moon { display:block; }
+.theme-toggle svg { width:24px; height:24px; }
 .theme-toggle:hover { background:var(--raised); }
 .winter-home .theme-toggle:hover { background:#071a28d9; }
 .site-nav a { display:inline-flex; align-items:center; min-height:44px; }
