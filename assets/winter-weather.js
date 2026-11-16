@@ -73,7 +73,13 @@
     frame = requestAnimationFrame(tick);
   };
   const sync = () => {
-    if (active()) { if (!frame) { last = 0; frame = requestAnimationFrame(tick); } }
+    if (active()) {
+      if (!frame) {
+        last = 0;
+        night = root.dataset.theme === 'dark' ? 1 : 0;
+        frame = requestAnimationFrame(tick);
+      }
+    }
     else { cancelAnimationFrame(frame); frame = 0; last = 0; ctx.clearRect(0, 0, width, height); }
   };
   resize();

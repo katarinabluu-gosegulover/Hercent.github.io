@@ -1,33 +1,33 @@
-# Hercent design direction — Beta v1.0
+# Hercent — Winter Beta v1.0
 
-The owner-approved winter preview supersedes the previous homepage direction below. Use sunset / aurora landscapes, warm paper / deep blue reading surfaces, NeoDunggeunmo Code for Korean and English display text, and sans serif for long prose. Homepage sequence: landscape, real featured analysis, newest-first notes with author/topic sidebar. All article links and metadata come from Jekyll data. Background artwork is generated, not a photograph of an identified location. A subtle sky-light animation is optional; no video or moving landscape is implied.
+The owner approved a winter landscape with a subtle hacker identity. Preserve this direction during polish; do not restore the older terminal/diagram homepage.
 
-Run `tests/winter-smoke.cjs` for this release. `tests/smoke.cjs` retains the previous diagram-era regression suite and includes obsolete homepage selectors.
+## Visual System
 
-## Previous Direction (Historical)
+- Light: coral sunset, snowy trees and frozen river; warm paper reading surface.
+- Dark: the matching night scene with aurora; deep blue reading surface.
+- NeoDunggeunmo Code for Korean/English display text and navigation; IBM Plex Sans KR for long prose; IBM Plex Mono for code.
+- Homepage sequence: landscape, real featured analysis, newest-first notes, author/topic sidebar.
+- Real post titles, dates, links and images come from Jekyll data. Background artwork is generated, not a photograph of an identified location.
 
-### Beta v1.0 polish
+## Imagery And Motion
 
-Weather layer: `winter-weather.js` draws drifting snow and night-only aurora curtains on a decorative canvas, capped at 30 fps. Mobile uses 36 particles and 1x canvas scale; desktop uses 80 particles and at most 1.5x. Motion Off, reduced motion, hidden tabs and offscreen heroes stop rendering and clear the layer. Theme changes interpolate aurora intensity without moving the landscape. This is procedural animation over the still background, not a video.
+Desktop has separate native 1774x887 sunset/night WebP images. Mobile keeps the original portrait composition via `landscape.webp`. Do not stretch half the mobile comparison image across desktop. Preserve theme crossfades unless reduced motion is enabled.
 
-Desktop uses separate 1774x887 sunset/night WebP scenes (native generated resolution, not claimed as 4K). Mobile keeps the original portrait composition via `landscape.webp`. Do not reuse the half-width mobile image for desktop. Preserve opacity crossfades except when reduced motion is requested. Motion controls animate sky illumination and the scroll invitation; they do not play a landscape video. Keep native wheel/touch scrolling; only the explicit scroll link requests smooth navigation. English Motion/Cursor controls remain separate. Archive filter labels sit above 44px controls on a shared baseline; wrap to stacked groups on mobile.
+`winter-weather.js` renders snow and night-only aurora at up to 30 fps. Mobile uses 36 particles and 1x resolution; desktop uses 80 particles and at most 1.5x. Motion Off, reduced motion, hidden tabs and offscreen heroes stop rendering. This is procedural animation over a still image, not video. The subtle CSS sky light supports, rather than competes with, the canvas aurora.
 
-This is a reading-first security study archive, not a simulated security dashboard. The homepage should help visitors find real notes and understand the author's approach before it shows decorative interface details.
+Keep native wheel/touch scrolling. Only the explicit scroll link requests smooth navigation. Motion and Cursor controls are separate, in English, with persistent preferences. Theme icons show the destination theme.
 
-## Keep
+## Craft Rules
 
-- Dark ink background, sharp green and orange accents, Korean body copy, and the existing technical diagram as a restrained illustration of the learning process.
-- Actual post dates, categories, working links, reduced-motion support, and the GitHub-linked profile image.
-- Real case-study evidence and excerpts from published posts as the main visual material.
-
-## Avoid
-
-- Fake telemetry, decorative coordinates, numbered sections without a sequence, and repeated all-caps labels that do not aid navigation.
-- Metric tiles in the hero, heavy hard-offset shadows, and extra frames around content already separated by spacing.
-- Decorative motion that obscures reading or ignores reduced-motion preferences.
+- Preserve clear text over scenery; effects never capture pointer input.
+- Controls use at least 44px targets where possible. Archive filters share 44px input heights and aligned baselines, stacking on mobile.
+- Search inputs and mobile article prose are at least 16px. Pixel styling is not a reason to shrink long text.
+- No fake telemetry, extra profile monograms, terminal windows, or decorative metrics.
+- Keep keyboard focus, no-JS reading, working links, image viewing, code copy and table of contents.
 
 ## Verification
 
-Review the rendered homepage at desktop and mobile widths. Check that the article list and calls to action remain prominent and that the first viewport has a clear reading order. Run the Jekyll build and `tests/smoke.cjs` after changes.
+Build with Jekyll and run `tests/winter-smoke.cjs`. Review desktop/mobile captures in both themes. The older `tests/smoke.cjs` contains obsolete diagram-era homepage selectors; do not treat it as the current homepage contract.
 
-Impeccable project skill: `.agents/skills/impeccable/SKILL.md`. Design guidance is adapted from its `reference/craft-floor.md` and a review of `index.html` and `assets/research.css`.
+Guidance: `.agents/skills/impeccable/reference/polish.md` and `reference/craft-floor.md`. The user's pinned landscape and pixel-font choices remain the visual authority.

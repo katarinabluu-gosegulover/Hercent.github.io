@@ -30,6 +30,8 @@ const server = http.createServer((req,res) => {
     await page.evaluate(() => document.fonts.ready);
     assert(await page.evaluate(() => document.fonts.check('24px NeoCode')));
     assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
+    assert(await page.locator('.theme-moon').isVisible());
+    assert.equal(await page.locator('.theme-toggle').evaluate(el=>el.getBoundingClientRect().height),44);
     assert.equal(await page.locator('.winter-monogram').count(),0);
     assert((await page.locator('.scene-sunset').evaluate(el=>getComputedStyle(el).backgroundImage)).includes('sunset-desktop.webp'));
     assert.equal(await page.locator('[data-motion-toggle]').textContent(),'Motion: On');
@@ -60,6 +62,8 @@ const server = http.createServer((req,res) => {
     await page.screenshot({path:path.join(output,'beta-light.png'),fullPage:true});
     await page.locator('[data-theme-toggle]').click();
     await page.waitForFunction(()=>getComputedStyle(document.querySelector('.scene-night')).opacity==='1');
+    assert(await page.locator('.theme-sun').isVisible());
+    assert.equal(await page.locator('meta[name="theme-color"]').getAttribute('content'),'#0a1c28');
     await page.waitForFunction(()=>document.querySelector('.winter-hero').classList.contains('ambient-running'));
     assert.equal(await page.locator('.winter-sky').evaluate(el=>getComputedStyle(el).animationPlayState),'running');
     await page.waitForFunction(()=>{
@@ -79,7 +83,7 @@ const server = http.createServer((req,res) => {
     await page.waitForFunction(()=>document.querySelector('[data-motion-toggle]').disabled);
     assert(await page.locator('[data-motion-toggle]').isDisabled());
     assert.equal(await page.locator('.winter-sky').evaluate(el=>getComputedStyle(el).animationName),'none');
-    for (const width of [360,390,768,1024,1920]) {
+    for (const width of [320,360,390,768,1024,1920]) {
       await page.setViewportSize({width,height:900}); await noOverflow();
       const scene=await page.locator('.scene-sunset').evaluate(el=>getComputedStyle(el).backgroundImage);
       assert(scene.includes(width<=760?'landscape.webp':'sunset-desktop.webp'));
@@ -88,6 +92,7 @@ const server = http.createServer((req,res) => {
     await page.setViewportSize({width:1440,height:1000});
     await page.keyboard.press('/'); await page.waitForURL('**/posts/#post-search');
     const search = page.locator('[data-post-search]'); await search.fill('fuzzing');
+    assert.equal(await search.evaluate(el=>getComputedStyle(el).fontSize),'16px');
     assert(await page.locator('.post-row:visible').count()>0);
     await search.fill('no-such-entry-92837'); assert.equal(await page.locator('.post-row:visible').count(),0);
     await search.fill(''); const total=await page.locator('.post-row').count(); assert(total>30);
@@ -105,11 +110,16 @@ const server = http.createServer((req,res) => {
     const code=page.locator('.code-block').first(); await code.locator('.copy-code').click();
     assert.equal(await page.evaluate(()=>window.__copy),await code.locator('pre').textContent());
     assert(await page.locator('.related-card').count()>0);
+    await page.screenshot({path:path.join(output,'beta-reading-desktop.png')});
+    await page.setViewportSize({width:390,height:844}); await noOverflow();
+    assert.equal(await page.locator('.article-body').evaluate(el=>getComputedStyle(el).fontSize),'16px');
+    await page.screenshot({path:path.join(output,'beta-reading-mobile.png')});
+    await page.setViewportSize({width:1440,height:1000});
     await page.locator('.image-zoom').first().click(); assert(await page.locator('.image-viewer').isVisible()); await page.keyboard.press('Escape');
     for (const route of ['/posts/','/categories/','/about/','/posts/ethernaut-writeups/']) { await visit(route); await noOverflow(); await page.setViewportSize({width:390,height:844}); await noOverflow(); await page.setViewportSize({width:1440,height:1000}); }
     const nojs=await browser.newContext({javaScriptEnabled:false,viewport:{width:390,height:844}}); const staticPage=await nojs.newPage(); await staticPage.goto(base+'/');
     assert(await staticPage.locator('.winter-feature-link').isVisible()); assert.equal(await staticPage.locator('.winter-latest article').count(),6); assert(await staticPage.locator('[data-motion-toggle]').isHidden());
     assert.deepEqual(errors,[]);
-    console.log(`PASS: beta themes, font, links, ${total} entries, search, TOC, code copy, image viewer, motion persistence, reduced motion, no-JS, 360–1920px layouts.`);
+    console.log(`PASS: beta themes, font, links, ${total} entries, search, TOC, code copy, image viewer, motion persistence, reduced motion, no-JS, 320–1920px layouts.`);
   } finally { await browser.close(); server.close(); }
 })().catch(e=>{console.error(e);server.close();process.exitCode=1;});

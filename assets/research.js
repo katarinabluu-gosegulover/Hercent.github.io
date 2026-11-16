@@ -76,6 +76,8 @@
     const dark = root.dataset.theme !== "light";
     toggle.setAttribute("aria-label", dark ? "라이트 모드로 전환" : "다크 모드로 전환");
     toggle.setAttribute("aria-pressed", String(dark));
+    toggle.title = dark ? "Switch to light mode" : "Switch to dark mode";
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', dark ? '#0a1c28' : '#f5f1e9');
   };
   updateToggle();
   toggle?.addEventListener("click", () => {
