@@ -28,6 +28,14 @@ const server = http.createServer((req,res) => {
     const noOverflow = async () => assert(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth+1),page.url());
     await visit('/');
     await page.evaluate(() => document.fonts.ready);
+    assert.equal(await page.locator('.research-index a').count(),2);
+    assert.equal(await page.locator('.research-path').textContent(),'~/notes');
+    const record=page.locator('.winter-latest article').first();
+    await record.locator('h3 a').focus();
+    assert.equal(await record.evaluate(el=>getComputedStyle(el,'::before').opacity),'1');
+    const dateColumns=await page.locator('.winter-meta time').evaluateAll(els=>els.map(el=>el.getBoundingClientRect().left));
+    assert(dateColumns.every(left=>Math.abs(left-dateColumns[0])<1),'Aligned record dates');
+    await page.evaluate(()=>{document.activeElement.blur();scrollTo({top:0,behavior:'instant'});});
     assert(await page.evaluate(() => document.fonts.check('24px NeoCode')));
     assert.equal(await page.locator('html').getAttribute('data-theme'),'light');
     assert(await page.locator('.theme-sun').isVisible());
@@ -68,6 +76,7 @@ const server = http.createServer((req,res) => {
     for (const href of await page.locator('.winter-content a').evaluateAll(els=>[...new Set(els.map(el=>el.href))].filter(url=>url.startsWith(location.origin)))) assert.equal((await context.request.get(href)).status(),200,href);
     assert.equal((await context.request.get(base+'/assets/winter/landscape.webp')).status(),200);
     await page.screenshot({path:path.join(output,'beta-light.png'),fullPage:true});
+    await page.screenshot({path:path.join(output,'polish-light-preview.png'),fullPage:true,clip:{x:0,y:0,width:1440,height:1700}});
     await page.locator('[data-theme-toggle]').click();
     await page.waitForFunction(()=>getComputedStyle(document.querySelector('.scene-night')).opacity==='1');
     assert(await page.locator('.theme-moon').isVisible());
@@ -80,6 +89,7 @@ const server = http.createServer((req,res) => {
       return el.getContext('2d').getImageData(0,0,el.width,Math.floor(el.height*.3)).data.some((v,i)=>i%4===3&&v>0);
     });
     await page.screenshot({path:path.join(output,'beta-dark.png'),fullPage:true});
+    await page.screenshot({path:path.join(output,'polish-dark-preview.png'),fullPage:true,clip:{x:0,y:0,width:1440,height:1700}});
     await page.locator('[data-motion-toggle]').click();
     assert.equal(await page.locator('html').evaluate(el=>el.classList.contains('ambient-enabled')),false);
     assert.equal(await weather.evaluate(el=>el.getContext('2d').getImageData(0,0,el.width,el.height).data.some(v=>v!==0)),false,'Motion Off clears weather');
@@ -96,7 +106,10 @@ const server = http.createServer((req,res) => {
       await page.setViewportSize({width,height:900}); await noOverflow();
       const scene=await page.locator('.scene-sunset').evaluate(el=>getComputedStyle(el).backgroundImage);
       assert(scene.includes(width<=760?'landscape.webp':'sunset-desktop.webp'));
-      if(width===390) await page.screenshot({path:path.join(output,'beta-mobile.png'),fullPage:true});
+      if(width===390) {
+        await page.screenshot({path:path.join(output,'beta-mobile.png'),fullPage:true});
+        await page.screenshot({path:path.join(output,'polish-mobile-preview.png'),fullPage:true,clip:{x:0,y:0,width:390,height:1700}});
+      }
     }
     await page.setViewportSize({width:1440,height:1000});
     await page.keyboard.press('/'); await page.waitForURL('**/posts/#post-search');

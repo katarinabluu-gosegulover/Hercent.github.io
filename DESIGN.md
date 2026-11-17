@@ -9,6 +9,7 @@ The owner approved a winter landscape with a subtle hacker identity. Preserve th
 - NeoDunggeunmo Code for Korean/English display text and navigation; IBM Plex Sans KR for long prose; IBM Plex Mono for code.
 - Homepage sequence: landscape, real featured analysis, newest-first notes, author/topic sidebar.
 - Real post titles, dates, links and images come from Jekyll data. Background artwork is generated, not a photograph of an identified location.
+- Research-note refinement: functional path-style navigation, aligned date columns on desktop, and a mint rule/chevron on hovered or keyboard-focused records. Keep Korean labels and prose; no simulated shell output. Dark reading surfaces lean toward ink, while the winter artwork stays unchanged.
 
 ## Imagery And Motion
 

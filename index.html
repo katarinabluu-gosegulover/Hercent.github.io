@@ -11,11 +11,12 @@ body_class: winter-home
   <section class="winter-hero" aria-labelledby="winter-title" data-winter-scene>
     <div class="winter-scene scene-sunset" aria-hidden="true"></div><div class="winter-scene scene-night" aria-hidden="true"></div><div class="winter-sky" aria-hidden="true"></div>
     <canvas class="winter-weather" aria-hidden="true"></canvas>
-    <div class="winter-copy"><h1 id="winter-title">Beneath<br>the quiet<span class="profile-cursor">_</span></h1><p>고요한 풍경 아래, 끝없이 궁금한 것들.</p><div class="winter-actions"><a href="{{ '/posts/' | relative_url }}">기록 탐색 →</a><a href="{{ '/posts/#post-search' | relative_url }}"><kbd>/</kbd> 검색</a></div></div>
+    <div class="winter-copy"><h1 id="winter-title">Beneath<br>the quiet<span class="profile-cursor">_</span></h1><p>고요한 풍경 아래, 끝없이 궁금한 것들.</p><div class="winter-actions"><a href="{{ '/posts/' | relative_url }}"><span class="research-path" aria-hidden="true">~/notes</span> 기록 탐색 →</a><a href="{{ '/posts/#post-search' | relative_url }}"><kbd>/</kbd> 검색</a></div></div>
     <div class="winter-controls">{% include motion-control.html %}{% include profile-cursor-control.html %}</div>
     <a class="winter-scroll" href="#winter-records" data-scroll-records aria-label="아래 연구 기록으로 이동"><span>SCROLL</span><svg width="24" height="28" viewBox="0 0 24 28" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M12 3v20m-7-7 7 7 7-7"/></svg></a>
   </section>
   <div class="winter-content" id="winter-records" tabindex="-1">
+    <nav class="research-index" aria-label="연구 기록 바로가기"><span>hercent / research log</span><a href="#latest-title">./notes <span>최근 기록</span></a><a href="{{ '/categories/' | relative_url }}">./topics <span>주제 탐색</span></a></nav>
     {% if spotlight_post %}
     <section class="winter-feature" aria-labelledby="feature-title">
       <div class="winter-section-head"><h2 id="feature-title">깊이 들여다본 기록</h2><span>Fuzzing / Debugging</span></div>
@@ -23,7 +24,7 @@ body_class: winter-home
     </section>
     {% endif %}
     <div class="winter-columns">
-      <section class="winter-latest" aria-labelledby="latest-title"><h2 id="latest-title">최근 기록</h2>
+      <section class="winter-latest" aria-labelledby="latest-title"><h2 id="latest-title"><span class="research-comment" aria-hidden="true">//</span> 최근 기록</h2>
         {% for post in site.posts limit: 6 %}{% assign category = site.data.categories | where: 'key', post.category_key | first %}
         <article><div class="winter-meta"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: '%Y.%m.%d' }}</time>{% if category %}<a href="{{ category.path | relative_url }}">{{ category.title | escape }}</a>{% endif %}</div><h3><a href="{{ post.url | relative_url }}">{{ post.title | escape }}</a></h3><p>{{ post.summary | default: post.page_description | default: post.excerpt | strip_html | strip_newlines | truncate: 110 | escape }}</p></article>
         {% endfor %}<a class="winter-all" href="{{ '/posts/' | relative_url }}">전체 기록 탐색 →</a>
